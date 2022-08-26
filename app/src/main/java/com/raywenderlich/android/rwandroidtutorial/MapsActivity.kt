@@ -257,12 +257,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
     showUserLocation()
 
     // Add a marker in Hong Kong and move the camera
-    val latitude = 22.3193
-    val longitude = 114.1694
-    val hongKongLatLong = LatLng(latitude, longitude)
+    val latitude = 20.566396
+    val longitude = -103.228250
+    val CUTLatLong = LatLng(latitude, longitude)
 
     val zoomLevel = 9.5f
-    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(hongKongLatLong, zoomLevel))
+    mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(CUTLatLong, zoomLevel))
 
     // Draw all the previous points on the map
     if (isTracking) {
@@ -316,6 +316,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
   }
 
   // Location
+  @SuppressLint("MissingPermission")
   @AfterPermissionGranted(REQUEST_CODE_FINE_LOCATION)
   private fun showUserLocation() {
     if (EasyPermissions.hasPermissions(this, ACCESS_FINE_LOCATION)) {
@@ -331,6 +332,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
     }
   }
 
+  @SuppressLint("MissingPermission")
   @AfterPermissionGranted(REQUEST_CODE_FINE_LOCATION)
   private fun setupLocationChangeListener() {
     if (EasyPermissions.hasPermissions(this, ACCESS_FINE_LOCATION)) {
