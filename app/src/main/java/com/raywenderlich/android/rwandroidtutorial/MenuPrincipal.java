@@ -1,0 +1,26 @@
+package com.raywenderlich.android.rwandroidtutorial;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+
+import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity;
+import com.raywenderlich.android.runtracking.R;
+
+public class MenuPrincipal extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_menu_principal);
+    }
+
+
+    public void btnCarrera(View view) {
+        Intent intent = new Intent(this, MapsActivity.class);
+        startActivity(intent);
+    }
+
+}
