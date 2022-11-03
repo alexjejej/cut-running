@@ -1,3 +1,4 @@
+# Nuevo .gitignore
 *.iml
 .gradle
 /local.properties
