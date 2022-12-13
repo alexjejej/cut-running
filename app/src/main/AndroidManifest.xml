@@ -16,10 +16,12 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name="com.raywenderlich.android.rwandroidtutorial.Carrera.FinCarrera"
+            android:name="com.raywenderlich.android.rwandroidtutorial.login.HomeActivity"
             android:exported="false" />
+
+        <!-- Activity principal que se muestra al iniciar la app -->
         <activity
-            android:name="com.raywenderlich.android.rwandroidtutorial.MenuPrincipal"
+            android:name="com.raywenderlich.android.rwandroidtutorial.login.AuthActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,13 +30,20 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.raywenderlich.android.rwandroidtutorial.Carrera.FinCarrera"
+            android:exported="false" />
+        <activity
+            android:name="com.raywenderlich.android.rwandroidtutorial.MenuPrincipal"
+            android:exported="false"/>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" /> <!-- Main Activity -->
         <activity
             android:name="com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity"
             android:exported="true"
-            android:theme="@style/SplashTheme"></activity>
+            android:theme="@style/SplashTheme" />
     </application>
 
 </manifest>

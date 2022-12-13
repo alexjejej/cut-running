@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">CutRunning</string>
+
+    <!-- AuthActivity -->
+    <string name="email_hint">Correo</string>
+    <string name="password_hint">Constraseña</string>
+    <string name="singIn_text">Registrar</string>
+    <string name="login_text">Acceder</string>
+    
+    <!-- HomeActivity -->
+    <string name="logout_text">Cerrar sesion</string>
 </resources>
