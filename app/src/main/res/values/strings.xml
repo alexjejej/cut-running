@@ -6,7 +6,11 @@
     <string name="password_hint">Constraseña</string>
     <string name="singIn_text">Registrar</string>
     <string name="login_text">Acceder</string>
-    
+    <string name="google_signin">Iniciar con Google</string>
+
     <!-- HomeActivity -->
     <string name="logout_text">Cerrar sesion</string>
+
+    <!-- Preferences file -->
+    <string name="prefs_file">cutrunning.PREFERENCE_FILE_KEY</string>
 </resources>
