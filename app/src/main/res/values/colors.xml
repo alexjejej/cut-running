@@ -5,5 +5,7 @@
   <color name="colorAccent">#F57C00</color>
   <color name="background">#ECEFF1</color>
   <color name="contrast">#212121</color>
+  <color name="coralFirebase">#FF8A65</color>
+  <color name="azulBonito">#6C90FC</color>
 
 </resources>
