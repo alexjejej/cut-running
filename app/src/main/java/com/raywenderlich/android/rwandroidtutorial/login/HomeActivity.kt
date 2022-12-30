@@ -5,9 +5,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.raywenderlich.android.runtracking.R
 
 enum class ProviderType {
@@ -18,9 +21,17 @@ enum class ProviderType {
 }
 
 class HomeActivity : AppCompatActivity() {
+    private val db = FirebaseFirestore.getInstance() // Referencia a la DB Cloud Firestore definida en Firebase
     lateinit var txtvwEmail: TextView
     lateinit var txtvwPass: TextView
     lateinit var btnLogout: Button
+
+    lateinit var txtSemester: EditText
+    lateinit var txtCareer: EditText
+    lateinit var txtCU: EditText
+    lateinit var btnSave: Button
+    lateinit var btnGet: Button
+    lateinit var btnDelete: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,9 +58,16 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setup( email: String, provider: String ) {
-        txtvwEmail = findViewById(R.id.txtvwEmail)
-        txtvwPass = findViewById(R.id.txtvwProvider)
-        btnLogout = findViewById(R.id.btnLogout)
+        txtvwEmail  = findViewById(R.id.txtvwEmail)
+        txtvwPass   = findViewById(R.id.txtvwProvider)
+        btnLogout   = findViewById(R.id.btnLogout)
+
+        txtCareer   = findViewById(R.id.txtCareer)
+        txtSemester = findViewById(R.id.txtSemester)
+        txtCU       = findViewById(R.id.txtCU)
+        btnSave     = findViewById(R.id.btnSave)
+        btnGet      = findViewById(R.id.btnGet)
+        btnDelete   = findViewById(R.id.btnDelete)
 
         title = "Inicio"
 
@@ -67,6 +85,57 @@ class HomeActivity : AppCompatActivity() {
 
             FirebaseAuth.getInstance().signOut()
             onBackPressed() // Nos devuelve a la pantalla anterior, en este caso el login (AuthActivity)
+        }
+
+        /** Eventos de mnajeo de la DB Cloud Firestore */
+        btnSave.setOnClickListener {
+            // Definicion de la coleccion "users"
+            // En "document()" indicamos la key del usuario
+            db.collection("users").document(email)
+                .set(
+                    hashMapOf(
+                        "provider"  to provider,
+                        "semester"  to txtSemester.text.toString(),
+                        "career"    to txtCareer.text.toString(),
+                        "cu"        to txtCU.text.toString(),
+                        "enable"    to true
+                    )
+                )
+                .addOnSuccessListener {
+                    Log.d("Registro exitoso", "Datos del usuario agregados correctamente")
+                }
+                .addOnFailureListener {
+                    Log.w("Registro fallido", "No se ha logrado realizar el registro de los datos")
+                }
+        }
+
+        btnGet.setOnClickListener {
+            db.collection("users").document(email)
+                .get()
+                .addOnSuccessListener {
+                    txtCU.setText(it.get("cu").toString())
+                    txtSemester.setText(it.get("semester").toString())
+                    txtCareer.setText(it.get("career").toString())
+                    Log.d("Recuperacion exitosa", "Datos del usuario recuperados correctamente")
+                }
+                .addOnFailureListener {
+                    Log.w("Recuperacion fallida", "No se ha logrado recuperar los datos")
+                }
+        }
+
+        btnDelete.setOnClickListener {
+            db.collection("users").document(email)
+                .set(
+                    hashMapOf(
+                        "enable" to false
+                    )
+                )
+                .addOnSuccessListener {
+                    Log.d("Eliminacion exitosa", "Eliminacion de datos del usuario recuperados correctamente")
+                }
+                .addOnFailureListener {
+                    Log.w("Eliminacion fallida", "No se ha logrado eliminar los datos")
+                }
         }
     }
 }
