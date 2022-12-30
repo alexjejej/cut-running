@@ -20,6 +20,9 @@
             android:name="com.raywenderlich.android.rwandroidtutorial.login.HomeActivity"
             android:exported="false" />
 
+        <activity android:name="com.raywenderlich.android.rwandroidtutorial.login.RegistrationCompletionActivity"
+            android:exported="false"/>
+
         <!-- Activity principal que se muestra al iniciar la app -->
         <activity
             android:name="com.raywenderlich.android.rwandroidtutorial.login.AuthActivity"

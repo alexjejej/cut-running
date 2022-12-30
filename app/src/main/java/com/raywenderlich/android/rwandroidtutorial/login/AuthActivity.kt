@@ -137,7 +137,7 @@ class AuthActivity : AppCompatActivity() {
 
     /** Muestra la pantalla de Home (HomeActivity) **/
     private fun showHome( email: String, provider: ProviderType ) {
-        val homeIntent = Intent(this, HomeActivity::class.java).apply{
+        val homeIntent = Intent(this, RegistrationCompletionActivity::class.java).apply{
             // Paso de parametros a la nueva pantalla que se mostrara
             putExtra("email", email)
             putExtra("provider", provider.name)
