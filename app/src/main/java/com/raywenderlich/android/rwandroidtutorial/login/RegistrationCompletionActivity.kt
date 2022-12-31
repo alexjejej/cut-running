@@ -13,13 +13,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.raywenderlich.android.runtracking.R
 
-enum class ProviderType {
-    /** Nos sirve para designar que metodo de autenticacion estamos utilizando
-     * De momento tiene le valor BASIC, ya que es el unico tipo de autenticacion que se tiene
-     * el cual es una autenticacion basica por email y password **/
-    BASIC, GOOGLE;
-}
-
 class RegistrationCompletionActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance() // Referencia a la DB Cloud Firestore definida en Firebase
     lateinit var txtvwEmail: TextView
