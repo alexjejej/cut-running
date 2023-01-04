@@ -4,8 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
     tools:context="com.raywenderlich.android.rwandroidtutorial.login.RegistrationCompletionActivity">
 
+    <!-- TODO: Mostar campos faltantes cuando la autenticacion es BASIC -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -15,7 +17,8 @@
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_height="40dp"
@@ -27,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_weight="1"
-                android:text="Email" />
+                android:text="@string/txtv_email" />
 
             <Space
                 android:layout_width="8dp"
@@ -38,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_weight="1"
-                android:text="Proveedor" />
+                android:text="@string/txtv_provider" />
 
         </LinearLayout>
 
@@ -46,128 +49,94 @@
             android:layout_width="match_parent"
             android:layout_height="8dp" />
 
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:hint="Semestre" >
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtSemester"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:inputType="number"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="60dp"
+                android:hint="@string/txt_semester_hint" >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtSemester"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="number"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:hint="@string/txt_career_hint" >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtCareer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="8dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:hint="@string/txt_cu_hint" >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/txtCU"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="8dp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:hint="Carrera" >
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtCareer"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:hint="C.U." >
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtCU"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="15dp" />
+            android:layout_height="10dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            >
 
             <Button
                 android:id="@+id/btnSave"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Guardar"
+                android:text="@string/btn_save_text"
                 android:textColor="@color/contrast"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                style="@style/Widget.Material3.Button.Icon"
+                app:icon="@drawable/icon_save_24"
+                app:iconPadding="10dp"
+                app:iconGravity="textStart"/>
 
-        </LinearLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"/>
 
             <Button
-                android:id="@+id/btnGet"
+                android:id="@+id/btnSkip"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Recuperar"
-                android:textSize="16sp"
-                android:textColor="@color/contrast" />
+                android:text="@string/btn_skip_text"
+                style="@style/Widget.Material3.Button.TextButton.Icon"
+                app:icon="@drawable/icon_arrow_right_24"
+                app:iconGravity="textEnd"/>
 
         </LinearLayout>
 
         <Space
             android:layout_width="match_parent"
-            android:layout_height="8dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnDelete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Borrar"
-                android:textSize="16sp"
-                android:textColor="@color/contrast" />
-
-        </LinearLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnNew1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Nada"
-                android:textSize="16sp"
-                android:textColor="@color/contrast" />
-
-        </LinearLayout>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="8dp"/>
+            android:layout_height="8dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -179,7 +148,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/logout_text"
+                android:text="@string/btn_logout_text"
                 android:textSize="16sp"
                 android:textColor="@color/contrast"
                 app:backgroundTint="@color/coralFirebase"/>

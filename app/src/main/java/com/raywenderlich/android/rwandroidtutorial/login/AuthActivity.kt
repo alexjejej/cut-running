@@ -18,7 +18,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
+import com.raywenderlich.android.rwandroidtutorial.models.User
 
 class AuthActivity : AppCompatActivity() {
     lateinit var txtEmail:      EditText
@@ -27,6 +33,7 @@ class AuthActivity : AppCompatActivity() {
     lateinit var btnSignUp:     Button
     lateinit var btnGoogleSignin: Button
     lateinit var authLayout:    LinearLayout
+    private lateinit var auth:  FirebaseAuth
 
     private val GOOGLE_SIGN_IN = 100 // Identificador que se envia a "startActivityForResult" para asi recoger la respuesta de la autenticacion
 
@@ -35,8 +42,8 @@ class AuthActivity : AppCompatActivity() {
         setContentView(R.layout.activity_auth)
 
         // Setup
-        setup()
-        session()
+        this.setup()
+        this.session()
     }
 
     override fun onStart() { // Se invoca cada vez que se vuelva a mostrar la pantalla
@@ -53,7 +60,8 @@ class AuthActivity : AppCompatActivity() {
 
         if ( email != null && provider != null ) {
             authLayout.visibility = View.INVISIBLE // Hacemos invisible el layout
-            showHome(email ?: "", ProviderType.valueOf(provider ?: ""))
+            // TODO: Mostar este activity solo cuando hay datos sin registrar
+            this.showRegistrationForm(email ?: "", ProviderType.valueOf(provider ?: ""))
         }
     }
 
@@ -66,22 +74,26 @@ class AuthActivity : AppCompatActivity() {
         btnGoogleSignin = this.findViewById(R.id.btnGoogleSignIn)
         authLayout  = this.findViewById(R.id.authLayout)
 
-        title = "Authenticcion" // Modificamos el titulo de la pantalla
+        title = "Authenticacion" // Modificamos el titulo de la pantalla
+
+        auth = Firebase.auth
 
         // Boton de signup
         btnSignUp.setOnClickListener {
             if ( txtEmail.text.isNotEmpty() && txtPass.text.isNotEmpty() ) {
-                FirebaseAuth.getInstance()
-                    .createUserWithEmailAndPassword(txtEmail.text.toString(), txtPass.text.toString()) // Crea un usuario con las credenciales dadas como parametros
+                auth
+                    .createUserWithEmailAndPassword(this.buildCompleteEmail(txtEmail.text.toString()), txtPass.text.toString()) // Crea un usuario con las credenciales dadas como parametros
                     .addOnCompleteListener {
                         // "addOnCompleteListener" ayuda a verificar si el registro fue exitoso
                         if ( it.isSuccessful ) {
+                            // Crea el registrro en la coleccion "users"
+                            this.createUser(it.result?.user?.email ?: "", ProviderType.BASIC)
                             // Navegacion a la pantalla Home (HomeActivity)
-                            showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
+                            this.showRegistrationForm(it.result?.user?.email ?: "", ProviderType.BASIC)
                         }
                         else {
                             // No se completo el registro correctamente
-                            showAlert()
+                            this.showAlert(it.exception?.message ?: "")
                         }
                     }
             }
@@ -90,17 +102,17 @@ class AuthActivity : AppCompatActivity() {
         // Boton de login
         btnLogin.setOnClickListener{
             if ( txtEmail.text.isNotEmpty() && txtPass.text.isNotEmpty() ) {
-                FirebaseAuth.getInstance()
-                    .signInWithEmailAndPassword(txtEmail.text.toString(), txtPass.text.toString()) // Crea un usuario con las credenciales dadas como parametros
+                auth
+                    .signInWithEmailAndPassword(this.buildCompleteEmail(txtEmail.text.toString()), txtPass.text.toString()) // Crea un usuario con las credenciales dadas como parametros
                     .addOnCompleteListener {
                         // "addOnCompleteListener" ayuda a verificar si el registro fue exitoso
                         if ( it.isSuccessful ) {
                             // Navegacion a la pantalla Home (HomeActivity)
-                            showHome(it.result?.user?.email ?: "", ProviderType.BASIC)
+                            this.showRegistrationForm(it.result?.user?.email ?: "", ProviderType.BASIC)
                         }
                         else {
                             // No se completo el registro correctamente
-                            showAlert()
+                            it.exception?.message?.let { it1 -> this.showAlert(it1) }
                         }
                     }
             }
@@ -126,23 +138,23 @@ class AuthActivity : AppCompatActivity() {
     }
 
     /** Muestra una laerta de error **/
-    private fun showAlert() {
+    private fun showAlert(message: String) {
         var builder = AlertDialog.Builder(this)
         builder.setTitle("Error")
-        builder.setMessage("Se ha producido un error al autenticar el usuario")
+        builder.setMessage( message )
         builder.setPositiveButton("Aceptar", null)
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
 
-    /** Muestra la pantalla de Home (HomeActivity) **/
-    private fun showHome( email: String, provider: ProviderType ) {
-        val homeIntent = Intent(this, RegistrationCompletionActivity::class.java).apply{
+    /** Muestra la pantalla par terminar el registro (RegistrationCompletionActivity) **/
+    private fun showRegistrationForm( email: String, provider: ProviderType ) {
+        val registrationIntent = Intent(this, RegistrationCompletionActivity::class.java).apply{
             // Paso de parametros a la nueva pantalla que se mostrara
             putExtra("email", email)
             putExtra("provider", provider.name)
         }
-        startActivity(homeIntent)
+        startActivity(registrationIntent)
     }
 
     /** Deprecated **/
@@ -160,22 +172,48 @@ class AuthActivity : AppCompatActivity() {
 
                     if ( account != null ) {
                         val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                        FirebaseAuth.getInstance()
+                        auth
                             .signInWithCredential(credential) // Pasamos la autenticacion a Firebase para crear un registro
                             .addOnCompleteListener{
                                 if ( it.isSuccessful ) {
-                                    showHome(account.email ?: "", ProviderType.GOOGLE)
+                                    this.showRegistrationForm(account.email ?: "", ProviderType.GOOGLE)
                                 }
                                 else {
-                                    showAlert()
+                                    this.showAlert(it.exception?.message ?: "")
                                 }
                             }
                     }
                 }
                 catch ( ex: ApiException ) {
-                    showAlert()
+                    this.showAlert(ex.message ?: "")
                 }
             }
         }
+    }
+
+    /** Contrulle el correo completo tomando en cuenta el suffix establecido en el EditText **/
+    private fun buildCompleteEmail( email: String ): String =
+        email + getString(R.string.txt_udg_suffix)
+
+    /** Crea el registro correspondiente en la colecion "users" de Firestore **/
+    private fun createUser( email: String, provider: ProviderType ) {
+        val db = Firebase.firestore // Referencia a la DB Cloud Firestore definida en Firebase
+        db.collection("users").document(email)
+            .set(
+                User(
+                    cu = "",
+                    career = "",
+                    completeInformation = false,
+                    provider = provider.name,
+                    enable = true,
+                    semester = 1
+                )
+            )
+            .addOnSuccessListener {
+                Log.d("Registro exitoso", "Datos del usuario agregados correctamente")
+            }
+            .addOnFailureListener {
+                Log.w("Registro fallido", "No se ha logrado realizar el registro de los datos")
+            }
     }
 }

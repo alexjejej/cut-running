@@ -1,6 +1,7 @@
 package com.raywenderlich.android.rwandroidtutorial.login
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +13,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.raywenderlich.android.runtracking.R
+import com.raywenderlich.android.rwandroidtutorial.models.User
 
 class RegistrationCompletionActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance() // Referencia a la DB Cloud Firestore definida en Firebase
@@ -23,8 +25,9 @@ class RegistrationCompletionActivity : AppCompatActivity() {
     lateinit var txtCareer: TextInputEditText
     lateinit var txtCU: TextInputEditText
     lateinit var btnSave: Button
-    lateinit var btnGet: Button
-    lateinit var btnDelete: Button
+    lateinit var btnSkip: Button
+    // lateinit var btnGet: Button
+    // lateinit var btnDelete: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,8 +62,9 @@ class RegistrationCompletionActivity : AppCompatActivity() {
         txtSemester = findViewById(R.id.txtSemester)
         txtCU       = findViewById(R.id.txtCU)
         btnSave     = findViewById(R.id.btnSave)
-        btnGet      = findViewById(R.id.btnGet)
-        btnDelete   = findViewById(R.id.btnDelete)
+        btnSkip     = findViewById(R.id.btnSkip)
+        // btnGet      = findViewById(R.id.btnGet)
+        // btnDelete   = findViewById(R.id.btnDelete)
 
         txtvwEmail.text = email
         txtvwPass.text = provider
@@ -84,23 +88,28 @@ class RegistrationCompletionActivity : AppCompatActivity() {
             // En "document()" indicamos la key del usuario
             db.collection("users").document(email)
                 .set(
-                    hashMapOf(
-                        "provider"  to provider,
-                        "semester"  to txtSemester.text.toString(),
-                        "career"    to txtCareer.text.toString(),
-                        "cu"        to txtCU.text.toString(),
-                        "enable"    to true
+                    // TODO: Agrevar validacion de campos vacios
+                    User(
+                        provider = provider,
+                        semester = txtSemester.text.toString().toInt(),
+                        career = txtCareer.text.toString(),
+                        cu = txtCU.text.toString(),
+                        enable = true,
+                        completeInformation = true
                     )
                 )
                 .addOnSuccessListener {
                     Log.d("Registro exitoso", "Datos del usuario agregados correctamente")
+                    this.showHome()
                 }
                 .addOnFailureListener {
                     Log.w("Registro fallido", "No se ha logrado realizar el registro de los datos")
                 }
         }
 
-        btnGet.setOnClickListener {
+        btnSkip.setOnClickListener { this.showHome() }
+
+        /** btnGet.setOnClickListener {
             db.collection("users").document(email)
                 .get()
                 .addOnSuccessListener {
@@ -112,9 +121,9 @@ class RegistrationCompletionActivity : AppCompatActivity() {
                 .addOnFailureListener {
                     Log.w("Recuperacion fallida", "No se ha logrado recuperar los datos")
                 }
-        }
+        } **/
 
-        btnDelete.setOnClickListener {
+        /** btnDelete.setOnClickListener {
             db.collection("users").document(email)
                 .set(
                     hashMapOf(
@@ -127,6 +136,13 @@ class RegistrationCompletionActivity : AppCompatActivity() {
                 .addOnFailureListener {
                     Log.w("Eliminacion fallida", "No se ha logrado eliminar los datos")
                 }
-        }
+        } **/
     }
+
+    /** Muestra la pantalla de Home (HomeActivity) **/
+    private fun showHome() {
+        val homeIntent = Intent(this, HomeActivity::class.java)
+        startActivity(homeIntent)
+    }
+
 }

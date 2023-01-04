@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/alarms"
+        android:id="@+id/btnHome"
         android:enabled="true"
         android:icon="@drawable/icon_home_24"
-        android:title="Home" />
+        android:title="@string/item_home" />
     <item
-        android:id="@+id/schedule"
+        android:id="@+id/btnAddTraining"
         android:enabled="true"
         android:icon="@drawable/icon_add_24"
-        android:title="Lock" />
+        android:title="@string/item_add_training" />
     <item
-        android:id="@+id/add"
+        android:id="@+id/btnAchievements"
         android:enabled="true"
         android:icon="@drawable/icon_military_tech_24"
-        android:title="Warning" />
+        android:title="@string/item_achievements" />
 </menu>
