@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:name="com.raywenderlich.android.rwandroidtutorial.Carrera.TrackingApplication"
@@ -15,6 +16,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity
+            android:name="com.raywenderlich.android.rwandroidtutorial.clasificacion.PrincipaClasificacion"
+            android:exported="false" />
+        <activity
+            android:name="com.raywenderlich.android.rwandroidtutorial.Logros.PrincipalLogros"
+            android:exported="false" />
         <activity
             android:name="com.raywenderlich.android.rwandroidtutorial.Carrera.FinCarrera"
             android:exported="false" />
@@ -34,7 +41,7 @@
         <activity
             android:name="com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity"
             android:exported="true"
-            android:theme="@style/SplashTheme"></activity>
+            android:theme="@style/SplashTheme" />
     </application>
 
 </manifest>
