@@ -1,3 +1,30 @@
 <resources>
     <string name="app_name">CutRunning</string>
+
+    <!-- AuthActivity -->
+    <string name="txt_email_hint">Correo</string>
+    <string name="txt_password_hint">Constraseña</string>
+    <string name="btn_singIn_text">Registrar</string>
+    <string name="btn_login_text">Acceder</string>
+    <string name="btn_google_signin">Iniciar con Google</string>
+    <string name="txt_udg_suffix">\@gmail.com</string>
+
+    <!-- RegistrationCompletionActivity -->
+    <string name="txtv_email">Email</string>
+    <string name="txtv_provider">Provider</string>
+    <string name="txt_semester_hint">Semester</string>
+    <string name="txt_career_hint">Career</string>
+    <string name="txt_cu_hint">C.U.</string>
+    <string name="btn_logout_text">Cerrar sesion</string>
+    <string name="btn_save_text">Guardar</string>
+    <string name="btn_skip_text">Saltar</string>
+
+    <!-- Preferences file -->
+    <string name="prefs_file">cutrunning.PREFERENCE_FILE_KEY</string>
+
+    <!-- Bottom navbar -->
+    <string name="item_home">Inicio</string>
+    <string name="item_add_training">Carrera</string>
+    <string name="item_achievements">Logros</string>
+    <string name="item_clasificacion">Clasificacion</string>
 </resources>

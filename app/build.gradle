@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.gms.google-services'
 
 android {
   compileSdkVersion rootProject.ext.compileSdkVersion
@@ -15,8 +16,8 @@ android {
 
   defaultConfig {
     applicationId "com.raywenderlich.android.runtracking"
-    minSdkVersion rootProject.ext.minSdkVersion
-    targetSdkVersion rootProject.ext.targetSdkVersion
+    minSdkVersion 24
+    targetSdkVersion 31
     versionCode 1
     versionName "1.0"
     testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -39,8 +40,9 @@ dependencies {
   annotationProcessor 'com.github.bumptech.glide:compiler:4.14.2'
 
   implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
 
-  kapt "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0"
+    kapt "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0"
 
   // Kotlin
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
@@ -78,4 +80,16 @@ dependencies {
   implementation "androidx.activity:activity-ktx:1.1.0"
   implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
   implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
+
+  // Libreria de autenticacion Firebase
+  // Import the BoM for the Firebase platform
+  implementation platform('com.google.firebase:firebase-bom:31.1.1')
+  // Add the dependency for the Firebase Authenticaction library
+  // When using the BoM, you don't specify versions in Firebase library dependencies
+  implementation 'com.google.firebase:firebase-auth-ktx'
+  // Also add the dependency for the Google Play services library and specify its version
+  implementation 'com.google.android.gms:play-services-auth:20.4.0'
+  // Declare the dependency for the Cloud Firestore library
+  // When using the BoM, you don't specify version in Firebase library dependencies
+  implementation 'com.google.firebase:firebase-firestore-ktx'
 }
