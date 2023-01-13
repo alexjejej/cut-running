@@ -92,4 +92,10 @@ dependencies {
   // Declare the dependency for the Cloud Firestore library
   // When using the BoM, you don't specify version in Firebase library dependencies
   implementation 'com.google.firebase:firebase-firestore-ktx'
+
+  // Incluimos la libreria de fragments de AndroidX
+  implementation 'androidx.fragment:fragment-ktx:1.5.5'
+
+  // Incluyendo las dependencias para ViewPager2 (Libreria no utilizada)
+  implementation 'androidx.viewpager2:viewpager2:1.0.0'
 }

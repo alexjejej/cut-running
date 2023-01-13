@@ -24,6 +24,8 @@ buildscript {
   }
 }
 
+/** Agrega el repositorio de Google Maven
+ * al declararse aqui, no se necesita declarar en settings.gradle **/
 allprojects {
   repositories {
     google()

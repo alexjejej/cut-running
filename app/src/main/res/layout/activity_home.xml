@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,50 +8,32 @@
     android:background="@color/background"
     tools:context="com.raywenderlich.android.rwandroidtutorial.login.HomeActivity">
 
-    <!-- <LinearLayout
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/layout_navbar"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:layout_height="40dp"
+        <!-- Incorpora el fragment a la vista (en este caso agregamos
+        el fragment programaticamente) -->
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/container_fragment_home"
             android:layout_width="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="match_parent"/>
 
-            <TextView
-                android:id="@+id/txtvwEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:text="Email" />
-
-            <Space
-                android:layout_width="8dp"
-                android:layout_height="match_parent" />
-
-            <TextView
-                android:id="@+id/txtvwProvider"
-                android:layout_width="wrap_content"
-                android:layout_height="40dp"
-                android:layout_weight="1"
-                android:text="Proveedor" />
-
-        </LinearLayout> -->
+    </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/layout_navbar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:ignore="MissingConstraints"
         app:layout_constraintBottom_toBottomOf="parent"> <!-- Coloca el LinearLayout al hasta abajo de la pantalla -->
         <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/buttonNavbar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:menu="@menu/bottom_navbar_items"/>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

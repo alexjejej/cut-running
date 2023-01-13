@@ -39,8 +39,7 @@ import androidx.lifecycle.ViewModelProvider
 
 class MapsActivityViewModelFactory(private val trackingRepository: TrackingRepository):
     ViewModelProvider.Factory {
-  override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-
+  override fun <T : ViewModel> create(modelClass: Class<T>): T {
     if (modelClass.isAssignableFrom(MapsActivityViewModel::class.java)) {
       @Suppress("UNCHECKED_CAST")
       return MapsActivityViewModel(trackingRepository) as T
