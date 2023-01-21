@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
+// Incorporacion de Hilt para DI
+apply plugin: 'com.google.dagger.hilt.android'
 
 android {
   compileSdkVersion rootProject.ext.compileSdkVersion
@@ -98,4 +100,13 @@ dependencies {
 
   // Incluyendo las dependencias para ViewPager2 (Libreria no utilizada)
   implementation 'androidx.viewpager2:viewpager2:1.0.0'
+
+  // Incorporacion de Hilt para DI
+  implementation 'com.google.dagger:hilt-android:2.44'
+  kapt 'com.google.dagger:hilt-android-compiler:2.44'
+}
+
+// Allow references to generated code
+kapt {
+  correctErrorTypes true
 }

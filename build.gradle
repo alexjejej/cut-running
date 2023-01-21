@@ -24,6 +24,11 @@ buildscript {
   }
 }
 
+// Incorporacion de Hilt para la DI
+plugins {
+  id 'com.google.dagger.hilt.android' version "2.44" apply false
+}
+
 /** Agrega el repositorio de Google Maven
  * al declararse aqui, no se necesita declarar en settings.gradle **/
 allprojects {

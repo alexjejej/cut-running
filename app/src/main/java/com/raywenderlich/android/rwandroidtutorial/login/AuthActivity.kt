@@ -2,17 +2,24 @@ package com.raywenderlich.android.rwandroidtutorial.login
 
 import android.content.Context
 import android.content.Intent
+import android.content.IntentSender
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -24,26 +31,41 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
+import com.raywenderlich.android.runtracking.databinding.ActivityAuthBinding
+import com.raywenderlich.android.rwandroidtutorial.login.viewmodel.AuthViewModel
 import com.raywenderlich.android.rwandroidtutorial.models.User
+import com.raywenderlich.android.rwandroidtutorial.provider.services.firebaseAuthentication.FirebaseAuthenticationService
+import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
+    @Inject lateinit var _firebaseAuthenticationService: FirebaseAuthenticationService
+    @Inject lateinit var _stringResourcesProvider: StringResourcesProvider
+    private lateinit var  binding: ActivityAuthBinding
+    private val authViewModel: AuthViewModel by viewModels()
+    private lateinit var auth:  FirebaseAuth
+    private lateinit var signInRequest: BeginSignInRequest
+    private lateinit var oneTapClient: SignInClient
+
     lateinit var txtEmail:      EditText
     lateinit var txtPass:       EditText
-    lateinit var btnLogin:      Button
-    lateinit var btnSignUp:     Button
-    lateinit var btnGoogleSignin: Button
     lateinit var authLayout:    LinearLayout
-    private lateinit var auth:  FirebaseAuth
 
-    private val GOOGLE_SIGN_IN = 100 // Identificador que se envia a "startActivityForResult" para asi recoger la respuesta de la autenticacion
+    private val REQUEST_ONE_TAP = 2 // Puede ser cualquier entero unico para el Activity
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_auth)
+        binding = ActivityAuthBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         // Setup
         this.setup()
         this.session()
+        this.initialiceGoogleutentication()
     }
 
     override fun onStart() { // Se invoca cada vez que se vuelva a mostrar la pantalla
@@ -67,73 +89,41 @@ class AuthActivity : AppCompatActivity() {
 
     // TODO: Refactorizar metodo
     private fun setup() {
-        txtEmail    = this.findViewById(R.id.txtEmail)
-        txtPass     = this.findViewById(R.id.txtPassword)
-        btnLogin    = this.findViewById(R.id.btnLogin)
-        btnSignUp   = this.findViewById(R.id.btnSignUp)
-        btnGoogleSignin = this.findViewById(R.id.btnGoogleSignIn)
-        authLayout  = this.findViewById(R.id.authLayout)
+        txtEmail    = this.binding.txtEmail
+        txtPass     = this.binding.txtPassword
+        authLayout  = this.binding.authLayout
 
         title = "Authenticacion" // Modificamos el titulo de la pantalla
 
         auth = Firebase.auth
 
-        // Boton de signup
-        btnSignUp.setOnClickListener {
-            if ( txtEmail.text.isNotEmpty() && txtPass.text.isNotEmpty() ) {
-                auth
-                    .createUserWithEmailAndPassword(this.buildCompleteEmail(txtEmail.text.toString()), txtPass.text.toString()) // Crea un usuario con las credenciales dadas como parametros
-                    .addOnCompleteListener {
-                        // "addOnCompleteListener" ayuda a verificar si el registro fue exitoso
-                        if ( it.isSuccessful ) {
-                            // Crea el registrro en la coleccion "users"
-                            this.createUser(it.result?.user?.email ?: "", ProviderType.BASIC)
-                            // Navegacion a la pantalla Home (HomeActivity)
-                            this.showRegistrationForm(it.result?.user?.email ?: "", ProviderType.BASIC)
-                        }
-                        else {
-                            // No se completo el registro correctamente
-                            this.showAlert(it.exception?.message ?: "")
-                        }
-                    }
-            }
+        this.binding.btnSignUp.setOnClickListener {
+            this.authViewModel.signUp(
+                this.binding.txtEmail.text.toString(), this.binding.txtPassword.text.toString()
+            )
         }
 
-        // Boton de login
-        btnLogin.setOnClickListener{
-            if ( txtEmail.text.isNotEmpty() && txtPass.text.isNotEmpty() ) {
-                auth
-                    .signInWithEmailAndPassword(this.buildCompleteEmail(txtEmail.text.toString()), txtPass.text.toString()) // Crea un usuario con las credenciales dadas como parametros
-                    .addOnCompleteListener {
-                        // "addOnCompleteListener" ayuda a verificar si el registro fue exitoso
-                        if ( it.isSuccessful ) {
-                            // Navegacion a la pantalla Home (HomeActivity)
-                            this.showRegistrationForm(it.result?.user?.email ?: "", ProviderType.BASIC)
-                        }
-                        else {
-                            // No se completo el registro correctamente
-                            it.exception?.message?.let { it1 -> this.showAlert(it1) }
-                        }
-                    }
-            }
+        this.binding.btnLogin.setOnClickListener {
+//            this.authViewModel.signIn(
+//                this.binding.txtEmail.text.toString(), this.binding.txtPassword.text.toString()
+//            )
         }
 
-        // Boton de Google sign in
-        btnGoogleSignin.setOnClickListener {
-            // Configuracion de login con Google
-            val googleConf = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN) // Indica que se usara el login por defecto de la cuenta de google
-                .requestIdToken(getString(R.string.default_web_client_id)) // Pasamos el token Id asociado a nuestra app
-                .requestEmail() // Solicitamos el email de la persona que se esta logueando
-                .build()
-
-            // Cliente de autenticacion de google
-            val googleClient = GoogleSignIn.getClient(this, googleConf)
-            googleClient.signOut() // Para que cada vez que se inicie sesion con google se realice el log out de la cuenta que pueda estar autenticada. Esto
-            // es util para el caso de que se tenga mas de una cuenta de google asociada al dispositivo
-
-            // Mostrar la pantalla de autenticacion de Google
-            // val getContent = registerForActivityResult(googleClient.signInIntent)
-            startActivityForResult(googleClient.signInIntent, GOOGLE_SIGN_IN) // TODO: Buscar implementacion reciente
+        this.binding.btnGoogleSignIn.setOnClickListener {
+            oneTapClient.beginSignIn(signInRequest)
+                .addOnSuccessListener {result ->
+                    try {
+                        startIntentSenderForResult(
+                            result.pendingIntent.intentSender, REQUEST_ONE_TAP, null, 0, 0, 0, null
+                        )
+                    }
+                    catch (e: IntentSender.SendIntentException) {
+                        Log.e("FirebaseAuth", "Couldn't start One Tap UI: ${e.localizedMessage}")
+                    }
+                }
+                .addOnFailureListener {
+                    Log.d("FirebaseAuth", "${it.localizedMessage}")
+                }
         }
     }
 
@@ -157,43 +147,13 @@ class AuthActivity : AppCompatActivity() {
         startActivity(registrationIntent)
     }
 
-    /** Deprecated **/
+    /** Este metodo es llamada despues de que se selecciona la cuenta con la que se
+     * iniciara sesion con oneTapClient. Es la el metodo donde se valida la respueta
+     * del oneTapClient **/
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { // TODO: Consultar documentacion sober onActivityResult
         super.onActivityResult(requestCode, resultCode, data)
-        if ( requestCode == GOOGLE_SIGN_IN ) {
-            // Si el request code es igual al reques code definido en GOOGLE_SIGN_IN querra decir
-            // que la respuesta de este activity se corresponde con el de la autenticacion con Google
-            if ( requestCode == GOOGLE_SIGN_IN ) {
-                val task = GoogleSignIn.getSignedInAccountFromIntent(data)
-
-                try {
-                    // Esta linea puede producir un error en caso de que no sea capaz de recuperar una cuenta
-                    val account = task.getResult(ApiException::class.java)
-
-                    if ( account != null ) {
-                        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
-                        auth
-                            .signInWithCredential(credential) // Pasamos la autenticacion a Firebase para crear un registro
-                            .addOnCompleteListener{
-                                if ( it.isSuccessful ) {
-                                    this.showRegistrationForm(account.email ?: "", ProviderType.GOOGLE)
-                                }
-                                else {
-                                    this.showAlert(it.exception?.message ?: "")
-                                }
-                            }
-                    }
-                }
-                catch ( ex: ApiException ) {
-                    this.showAlert(ex.message ?: "")
-                }
-            }
-        }
+        this.authViewModel.onActivityResultActions(requestCode, resultCode, data, oneTapClient)
     }
-
-    /** Contrulle el correo completo tomando en cuenta el suffix establecido en el EditText **/
-    private fun buildCompleteEmail( email: String ): String =
-        email + getString(R.string.txt_udg_suffix)
 
     /** Crea el registro correspondiente en la colecion "users" de Firestore **/
     private fun createUser( email: String, provider: ProviderType ) {
@@ -215,5 +175,30 @@ class AuthActivity : AppCompatActivity() {
             .addOnFailureListener {
                 Log.w("Registro fallido", "No se ha logrado realizar el registro de los datos")
             }
+    }
+
+    /** Inicializacion de propiedades para usar el oneTapClient de inicio de sesion
+     * com Google **/
+    private fun initialiceGoogleutentication() {
+        oneTapClient = Identity.getSignInClient(this)
+
+        signInRequest = BeginSignInRequest.builder()
+            .setPasswordRequestOptions(
+                BeginSignInRequest.PasswordRequestOptions.builder()
+                .setSupported(true)
+                .build())
+            .setGoogleIdTokenRequestOptions(
+                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
+                    .setSupported(true)
+                    // Your server's client ID, not your Android client ID.
+                    .setServerClientId(
+                        _stringResourcesProvider.getString(R.string.default_web_client_id)
+                    )
+                    // Only show accounts previously used to sign in.
+                    .setFilterByAuthorizedAccounts(true)
+                    .build())
+            // Automatically sign in when exactly one credential is retrieved.
+            .setAutoSelectEnabled(true)
+            .build()
     }
 }
