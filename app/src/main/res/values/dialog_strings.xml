@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="info_incorrect_credentials_title">Usuario no enonctrado!</string>
+    <string name="info_incorrect_credentials_message">Revisar las credenciales ingresadas para iniciar sesion</string>
+
+    <string name="warning_creation_user_title">Error enla creacion de usuario</string>
+    <string name="warning_creation_user_message">Ha ocurrido un error al momento de crear su usuarario, por favor intente crear su cuenta mas tarde</string>
+
+    <string name="default_dialog_button">Ok</string>
+</resources>

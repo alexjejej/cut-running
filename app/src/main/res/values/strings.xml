@@ -6,7 +6,7 @@
     <string name="txt_password_hint">Constraseña</string>
     <string name="btn_singIn_text">Registrar</string>
     <string name="btn_login_text">Acceder</string>
-    <string name="btn_google_signin">Iniciar con Google</string>
+    <string name="btn_google_signin">Iniciar</string>
     <string name="txt_udg_suffix">\@gmail.com</string>
 
     <!-- RegistrationCompletionActivity -->
@@ -21,6 +21,8 @@
 
     <!-- Preferences file -->
     <string name="prefs_file">cutrunning.PREFERENCE_FILE_KEY</string>
+    <string name="prefs_email">logged_email</string>
+    <string name="prefs_user_name">logged_user_name</string>
 
     <!-- Bottom navbar -->
     <string name="item_home">Inicio</string>

@@ -2,73 +2,87 @@ package com.raywenderlich.android.rwandroidtutorial.provider.services.firebaseAu
 
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.util.Log
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
+import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 
 class FirebaseAuthenticationService @Inject constructor(
     private val _stringResourcesProvider: StringResourcesProvider,
+    private val _dialog: Dialog,
     @ApplicationContext private val context: Context
-) : IFirebaseAuthenticationService {
+) {
     // Creacion de intancia de FirebaseAuth
-    private lateinit var auth: FirebaseAuth
+    private val auth: FirebaseAuth = Firebase.auth
     private val REQUEST_ONE_TAP = 2 // Puede ser cualquier entero unico para el Activity
 
     /** Verificar conexion del usuario **/
-    override fun curretnUser() {
-        auth = Firebase.auth
+    fun curretnUser(): FirebaseUser? {
         val currentUser = auth.currentUser
         if ( currentUser != null ) {
-            // TODO: Acciones cuando el usuraio actual no es null
+            return currentUser
         }
+        return null
     }
 
     /** Inicio de sesion **/
-    override fun signIn(email: String, pass: String) {
-        auth = Firebase.auth
+    fun signIn(email: String, pass: String): FirebaseUser? {
+        var user: FirebaseUser? = null
         auth.signInWithEmailAndPassword(email, pass)
             .addOnCompleteListener {
                 if ( it.isSuccessful ) {
-                    val user = auth.currentUser
+                    user = auth.currentUser
+                    Log.d("FirebaseAuth", "${user?.displayName}")
+                    Log.d("FirebaseAuth", "${user?.email}")
+                    Log.d("FirebaseAuth", "${user?.photoUrl}")
                     Log.d("FirebaseAuth", "Inicio de sesion exitoso")
                 }
                 else {
-                    Log.w("FirebaseAuth", "Error al iniciar sesion con las creadenciales")
-                    Log.w("FirebaseAuth", "${it.exception.toString()}")
+                    _dialog.infoDialog(R.string.info_incorrect_credentials_message, R.string.info_incorrect_credentials_title)
                 }
             }
+        return if (user != null) user else null
     }
 
     /** Creacion de una cuenta **/
-    override fun signUpWithCreadentials(email: String, pass: String) {
-        auth = Firebase.auth
+    fun signUpWithCreadentials(email: String, pass: String): FirebaseUser? {
+        var user: FirebaseUser? = null
         auth.createUserWithEmailAndPassword(email, pass)
             .addOnCompleteListener {
                 if ( it.isSuccessful ) {
-                    val user = auth.currentUser
+                    user = auth.currentUser
                     Log.d("FirebaseAuth", "Ususario creado correctamente")
                 }
                 else {
-                    Log.w("FirebaseAuth", "Error en la creacion del usuario")
+                    _dialog.warningDialog(R.string.warning_creation_user_message, R.string.warning_creation_user_title)
                     Log.w("FirebaseAuth", "${it.exception.toString()}")
                 }
             }
+        return if (user != null) user else null
     }
 
     /** Inicio de sesion con Google **/
-    override fun signIngWithGoogle() {}
+    fun signIngWithGoogle() {}
 
     /** Manejo de la respuesta del activity de seleccion de cuenta de google (oneTapClient) **/
-    fun onActivityResultActions(requestCode: Int, resultCode: Int, data: Intent?, oneTapClient: SignInClient) {
-        auth = Firebase.auth
+    fun activityResultActions(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?,
+        oneTapClient: SignInClient
+    ): FirebaseUser? {
         when(requestCode) {
             REQUEST_ONE_TAP -> {
                 try {
@@ -94,13 +108,16 @@ class FirebaseAuthenticationService @Inject constructor(
                         else -> {
                             // Shouldn't happen.
                             Log.d("FirebaseAuth", "No ID token!")
+                            return null
                         }
                     }
                 }
                 catch (e: ApiException) {
                     Log.d("FirebaseAuth", "${e.message.toString()}")
+                    return null
                 }
             }
         }
+        return null
     }
 }

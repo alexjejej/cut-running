@@ -17,6 +17,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
+import androidx.lifecycle.Observer
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -24,6 +25,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -34,8 +36,10 @@ import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.ActivityAuthBinding
 import com.raywenderlich.android.rwandroidtutorial.login.viewmodel.AuthViewModel
 import com.raywenderlich.android.rwandroidtutorial.models.User
+import com.raywenderlich.android.rwandroidtutorial.provider.services.context.ContextProvider
 import com.raywenderlich.android.rwandroidtutorial.provider.services.firebaseAuthentication.FirebaseAuthenticationService
 import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
+import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -43,14 +47,17 @@ import javax.inject.Inject
 class AuthActivity : AppCompatActivity() {
     @Inject lateinit var _firebaseAuthenticationService: FirebaseAuthenticationService
     @Inject lateinit var _stringResourcesProvider: StringResourcesProvider
+    @Inject lateinit var _contextProvider: ContextProvider
+
     private lateinit var  binding: ActivityAuthBinding
     private val authViewModel: AuthViewModel by viewModels()
     private lateinit var auth:  FirebaseAuth
     private lateinit var signInRequest: BeginSignInRequest
     private lateinit var oneTapClient: SignInClient
+    private lateinit var prefs: SharedPreferences
 
-    lateinit var txtEmail:      EditText
-    lateinit var txtPass:       EditText
+    // lateinit var txtEmail:      EditText
+    // lateinit var txtPass:       EditText
     lateinit var authLayout:    LinearLayout
 
     private val REQUEST_ONE_TAP = 2 // Puede ser cualquier entero unico para el Activity
@@ -61,6 +68,7 @@ class AuthActivity : AppCompatActivity() {
         binding = ActivityAuthBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+        _contextProvider.setContext(this)
 
         // Setup
         this.setup()
@@ -71,43 +79,57 @@ class AuthActivity : AppCompatActivity() {
     override fun onStart() { // Se invoca cada vez que se vuelva a mostrar la pantalla
         super.onStart()
         // Mostramos de nuevo el layout en caso de que hagamos un log out y regresemos a este activity (pantalla)
-        authLayout.visibility = View.VISIBLE // Hacemos visible el layout
+        this.authLayout.visibility = View.VISIBLE // Hacemos visible el layout
     }
 
     /** Comprobacion de si existe una sesion activa **/
     private fun session() {
-        val prefs: SharedPreferences = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
-        val email: String?      = prefs.getString("email", null)
-        val provider: String?   = prefs.getString("provider", null)
+        // val prefs: SharedPreferences = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        val userName: String?      = this.prefs.getString(getString(R.string.prefs_user_name), null)
+        val email: String?         = this.prefs.getString(getString(R.string.prefs_email), null)
 
-        if ( email != null && provider != null ) {
-            authLayout.visibility = View.INVISIBLE // Hacemos invisible el layout
+        if ( email != null && userName != null ) {
+            this.authLayout.visibility = View.INVISIBLE // Hacemos invisible el layout
+            this.showHorScreen()
             // TODO: Mostar este activity solo cuando hay datos sin registrar
-            this.showRegistrationForm(email ?: "", ProviderType.valueOf(provider ?: ""))
+            // this.showRegistrationForm(email ?: "", ProviderType.valueOf(provider ?: ""))
         }
     }
 
     // TODO: Refactorizar metodo
     private fun setup() {
-        txtEmail    = this.binding.txtEmail
-        txtPass     = this.binding.txtPassword
+        // txtEmail    = this.binding.txtEmail
+        // txtPass     = this.binding.txtPassword
         authLayout  = this.binding.authLayout
-
         title = "Authenticacion" // Modificamos el titulo de la pantalla
+        this.prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
 
-        auth = Firebase.auth
+        /** Manejo de la informacion pasada desde el ViewModel con LiveData **/
+        authViewModel.authenticationResult.observe(this, Observer {
+            with (this.prefs.edit()) {
+                putString(getString(R.string.prefs_user_name), it.displayName)
+                putString(getString(R.string.prefs_email), it.email)
+                apply()
+            }
 
+            this.showHorScreen()
+        })
+
+        /*
         this.binding.btnSignUp.setOnClickListener {
             this.authViewModel.signUp(
                 this.binding.txtEmail.text.toString(), this.binding.txtPassword.text.toString()
             )
         }
+         */
 
+        /*
         this.binding.btnLogin.setOnClickListener {
-//            this.authViewModel.signIn(
-//                this.binding.txtEmail.text.toString(), this.binding.txtPassword.text.toString()
-//            )
+            this.authViewModel.signIn(
+                this.binding.txtEmail.text.toString(), this.binding.txtPassword.text.toString()
+            )
         }
+         */
 
         this.binding.btnGoogleSignIn.setOnClickListener {
             oneTapClient.beginSignIn(signInRequest)
@@ -127,7 +149,14 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
+    /** Navegamos a la pagina Home de la aplicacion **/
+    private fun showHorScreen() {
+        var intent = Intent(this, HomeActivity::class.java)
+        startActivity(intent)
+    }
+
     /** Muestra una laerta de error **/
+    /*
     private fun showAlert(message: String) {
         var builder = AlertDialog.Builder(this)
         builder.setTitle("Error")
@@ -136,6 +165,7 @@ class AuthActivity : AppCompatActivity() {
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
+     */
 
     /** Muestra la pantalla par terminar el registro (RegistrationCompletionActivity) **/
     private fun showRegistrationForm( email: String, provider: ProviderType ) {
@@ -150,9 +180,9 @@ class AuthActivity : AppCompatActivity() {
     /** Este metodo es llamada despues de que se selecciona la cuenta con la que se
      * iniciara sesion con oneTapClient. Es la el metodo donde se valida la respueta
      * del oneTapClient **/
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { // TODO: Consultar documentacion sober onActivityResult
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { // TODO: Consultar documentacion sobre onActivityResult
         super.onActivityResult(requestCode, resultCode, data)
-        this.authViewModel.onActivityResultActions(requestCode, resultCode, data, oneTapClient)
+        this.authViewModel.activityResultActions(requestCode, resultCode, data, oneTapClient)
     }
 
     /** Crea el registro correspondiente en la colecion "users" de Firestore **/
