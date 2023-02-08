@@ -49,16 +49,13 @@ class AuthActivity : AppCompatActivity() {
     @Inject lateinit var _stringResourcesProvider: StringResourcesProvider
     @Inject lateinit var _contextProvider: ContextProvider
 
+    // private val authViewModel: AuthViewModel by viewModels()
     private lateinit var  binding: ActivityAuthBinding
-    private val authViewModel: AuthViewModel by viewModels()
     private lateinit var auth:  FirebaseAuth
+    private lateinit var prefs: SharedPreferences
     private lateinit var signInRequest: BeginSignInRequest
     private lateinit var oneTapClient: SignInClient
-    private lateinit var prefs: SharedPreferences
-
-    // lateinit var txtEmail:      EditText
-    // lateinit var txtPass:       EditText
-    lateinit var authLayout:    LinearLayout
+    private lateinit var authLayout:    LinearLayout
 
     private val REQUEST_ONE_TAP = 2 // Puede ser cualquier entero unico para el Activity
 
@@ -84,52 +81,24 @@ class AuthActivity : AppCompatActivity() {
 
     /** Comprobacion de si existe una sesion activa **/
     private fun session() {
-        // val prefs: SharedPreferences = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         val userName: String?      = this.prefs.getString(getString(R.string.prefs_user_name), null)
         val email: String?         = this.prefs.getString(getString(R.string.prefs_email), null)
 
         if ( email != null && userName != null ) {
             this.authLayout.visibility = View.INVISIBLE // Hacemos invisible el layout
-            this.showHorScreen()
+            this.showHomeScreen()
             // TODO: Mostar este activity solo cuando hay datos sin registrar
             // this.showRegistrationForm(email ?: "", ProviderType.valueOf(provider ?: ""))
         }
     }
 
-    // TODO: Refactorizar metodo
+    /** Inicializacion de variables y configuraciones iniciales **/
     private fun setup() {
-        // txtEmail    = this.binding.txtEmail
-        // txtPass     = this.binding.txtPassword
-        authLayout  = this.binding.authLayout
-        title = "Authenticacion" // Modificamos el titulo de la pantalla
+        /** Variable Initialization **/
         this.prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
-
-        /** Manejo de la informacion pasada desde el ViewModel con LiveData **/
-        authViewModel.authenticationResult.observe(this, Observer {
-            with (this.prefs.edit()) {
-                putString(getString(R.string.prefs_user_name), it.displayName)
-                putString(getString(R.string.prefs_email), it.email)
-                apply()
-            }
-
-            this.showHorScreen()
-        })
-
-        /*
-        this.binding.btnSignUp.setOnClickListener {
-            this.authViewModel.signUp(
-                this.binding.txtEmail.text.toString(), this.binding.txtPassword.text.toString()
-            )
-        }
-         */
-
-        /*
-        this.binding.btnLogin.setOnClickListener {
-            this.authViewModel.signIn(
-                this.binding.txtEmail.text.toString(), this.binding.txtPassword.text.toString()
-            )
-        }
-         */
+        this.auth = Firebase.auth
+        this.authLayout  = this.binding.authLayout
+        title = "Authenticacion" // Modificamos el titulo de la pantalla
 
         this.binding.btnGoogleSignIn.setOnClickListener {
             oneTapClient.beginSignIn(signInRequest)
@@ -149,8 +118,18 @@ class AuthActivity : AppCompatActivity() {
         }
     }
 
+    /** Guarda los datos de usuario en el archivo de SharedPreferences **/
+    private fun saveSharedPreferences(userName: String, email: String) {
+        with(this.prefs.edit()) {
+            putString(getString(R.string.prefs_user_name), userName)
+            putString(getString(R.string.prefs_email), email)
+            apply()
+        }
+        this.showHomeScreen()
+    }
+
     /** Navegamos a la pagina Home de la aplicacion **/
-    private fun showHorScreen() {
+    private fun showHomeScreen() {
         var intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
     }
@@ -182,7 +161,40 @@ class AuthActivity : AppCompatActivity() {
      * del oneTapClient **/
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { // TODO: Consultar documentacion sobre onActivityResult
         super.onActivityResult(requestCode, resultCode, data)
-        this.authViewModel.activityResultActions(requestCode, resultCode, data, oneTapClient)
+        when(requestCode) {
+            REQUEST_ONE_TAP -> {
+                try {
+                    val credential = oneTapClient.getSignInCredentialFromIntent(data)
+                    val idToken = credential.googleIdToken
+                    when {
+                        idToken != null -> {
+                            // Got an ID token from Google. Use it to authenticate
+                            // with Firebase.
+                            val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+                            auth.signInWithCredential(firebaseCredential)
+                                .addOnCompleteListener {task ->
+                                    if (task.isSuccessful) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        // TODO: Set currente user un firebase aut property
+                                        this.saveSharedPreferences(auth.currentUser?.displayName!!, auth.currentUser?.email!!)
+                                        Log.d("FirebaseAuth", "Got ID token.")
+                                    }
+                                    else {
+                                        Log.w("FirebaseAuth", "${task.exception.toString()}")
+                                    }
+                                }
+                        }
+                        else -> {
+                            // Shouldn't happen.
+                            Log.d("FirebaseAuth", "No ID token!")
+                        }
+                    }
+                }
+                catch (e: ApiException) {
+                    Log.d("FirebaseAuth", "${e.message.toString()}")
+                }
+            }
+        }
     }
 
     /** Crea el registro correspondiente en la colecion "users" de Firestore **/

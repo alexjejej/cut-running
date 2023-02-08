@@ -29,6 +29,12 @@
     <string name="item_add_training">Carrera</string>
     <string name="item_achievements">Logros</string>
     <string name="item_clasificacion">Clasificacion</string>
+
+    <!-- Navigation Drawer -->
+    <string name="item_profile">Perfil</string>
+    <string name="item_app_info">Informacion sobre la App</string>
+    <string name="item_logout">Cerrar sesión</string>
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

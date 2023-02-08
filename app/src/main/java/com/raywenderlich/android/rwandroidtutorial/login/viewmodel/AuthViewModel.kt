@@ -25,34 +25,12 @@ class AuthViewModel @Inject constructor(
 
     val authenticationResult = MutableLiveData<FirebaseUser>()
 
-    /** Metodo de inicio de sesion con credenciales **/
-    fun signIn(email: String, pass: String) {
-        val currentUser = _firebaseAuthenticationService
-            .signIn( email.buildCompleteEmail(), pass )
-            // TODO: Enviar valor al live data
-    }
-
-    /** Metodo de creacion de usuario con las credenciales ingresadas **/
-    fun signUp(email: String, pass: String) {
-        val currentUser =_firebaseAuthenticationService
-            .signUpWithCreadentials(email.buildCompleteEmail(), pass)
-        if (currentUser != null) {
-            // TODO: Guardar email en el SharedPreferences
-            // TODO: Mandar boolean al LiveData
-        }
-    }
-
     // TODO: Eliminar o definir un comportamiento
     fun signIngWithGoogle(applicationContext: AppCompatActivity){}
 
     /** Llama al metodo que maneja la respuesta del activity de seleccion de cuenta de google (oneTapClient) **/
     fun activityResultActions(requestCode: Int, resultCode: Int, data: Intent?, oneTapClient: SignInClient) {
-        val currentUser = _firebaseAuthenticationService
-            .activityResultActions(requestCode, resultCode, data, oneTapClient)
-        if (currentUser != null) {
-            Log.d("AuthActivity", "${currentUser.displayName}")
-            authenticationResult.postValue(currentUser!!)
-        }
+        _firebaseAuthenticationService.activityResultActions(requestCode, resultCode, data, oneTapClient)
     }
 
     /** Metodo de extencion que construlle el correo completo

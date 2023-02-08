@@ -22,7 +22,6 @@ import javax.inject.Inject
 class FirebaseAuthenticationService @Inject constructor(
     private val _stringResourcesProvider: StringResourcesProvider,
     private val _dialog: Dialog,
-    @ApplicationContext private val context: Context
 ) {
     // Creacion de intancia de FirebaseAuth
     private val auth: FirebaseAuth = Firebase.auth
@@ -73,16 +72,13 @@ class FirebaseAuthenticationService @Inject constructor(
         return if (user != null) user else null
     }
 
-    /** Inicio de sesion con Google **/
-    fun signIngWithGoogle() {}
-
     /** Manejo de la respuesta del activity de seleccion de cuenta de google (oneTapClient) **/
     fun activityResultActions(
         requestCode: Int,
         resultCode: Int,
         data: Intent?,
         oneTapClient: SignInClient
-    ): FirebaseUser? {
+    ) {
         when(requestCode) {
             REQUEST_ONE_TAP -> {
                 try {
@@ -108,16 +104,13 @@ class FirebaseAuthenticationService @Inject constructor(
                         else -> {
                             // Shouldn't happen.
                             Log.d("FirebaseAuth", "No ID token!")
-                            return null
                         }
                     }
                 }
                 catch (e: ApiException) {
                     Log.d("FirebaseAuth", "${e.message.toString()}")
-                    return null
                 }
             }
         }
-        return null
     }
 }
