@@ -11,16 +11,16 @@ import com.google.firebase.auth.FirebaseUser
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.models.User
 import com.raywenderlich.android.rwandroidtutorial.provider.services.firebaseAuthentication.FirebaseAuthenticationService
-import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
-import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+//import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
+//import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
+//import dagger.hilt.android.lifecycle.HiltViewModel
+//import javax.inject.Inject
 
-@HiltViewModel
-class AuthViewModel @Inject constructor(
-    private val _firebaseAuthenticationService: FirebaseAuthenticationService,
-    private val _stringResourcesProvider: StringResourcesProvider,
-    private val _dialog: Dialog
+//@HiltViewModel
+class AuthViewModel (
+//    private val _firebaseAuthenticationService: FirebaseAuthenticationService,
+//    private val _stringResourcesProvider: StringResourcesProvider,
+//    private val _dialog: Dialog
 ) : ViewModel() {
 
     val authenticationResult = MutableLiveData<FirebaseUser>()
@@ -30,11 +30,11 @@ class AuthViewModel @Inject constructor(
 
     /** Llama al metodo que maneja la respuesta del activity de seleccion de cuenta de google (oneTapClient) **/
     fun activityResultActions(requestCode: Int, resultCode: Int, data: Intent?, oneTapClient: SignInClient) {
-        _firebaseAuthenticationService.activityResultActions(requestCode, resultCode, data, oneTapClient)
+//        _firebaseAuthenticationService.activityResultActions(requestCode, resultCode, data, oneTapClient)
     }
 
     /** Metodo de extencion que construlle el correo completo
      * tomando en cuenta el suffix establecido en el EditText **/
-    fun String.buildCompleteEmail(): String =
-        this + _stringResourcesProvider.getString(R.string.txt_udg_suffix)
+//    fun String.buildCompleteEmail(): String =
+//        this + _stringResourcesProvider.getString(R.string.txt_udg_suffix)
 }

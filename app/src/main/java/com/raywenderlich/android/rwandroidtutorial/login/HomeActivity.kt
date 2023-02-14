@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.commit
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import android.util.Log
 import android.widget.Button
 import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.firebase.database.ktx.database

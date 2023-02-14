@@ -39,7 +39,7 @@ class ClasificacionFragment : Fragment() {
         val manager = LinearLayoutManager(context)
         val decorartion = DividerItemDecoration(context, manager.orientation)
         binding.rvClassification.layoutManager = manager
-        binding.rvClassification.adapter = ListaClasificacionAdapter(clasificacionViewModel.listaClasificacion)
+//        binding.rvClassification.adapter = ListaClasificacionAdapter(clasificacionViewModel.listaClasificacion)
         binding.rvClassification.addItemDecoration(decorartion)
     }
 

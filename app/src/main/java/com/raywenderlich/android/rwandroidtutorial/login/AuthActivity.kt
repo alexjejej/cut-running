@@ -38,16 +38,16 @@ import com.raywenderlich.android.rwandroidtutorial.login.viewmodel.AuthViewModel
 import com.raywenderlich.android.rwandroidtutorial.models.User
 import com.raywenderlich.android.rwandroidtutorial.provider.services.context.ContextProvider
 import com.raywenderlich.android.rwandroidtutorial.provider.services.firebaseAuthentication.FirebaseAuthenticationService
-import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
-import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+//import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
+//import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
+//import dagger.hilt.android.AndroidEntryPoint
+//import javax.inject.Inject
 
-@AndroidEntryPoint
+//@AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
-    @Inject lateinit var _firebaseAuthenticationService: FirebaseAuthenticationService
-    @Inject lateinit var _stringResourcesProvider: StringResourcesProvider
-    @Inject lateinit var _contextProvider: ContextProvider
+//    @Inject lateinit var _firebaseAuthenticationService: FirebaseAuthenticationService
+//    @Inject lateinit var _stringResourcesProvider: StringResourcesProvider
+//    @Inject lateinit var _contextProvider: ContextProvider
 
     // private val authViewModel: AuthViewModel by viewModels()
     private lateinit var binding: ActivityAuthBinding
@@ -65,7 +65,7 @@ class AuthActivity : AppCompatActivity() {
         binding = ActivityAuthBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-        _contextProvider.setContext(this)
+//        _contextProvider.setContext(this)
 
         // Setup
         this.setup()
@@ -232,7 +232,8 @@ class AuthActivity : AppCompatActivity() {
                     .setSupported(true)
                     // Your server's client ID, not your Android client ID.
                     .setServerClientId(
-                        _stringResourcesProvider.getString(R.string.default_web_client_id)
+                        getString(R.string.default_web_client_id)
+//                        _stringResourcesProvider.getString() TODO: Delete
                     )
                     // Only show accounts previously used to sign in.
                     .setFilterByAuthorizedAccounts(true)

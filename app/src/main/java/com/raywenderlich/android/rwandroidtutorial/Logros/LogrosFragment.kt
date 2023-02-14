@@ -39,7 +39,7 @@ class LogrosFragment : Fragment() {
         val manager = LinearLayoutManager(context)
         val decoration = DividerItemDecoration(context, manager.orientation)
         binding.rvLogrosF.layoutManager = manager
-        binding.rvLogrosF.adapter = ListaLogrosAdapter(logrosViewModel.listaLogros)
+//        binding.rvLogrosF.adapter = ListaLogrosAdapter(logrosViewModel.listaLogros)
         binding.rvLogrosF.addItemDecoration(decoration)
     }
 

@@ -13,15 +13,15 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
-import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
-import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
+//import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
+//import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
+//import dagger.hilt.android.qualifiers.ApplicationContext
+//import javax.inject.Inject
 
 
-class FirebaseAuthenticationService @Inject constructor(
-    private val _stringResourcesProvider: StringResourcesProvider,
-    private val _dialog: Dialog,
+class FirebaseAuthenticationService (
+//    private val _stringResourcesProvider: StringResourcesProvider,
+//    private val _dialog: Dialog,
 ) {
     // Creacion de intancia de FirebaseAuth
     private val auth: FirebaseAuth = Firebase.auth
@@ -49,7 +49,7 @@ class FirebaseAuthenticationService @Inject constructor(
                     Log.d("FirebaseAuth", "Inicio de sesion exitoso")
                 }
                 else {
-                    _dialog.infoDialog(R.string.info_incorrect_credentials_message, R.string.info_incorrect_credentials_title)
+//                    _dialog.infoDialog(R.string.info_incorrect_credentials_message, R.string.info_incorrect_credentials_title)
                 }
             }
         return if (user != null) user else null
@@ -65,7 +65,7 @@ class FirebaseAuthenticationService @Inject constructor(
                     Log.d("FirebaseAuth", "Ususario creado correctamente")
                 }
                 else {
-                    _dialog.warningDialog(R.string.warning_creation_user_message, R.string.warning_creation_user_title)
+//                    _dialog.warningDialog(R.string.warning_creation_user_message, R.string.warning_creation_user_title)
                     Log.w("FirebaseAuth", "${it.exception.toString()}")
                 }
             }
