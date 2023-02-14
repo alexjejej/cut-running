@@ -1,11 +1,11 @@
 package com.raywenderlich.android.rwandroidtutorial.provider.services.context
 
 import androidx.appcompat.app.AppCompatActivity
-//import javax.inject.Inject
-//import javax.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 
-//@Singleton
-class ContextProvider constructor() {
+@Singleton
+class ContextProvider @Inject constructor() {
     private lateinit var _context: AppCompatActivity
 
     /** Obtiene el contexto definido **/

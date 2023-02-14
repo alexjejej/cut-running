@@ -1,27 +1,22 @@
 package com.raywenderlich.android.rwandroidtutorial.provider.services.firebaseAuthentication
 
-import android.content.Context
+import android.app.Dialog
 import android.content.Intent
-import android.content.SharedPreferences
 import android.util.Log
 import com.google.android.gms.auth.api.identity.SignInClient
 import com.google.android.gms.common.api.ApiException
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
-//import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
-//import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
-//import dagger.hilt.android.qualifiers.ApplicationContext
-//import javax.inject.Inject
+import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
+import javax.inject.Inject
 
-
-class FirebaseAuthenticationService (
-//    private val _stringResourcesProvider: StringResourcesProvider,
-//    private val _dialog: Dialog,
+class FirebaseAuthenticationService @Inject constructor(
+    private val _stringResourcesProvider: StringResourcesProvider,
+    private val _dialog: Dialog,
 ) {
     // Creacion de intancia de FirebaseAuth
     private val auth: FirebaseAuth = Firebase.auth
