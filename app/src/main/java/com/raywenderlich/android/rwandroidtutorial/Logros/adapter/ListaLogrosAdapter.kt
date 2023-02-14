@@ -5,8 +5,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.Logros.ListaLogros
+import com.raywenderlich.android.rwandroidtutorial.Logros.Logro
 
-class ListaLogrosAdapter(private val listalogros:List<ListaLogros>) : RecyclerView.Adapter<ListaLogrosViewHolder>(){
+class ListaLogrosAdapter(private val listalogros:List<Logro>) : RecyclerView.Adapter<ListaLogrosViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaLogrosViewHolder {
         val LayoutInflater=LayoutInflater.from(parent.context)

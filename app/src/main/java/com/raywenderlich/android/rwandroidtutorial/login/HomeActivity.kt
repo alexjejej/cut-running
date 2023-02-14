@@ -5,10 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import androidx.fragment.app.commit
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity
+import com.raywenderlich.android.rwandroidtutorial.Logros.LogrosFragment
 import com.raywenderlich.android.rwandroidtutorial.Logros.PrincipalLogros
+import com.raywenderlich.android.rwandroidtutorial.clasificacion.ClasificacionFragment
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.PrincipaClasificacion
 
 class HomeActivity : AppCompatActivity() {
@@ -73,17 +76,34 @@ class HomeActivity : AppCompatActivity() {
 //    }
 
     private fun showClasificacionActivty() {
-        var clasificacionIntent = Intent(this, PrincipaClasificacion::class.java)
-        startActivity(clasificacionIntent)
+        this.manageBackStack()
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add(R.id.container_fragment_home, ClasificacionFragment())
+            addToBackStack("ClassificationFragment")
+        }
+//        var clasificacionIntent = Intent(this, PrincipaClasificacion::class.java)
+//        startActivity(clasificacionIntent)
     }
 
     private fun showLogrosActivity(){
-        var logrosIntent = Intent(this, PrincipalLogros::class.java)
-        startActivity(logrosIntent)
+        this.manageBackStack()
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add(R.id.container_fragment_home, LogrosFragment())
+            addToBackStack("AchievementsFragment")
+        }
+//        var logrosIntent = Intent(this, PrincipalLogros::class.java)
+//        startActivity(logrosIntent)
     }
 
     private fun showMapsActivity() {
         var mapsIntent = Intent(this, MapsActivity::class.java)
         startActivity(mapsIntent)
+    }
+
+    private fun manageBackStack() {
+        supportFragmentManager.popBackStack()
+        Log.d("BackStack", "${supportFragmentManager.backStackEntryCount}")
     }
 }

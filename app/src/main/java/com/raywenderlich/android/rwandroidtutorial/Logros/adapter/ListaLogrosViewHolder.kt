@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.Logros.ListaLogros
+import com.raywenderlich.android.rwandroidtutorial.Logros.Logro
 
 class ListaLogrosViewHolder(view:View):RecyclerView.ViewHolder(view) {
 
@@ -16,7 +17,7 @@ class ListaLogrosViewHolder(view:View):RecyclerView.ViewHolder(view) {
     val status = view.findViewById<TextView>(R.id.logrostatus)
     val photo = view.findViewById<ImageView>(R.id.imlogro)
 
-    fun render(ListaLogros: ListaLogros){
+    fun render(ListaLogros: Logro){
         nombre.text = ListaLogros.nombre
         descripcion.text = ListaLogros.descripcion
         progreso.text = ListaLogros.progreso

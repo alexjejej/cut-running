@@ -20,8 +20,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/layout_navbar"
         app:layout_constraintTop_toTopOf="parent">
+        <!-- Agregar esta propiedd para que el fragment se muestre al centro
+         de la pantalla:
+            app:layout_constraintBottom_toTopOf="@+id/layout_navbar" -->
+
 
         <!-- Incorpora el fragment a la vista (en este caso agregamos
         el fragment programaticamente) -->

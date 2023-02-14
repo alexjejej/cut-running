@@ -50,7 +50,7 @@ class AuthActivity : AppCompatActivity() {
     @Inject lateinit var _contextProvider: ContextProvider
 
     // private val authViewModel: AuthViewModel by viewModels()
-    private lateinit var  binding: ActivityAuthBinding
+    private lateinit var binding: ActivityAuthBinding
     private lateinit var auth:  FirebaseAuth
     private lateinit var prefs: SharedPreferences
     private lateinit var signInRequest: BeginSignInRequest
@@ -87,14 +87,12 @@ class AuthActivity : AppCompatActivity() {
         if ( email != null && userName != null ) {
             this.authLayout.visibility = View.INVISIBLE // Hacemos invisible el layout
             this.showHomeScreen()
-            // TODO: Mostar este activity solo cuando hay datos sin registrar
-            // this.showRegistrationForm(email ?: "", ProviderType.valueOf(provider ?: ""))
         }
     }
 
     /** Inicializacion de variables y configuraciones iniciales **/
     private fun setup() {
-        /** Variable Initialization **/
+        /** Inicializacion de variables **/
         this.prefs = getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
         this.auth = Firebase.auth
         this.authLayout  = this.binding.authLayout

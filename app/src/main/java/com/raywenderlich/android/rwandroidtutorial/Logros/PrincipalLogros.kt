@@ -13,17 +13,17 @@ class PrincipalLogros : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_principal_logros)
-        initRecyclerView()
+//        initRecyclerView()
     }
 
-    private fun initRecyclerView(){
-        val manager = LinearLayoutManager(this)
-        val decoration = DividerItemDecoration(this,manager.orientation)
-        val recyclerView = findViewById<RecyclerView>(R.id.rvLogros)
-        recyclerView.layoutManager = manager
-        recyclerView.adapter = ListaLogrosAdapter(ListaLogrosProvider.listLogros)
-        recyclerView.addItemDecoration(decoration)
-    }
+//    private fun initRecyclerView(){
+//        val manager = LinearLayoutManager(this)
+//        val decoration = DividerItemDecoration(this,manager.orientation)
+//        val recyclerView = findViewById<RecyclerView>(R.id.rvLogros)
+//        recyclerView.layoutManager = manager
+//        recyclerView.adapter = ListaLogrosAdapter(ListaLogrosProvider.listLogros)
+//        recyclerView.addItemDecoration(decoration)
+//    }
 
 
 

@@ -6,8 +6,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.Logros.ListaLogros
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ListaClasificacion
+import com.raywenderlich.android.rwandroidtutorial.clasificacion.Posicion
 
-class ListaClasificacionAdapter(private val listaclasificacion:List<ListaClasificacion>) : RecyclerView.Adapter<ListaClasificacionViewHolder>(){
+class ListaClasificacionAdapter(private val listaclasificacion:List<Posicion>) : RecyclerView.Adapter<ListaClasificacionViewHolder>(){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaClasificacionViewHolder {
         val LayoutInflater=LayoutInflater.from(parent.context)

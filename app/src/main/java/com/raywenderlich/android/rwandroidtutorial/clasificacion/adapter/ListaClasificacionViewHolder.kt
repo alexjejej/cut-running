@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ListaClasificacion
+import com.raywenderlich.android.rwandroidtutorial.clasificacion.Posicion
 
 class ListaClasificacionViewHolder(view:View):RecyclerView.ViewHolder(view) {
 
@@ -15,10 +16,9 @@ class ListaClasificacionViewHolder(view:View):RecyclerView.ViewHolder(view) {
     val pasos = view.findViewById<TextView>(R.id.clasificacionpasos)
 
 
-    fun render(ListaClasificacion: ListaClasificacion){
+    fun render(ListaClasificacion: Posicion){
         numero.text = ListaClasificacion.numero
         nombre.text = ListaClasificacion.nombre
         pasos.text = ListaClasificacion.pasos
-
     }
 }
