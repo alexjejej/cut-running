@@ -10,25 +10,26 @@
         android:id="@+id/txtviewclasificacion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="12dp"
         android:gravity="center"
         android:text="Clasificacion"
         android:textAlignment="center"
+        android:layout_marginTop="5dp"
         android:textColor="#C70039"
         android:textSize="25dp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/txt2"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+         />
 
 
     <TextView
         android:id="@+id/txt1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
         android:layout_marginTop="56dp"
-        android:text="#"
+        android:text="Nro."
         android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,14 +39,13 @@
         android:id="@+id/txt2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="15dp"
-        android:layout_marginStart="28dp"
+        android:layout_marginHorizontal="5dp"
         android:layout_marginBottom="3dp"
         android:text="Nombre"
         android:textSize="20dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/rvClasificacion"
-        app:layout_constraintStart_toStartOf="@+id/rvClasificacion" />
+        app:layout_constraintStart_toEndOf="@+id/txt1" />
 
     <TextView
         android:id="@+id/txt3"
@@ -53,8 +53,9 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="3dp"
-        android:text="Posición"
+        android:text="Pasos"
         android:textSize="20dp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/rvClasificacion"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -66,7 +67,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt1" />
+        app:layout_constraintTop_toBottomOf="@+id/txt1"
+        tools:listitem="@layout/item_listaclasificacion"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

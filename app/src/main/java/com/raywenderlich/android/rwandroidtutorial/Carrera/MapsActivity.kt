@@ -68,6 +68,8 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.MenuPrincipal
 import java.text.SimpleDateFormat
@@ -265,6 +267,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
 
   }
 
+
   private fun PasosHoy(){
 
     //variables locales
@@ -284,8 +287,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
     editor.putInt("Pasos "+currentDate,pasos)
     editor.putFloat("Distancia "+currentDate,distancia)
     editor.putInt("PasosTotales",pasosT);
-    editor.putInt("pasos", 0)
-    editor.putFloat("distancia", 0.0F)
     editor.commit()
 
     val txtPasos = findViewById<TextView>(R.id.PasosHoy)
