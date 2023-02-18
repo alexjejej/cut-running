@@ -1,31 +1,51 @@
 package com.raywenderlich.android.rwandroidtutorial.Logros
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-
-// TODO: Mover de fichero
-data class Logro(
-    val nombre:String,
-    val descripcion:String,
-    val progreso:String,
-    val status:String,
-    val photo:String
-)
+import androidx.lifecycle.viewModelScope
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.database
+import com.google.firebase.database.ktx.getValue
+import com.google.firebase.ktx.Firebase
+import com.raywenderlich.android.rwandroidtutorial.models.Logro
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class LogrosViewModel: ViewModel() {
+    private lateinit var database: DatabaseReference
+    private var auxArrayLiveData: ArrayList<Logro> = ArrayList()
+
     // Implementacion de Backing properties
     // Hace que una propiedad sea editabldel desde ViewModel (o clase que lo contenga)
     // pero que dicha propiedad sea expuesta como solo lectura
-    private var _listaLogros: List<Logro> = listOf<Logro>(
-        Logro("500 pasos","Camina por más de 500 pasos",
-            "200 de 500","En progreso",
-            "https://cdn-icons-png.flaticon.com/512/233/233146.png"),
-        Logro("1000 pasos","Camina por más de 1000 pasos",
-            "200 de 1000","En progreso",
-            "https://cdn-icons-png.flaticon.com/512/233/233146.png"),
-        Logro("1500 pasos","Camina por más de 1500 pasos",
-            "200 de 1500","En progreso",
-            "https://cdn-icons-png.flaticon.com/512/233/233146.png")
-    )
-    val listaLogros: List<Logro>
+    private var _listaLogros: MutableLiveData<ArrayList<Logro>> = MutableLiveData()
+    val listaLogros: LiveData<ArrayList<Logro>>
         get() = _listaLogros
+
+    init {
+        database = Firebase.database.getReference("logros")
+
+        lateinit var logroListener: ValueEventListener
+
+        viewModelScope.launch(Dispatchers.IO) {
+            logroListener = object: ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    Log.d("LogrosVM", "Cantidad de hijos: ${snapshot.childrenCount}")
+                    for(children in snapshot.children) {
+                        Log.d("LogrosVM", "Nombre: ${children.getValue(Logro::class.java)?.titulo ?: "No name"}")
+                        val data = children.getValue(Logro::class.java)
+                        auxArrayLiveData.add(data!!)
+                    }
+                    _listaLogros.value = auxArrayLiveData
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e("Cancelled", "loadLogro: onCancelled", error.toException())
+                }
+            }
+            database.addValueEventListener(logroListener)
+        }
+    }
 }

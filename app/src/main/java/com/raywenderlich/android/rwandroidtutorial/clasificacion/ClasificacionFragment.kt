@@ -51,7 +51,6 @@ class ClasificacionFragment : Fragment() {
         val decorartion = DividerItemDecoration(context, manager.orientation)
         binding.rvClassification.layoutManager = manager
         binding.rvClassification.setHasFixedSize(true)
-//        binding.rvClassification.adapter = ListaClasificacionAdapter(clasificacionViewModel.listaClasificacion, context?.applicationContext!!)
         binding.rvClassification.addItemDecoration(decorartion)
     }
 

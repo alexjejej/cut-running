@@ -24,7 +24,6 @@ import com.google.firebase.database.DataSnapshot
 
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.ktx.firestore
-import com.raywenderlich.android.rwandroidtutorial.Logros.ListaLogros
 import com.raywenderlich.android.rwandroidtutorial.Logros.ListaNotificacion
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ListaClasificacion
 import kotlin.system.exitProcess

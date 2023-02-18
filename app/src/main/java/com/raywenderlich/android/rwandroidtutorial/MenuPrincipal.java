@@ -16,7 +16,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity;
 import com.raywenderlich.android.runtracking.R;
-import com.raywenderlich.android.rwandroidtutorial.Logros.PrincipalLogros;
 
 public class MenuPrincipal extends AppCompatActivity {
 

@@ -18,8 +18,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ClasificacionViewModel: ViewModel() {
-    private val dbref = FirebaseDatabase.getInstance()
-        .getReference("clasificacion").child("historica")
+//    private val dbref = FirebaseDatabase.getInstance()
+//        .getReference("clasificacion").child("historica")
     private lateinit var database: DatabaseReference
 
     private var auxArrayList: ArrayList<Posicion> = ArrayList()

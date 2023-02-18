@@ -1,10 +1,12 @@
 package com.raywenderlich.android.rwandroidtutorial.Logros
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.raywenderlich.android.runtracking.R
@@ -33,13 +35,20 @@ class LogrosFragment : Fragment() {
 
     private fun setup() {
         this.initRecycleView()
+
+        // Observer de LiveData de ViewModel
+        logrosViewModel.listaLogros.observe(viewLifecycleOwner, Observer { logro ->
+            Log.d("ClasFragment", "Actualizacion de datos de LiveData")
+            binding.rvLogrosF.adapter = ListaLogrosAdapter(logro, context?.applicationContext!!)
+        })
     }
 
+    /** Inicializacion del RecycleView **/
     private fun initRecycleView() {
         val manager = LinearLayoutManager(context)
         val decoration = DividerItemDecoration(context, manager.orientation)
         binding.rvLogrosF.layoutManager = manager
-//        binding.rvLogrosF.adapter = ListaLogrosAdapter(logrosViewModel.listaLogros)
+        binding.rvLogrosF.setHasFixedSize(true)
         binding.rvLogrosF.addItemDecoration(decoration)
     }
 

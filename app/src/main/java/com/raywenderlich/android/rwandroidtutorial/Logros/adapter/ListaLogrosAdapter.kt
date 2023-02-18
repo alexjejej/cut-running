@@ -15,10 +15,10 @@ import com.bumptech.glide.Glide
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.Carrera.FinCarrera
 import com.raywenderlich.android.rwandroidtutorial.Logros.ListaLogros
-import com.raywenderlich.android.rwandroidtutorial.Logros.Logro
+import com.raywenderlich.android.rwandroidtutorial.models.Logro
 
 
-class ListaLogrosAdapter(private val logrosList:ArrayList<ListaLogros>, private val context : Context) : RecyclerView.Adapter<ListaLogrosAdapter.ListaLogrosViewHolder>() {
+class ListaLogrosAdapter(private val logrosList:ArrayList<Logro>, private val context : Context) : RecyclerView.Adapter<ListaLogrosAdapter.ListaLogrosViewHolder>() {
 
     // variables locales
     val sharedPreferences =  context.getSharedPreferences("Datos", Context.MODE_PRIVATE)
