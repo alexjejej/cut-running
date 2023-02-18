@@ -11,7 +11,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.models.User
 import com.raywenderlich.android.rwandroidtutorial.provider.services.firebaseAuthentication.FirebaseAuthenticationService
-//import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
+//import com.raywenderlich.android.rwandroidtutorial.provider.resources.StringResourcesProvider
 //import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
 //import dagger.hilt.android.lifecycle.HiltViewModel
 //import javax.inject.Inject

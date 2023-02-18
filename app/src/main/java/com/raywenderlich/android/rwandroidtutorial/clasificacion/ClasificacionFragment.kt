@@ -1,10 +1,12 @@
 package com.raywenderlich.android.rwandroidtutorial.clasificacion
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.raywenderlich.android.runtracking.R
@@ -31,15 +33,25 @@ class ClasificacionFragment : Fragment() {
         return rootView
     }
 
+    /** Funcion de inicio de configuracion **/
     private fun setup() {
         this.initRecycleView()
+
+        // Observer de LiveData del ViewModel
+        clasificacionViewModel.listaClasificacion.observe(viewLifecycleOwner, Observer { posicion ->
+            Log.d("ClasFragment", "Actualizacion de datos de LiveData")
+            binding.rvClassification.adapter = ListaClasificacionAdapter(posicion.sortedByDescending { it.pasos },
+                context?.applicationContext!!)
+        })
     }
 
+    /** Inicializacion de Recycleview **/
     private fun initRecycleView() {
         val manager = LinearLayoutManager(context)
         val decorartion = DividerItemDecoration(context, manager.orientation)
         binding.rvClassification.layoutManager = manager
-//        binding.rvClassification.adapter = ListaClasificacionAdapter(clasificacionViewModel.listaClasificacion)
+        binding.rvClassification.setHasFixedSize(true)
+//        binding.rvClassification.adapter = ListaClasificacionAdapter(clasificacionViewModel.listaClasificacion, context?.applicationContext!!)
         binding.rvClassification.addItemDecoration(decorartion)
     }
 

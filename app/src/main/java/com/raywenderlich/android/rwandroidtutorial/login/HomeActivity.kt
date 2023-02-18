@@ -8,17 +8,13 @@ import android.util.Log
 import android.view.MenuItem
 import androidx.fragment.app.commit
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import android.widget.Button
-import com.google.android.material.bottomnavigation.BottomNavigationItemView
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.Carrera.ListaDatosUsuario
 import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity
 import com.raywenderlich.android.rwandroidtutorial.Logros.LogrosFragment
-import com.raywenderlich.android.rwandroidtutorial.Logros.PrincipalLogros
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ClasificacionFragment
-import com.raywenderlich.android.rwandroidtutorial.clasificacion.PrincipaClasificacion
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -77,6 +73,7 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
+    /** Muestra fragment de clasificacion **/
     private fun showClasificacionActivty() {
         this.manageBackStack()
         supportFragmentManager.commit {
@@ -88,6 +85,7 @@ class HomeActivity : AppCompatActivity() {
 //        startActivity(clasificacionIntent)
     }
 
+    /** Muestra fragment de logros **/
     private fun showLogrosActivity(){
         this.manageBackStack()
         supportFragmentManager.commit {
@@ -99,10 +97,12 @@ class HomeActivity : AppCompatActivity() {
 //        startActivity(logrosIntent)
     }
 
+    /** Muestra fragment de mapa y step counter **/
     private fun showMapsActivity() {
         var mapsIntent = Intent(this, MapsActivity::class.java)
         startActivity(mapsIntent)
     }
+
     private fun sincronizar() {
         //variables locales
         val sharedPreference =  getSharedPreferences("Datos", Context.MODE_PRIVATE)
@@ -158,6 +158,7 @@ class HomeActivity : AppCompatActivity() {
         myRef.setValue(DatosUsuario)
     }
 
+    /** Maneja el BackStack de fragments para que no se sobrepongan los fragments **/
     private fun manageBackStack() {
         supportFragmentManager.popBackStack()
         Log.d("BackStack", "${supportFragmentManager.backStackEntryCount}")

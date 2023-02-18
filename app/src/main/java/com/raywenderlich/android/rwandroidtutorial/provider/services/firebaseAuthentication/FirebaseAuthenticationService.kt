@@ -10,8 +10,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.raywenderlich.android.runtracking.R
-import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
+import com.raywenderlich.android.rwandroidtutorial.provider.resources.StringResourcesProvider
 import javax.inject.Inject
 
 class FirebaseAuthenticationService @Inject constructor(

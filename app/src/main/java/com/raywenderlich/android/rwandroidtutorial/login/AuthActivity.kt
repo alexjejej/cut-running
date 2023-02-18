@@ -38,7 +38,7 @@ import com.raywenderlich.android.rwandroidtutorial.login.viewmodel.AuthViewModel
 import com.raywenderlich.android.rwandroidtutorial.models.User
 import com.raywenderlich.android.rwandroidtutorial.provider.services.context.ContextProvider
 import com.raywenderlich.android.rwandroidtutorial.provider.services.firebaseAuthentication.FirebaseAuthenticationService
-//import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
+//import com.raywenderlich.android.rwandroidtutorial.provider.resources.StringResourcesProvider
 //import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
 //import dagger.hilt.android.AndroidEntryPoint
 //import javax.inject.Inject

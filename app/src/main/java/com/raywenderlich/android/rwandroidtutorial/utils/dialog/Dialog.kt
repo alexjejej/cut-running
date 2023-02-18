@@ -3,8 +3,8 @@ package com.raywenderlich.android.rwandroidtutorial.utils.dialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.provider.services.context.ContextProvider
-import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.DrawableResourcesProvider
-import com.raywenderlich.android.rwandroidtutorial.provider.services.resources.StringResourcesProvider
+import com.raywenderlich.android.rwandroidtutorial.provider.resources.DrawableResourcesProvider
+import com.raywenderlich.android.rwandroidtutorial.provider.resources.StringResourcesProvider
 import javax.inject.Inject
 
 class Dialog @Inject constructor(

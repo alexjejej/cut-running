@@ -17,7 +17,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity;
 import com.raywenderlich.android.runtracking.R;
 import com.raywenderlich.android.rwandroidtutorial.Logros.PrincipalLogros;
-import com.raywenderlich.android.rwandroidtutorial.clasificacion.PrincipaClasificacion;
 
 public class MenuPrincipal extends AppCompatActivity {
 
@@ -29,17 +28,17 @@ public class MenuPrincipal extends AppCompatActivity {
     }
 
 
-    public void btnCarrera(View view) {
-        Intent intent = new Intent(this, MapsActivity.class);
-        startActivity(intent);
-    }
-    public void btnLogros(View view){
-        Intent intent = new Intent(this, PrincipalLogros.class);
-        startActivity(intent);
-    }
-    public void btnClasificacion (View view){
-        Intent intent = new Intent(this, PrincipaClasificacion.class);
-        startActivity(intent);
-    }
+//    public void btnCarrera(View view) {
+//        Intent intent = new Intent(this, MapsActivity.class);
+//        startActivity(intent);
+//    }
+//    public void btnLogros(View view){
+//        Intent intent = new Intent(this, PrincipalLogros.class);
+//        startActivity(intent);
+//    }
+//    public void btnClasificacion (View view){
+//        Intent intent = new Intent(this, PrincipaClasificacion.class);
+//        startActivity(intent);
+//    }
 
 }

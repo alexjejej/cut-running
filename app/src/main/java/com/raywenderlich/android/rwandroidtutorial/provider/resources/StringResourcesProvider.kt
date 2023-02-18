@@ -1,4 +1,4 @@
-package com.raywenderlich.android.rwandroidtutorial.provider.services.resources
+package com.raywenderlich.android.rwandroidtutorial.provider.resources
 
 import android.content.Context
 import androidx.annotation.StringRes

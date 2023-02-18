@@ -11,9 +11,9 @@ import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.Logros.ListaLogros
 import com.raywenderlich.android.rwandroidtutorial.Logros.adapter.ListaLogrosAdapter
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ListaClasificacion
-import com.raywenderlich.android.rwandroidtutorial.clasificacion.Posicion
+import com.raywenderlich.android.rwandroidtutorial.models.Posicion
 
-class ListaClasificacionAdapter(private val listaclasificacion:List<ListaClasificacion>, private val context : Context) : RecyclerView.Adapter<ListaClasificacionAdapter.ListaClasificacionViewHolder>() {
+class ListaClasificacionAdapter(private val listaclasificacion:List<Posicion>, private val context : Context) : RecyclerView.Adapter<ListaClasificacionAdapter.ListaClasificacionViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaClasificacionViewHolder {
         val LayoutInflater = LayoutInflater.from(parent.context).inflate(R.layout.item_listaclasificacion,parent,false)
