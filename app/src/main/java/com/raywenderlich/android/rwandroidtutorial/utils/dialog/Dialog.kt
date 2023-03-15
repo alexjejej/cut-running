@@ -31,7 +31,7 @@ class Dialog @Inject constructor(
         MaterialAlertDialogBuilder(_contextProvider.getContext())
             .setTitle(_stringResourcesProvider.getString(title))
             .setMessage(_stringResourcesProvider.getString(message))
-            .setIcon(_drawableResourcesProvider.getDrawable(R.drawable.icon_info_24))
+            // .setIcon(_drawableResourcesProvider.getDrawable(R.drawable.icon_info_24)) TODO: Definir icono apropiado
             .setNeutralButton(_stringResourcesProvider.getString(R.string.default_dialog_button))
             { dialog, which ->
                 dialog.dismiss()
@@ -40,8 +40,16 @@ class Dialog @Inject constructor(
     }
 
     /** Incorpora los elementos para un dialog de error **/
-    fun dangerDialog() {
-
+    fun dangerDialog(message: Int, title: Int) {
+        MaterialAlertDialogBuilder(_contextProvider.getContext())
+            .setTitle(_stringResourcesProvider.getString(title))
+            .setMessage(_stringResourcesProvider.getString(message))
+            .setIcon(_drawableResourcesProvider.getDrawable(R.drawable.icon_info_24))
+            .setNeutralButton(_stringResourcesProvider.getString(R.string.default_dialog_button))
+            { dialog, which ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     /** Incorpora los elementos para un dialog de proceso exitoso **/

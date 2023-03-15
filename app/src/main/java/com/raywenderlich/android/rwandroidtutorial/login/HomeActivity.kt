@@ -2,28 +2,45 @@ package com.raywenderlich.android.rwandroidtutorial.login
 
 import android.content.Context
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.fragment.app.commit
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
+import com.raywenderlich.android.runtracking.databinding.ActivityHomeBinding
 import com.raywenderlich.android.rwandroidtutorial.Carrera.ListaDatosUsuario
 import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity
 import com.raywenderlich.android.rwandroidtutorial.Logros.LogrosFragment
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ClasificacionFragment
+import com.raywenderlich.android.rwandroidtutorial.models.Session
+import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 
 class HomeActivity : AppCompatActivity() {
-    lateinit var nbBottomNavigationBar: BottomNavigationView
+    private lateinit var binding: ActivityHomeBinding
+    private lateinit var toggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_home)
+        binding = ActivityHomeBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
+
+        // Configuracion de Nav Bar
+        toggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        binding.drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
 
 //        if ( savedInstanceState == null ) { // TODO: Revisar lo que es el savedIntanceState
 //            supportFragmentManager.commit {
@@ -36,22 +53,33 @@ class HomeActivity : AppCompatActivity() {
 //            }
 //        }
 
+        Session.readPrefs( this )
         this.setup()
-        //sincronizar datos:
-        sincronizar()
+        this.sincronizar()
     }
 
+    /** Es el evento que se dispara cuadno retrocedemos en la aplicacion (dar clic en el boton atras) **/
     override fun onBackPressed() {
         Log.d("HomeActivity", "On Back Pressed")
-        super.onBackPressed()
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START))
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        else
+            super.onBackPressed()
     }
 
+    /** Inicializa la configuracion de los componentes **/
     private fun setup() {
-        nbBottomNavigationBar = findViewById(R.id.buttonNavbar)
+        // Obtencion del nombre de ususario de shared preferences y formateo para obtener los dos primeros valores
+        val userName: List<String>? = Session.userName.split(" ")
 
-        nbBottomNavigationBar.setOnItemSelectedListener { item -> this.setNavigation(item) }
+        // Accedemos a modificar el header del Nav Bar
+        var header: View = binding.navigationView.getHeaderView(0)
+        header.findViewById<TextView>(R.id.txtUserName).text = userName?.get(0) + " " + userName?.get(1)
+        Picasso.get().load(Session.userPhoto).into(header.findViewById<ImageView>(R.id.profilePhoto))
+        binding.navigationView.setNavigationItemSelectedListener { item -> this.setNavigation(item) }
     }
 
+    /** Controla la navegacion del menu **/
     private fun setNavigation(item: MenuItem): Boolean {
         when( item.itemId ) {
             R.id.btnHome -> {
@@ -59,34 +87,31 @@ class HomeActivity : AppCompatActivity() {
             }
             R.id.btnAddTraining -> {
                 this.showMapsActivity()
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
                 return true
             }
             R.id.btnAchievements -> {
-                this.showLogrosActivity()
+                this.showLogrosFragment()
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
                 return true
             }
             R.id.btnClasificacion -> {
-                this.showClasificacionActivty()
+                this.showClasificacionFragment()
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
                 return true
             }
             else -> return false
         }
     }
 
-    /** Muestra fragment de clasificacion **/
-    private fun showClasificacionActivty() {
-        this.manageBackStack()
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            add(R.id.container_fragment_home, ClasificacionFragment())
-            addToBackStack("ClassificationFragment")
-        }
-//        var clasificacionIntent = Intent(this, PrincipaClasificacion::class.java)
-//        startActivity(clasificacionIntent)
+    /** Muestra fragment de mapa y step counter **/
+    private fun showMapsActivity() {
+        var mapsIntent = Intent(this, MapsActivity::class.java)
+        startActivity(mapsIntent)
     }
 
     /** Muestra fragment de logros **/
-    private fun showLogrosActivity(){
+    private fun showLogrosFragment(){
         this.manageBackStack()
         supportFragmentManager.commit {
             setReorderingAllowed(true)
@@ -97,10 +122,16 @@ class HomeActivity : AppCompatActivity() {
 //        startActivity(logrosIntent)
     }
 
-    /** Muestra fragment de mapa y step counter **/
-    private fun showMapsActivity() {
-        var mapsIntent = Intent(this, MapsActivity::class.java)
-        startActivity(mapsIntent)
+    /** Muestra fragment de clasificacion **/
+    private fun showClasificacionFragment() {
+        this.manageBackStack()
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            add(R.id.container_fragment_home, ClasificacionFragment())
+            addToBackStack("ClassificationFragment")
+        }
+//        var clasificacionIntent = Intent(this, PrincipaClasificacion::class.java)
+//        startActivity(clasificacionIntent)
     }
 
     private fun sincronizar() {

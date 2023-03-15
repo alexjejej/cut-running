@@ -3,7 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/btnProfile"
+            android:enabled="true"
+            android:icon="@drawable/icon_person_24"
+            android:title="@string/item_profile"/>
+    </group>
+
+    <group
+        android:id="@+id/principal_views_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/btnRaceManagement"
+            android:enabled="true"
+            android:icon="@drawable/icon_run_24"
+            android:title="@string/item_race_managements"/>
         <item
             android:id="@+id/btnHome"
             android:enabled="true"
@@ -24,6 +40,16 @@
             android:enabled="true"
             android:icon="@drawable/icon_drag_indicator_24"
             android:title="@string/item_clasificacion" />
+    </group>
+
+    <group
+        android:id="@+id/logout_group"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/btnLogout"
+            android:enabled="true"
+            android:icon="@drawable/icon_logout_24"
+            android:title="@string/item_logout"/>
     </group>
 
 </menu>

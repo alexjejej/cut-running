@@ -8,5 +8,17 @@
   <color name="coralFirebase">#FF8A65</color>
   <color name="azulBonito">#6C90FC</color>
   <color name="lugar1">#D4AF37</color>
+  <color name="black">#000000</color>
+  <color name="white">#FFFFFF</color>
 
+  <!-- CUT Colors -->
+  <color name="cut1">#192637</color>
+  <color name="cut2">#d3e6d0</color>
+  <color name="cut3">#52afa2</color>
+  <color name="cut4">#529c45</color>
+  <color name="cut5">#148a9d</color>
+  <color name="cut6">#3c814f</color>
+  <color name="cut7">#6a7c6c</color>
+  <color name="cut8">#434d59</color>
+  <color name="cut9">#54546c</color>
 </resources>

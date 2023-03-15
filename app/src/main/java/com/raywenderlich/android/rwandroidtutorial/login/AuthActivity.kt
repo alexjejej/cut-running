@@ -4,50 +4,31 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
 import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
-import androidx.lifecycle.Observer
+import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.ActivityAuthBinding
-import com.raywenderlich.android.rwandroidtutorial.login.viewmodel.AuthViewModel
+import com.raywenderlich.android.rwandroidtutorial.models.Session
 import com.raywenderlich.android.rwandroidtutorial.models.User
-import com.raywenderlich.android.rwandroidtutorial.provider.services.context.ContextProvider
-import com.raywenderlich.android.rwandroidtutorial.provider.services.firebaseAuthentication.FirebaseAuthenticationService
-//import com.raywenderlich.android.rwandroidtutorial.provider.resources.StringResourcesProvider
-//import com.raywenderlich.android.rwandroidtutorial.utils.dialog.Dialog
-//import dagger.hilt.android.AndroidEntryPoint
-//import javax.inject.Inject
 
-//@AndroidEntryPoint
 class AuthActivity : AppCompatActivity() {
 //    @Inject lateinit var _firebaseAuthenticationService: FirebaseAuthenticationService
 //    @Inject lateinit var _stringResourcesProvider: StringResourcesProvider
 //    @Inject lateinit var _contextProvider: ContextProvider
+
 
     // private val authViewModel: AuthViewModel by viewModels()
     private lateinit var binding: ActivityAuthBinding
@@ -117,10 +98,11 @@ class AuthActivity : AppCompatActivity() {
     }
 
     /** Guarda los datos de usuario en el archivo de SharedPreferences **/
-    private fun saveSharedPreferences(userName: String, email: String) {
+    private fun saveSharedPreferences(userName: String, email: String, userPhoto: String) {
         with(this.prefs.edit()) {
             putString(getString(R.string.prefs_user_name), userName)
             putString(getString(R.string.prefs_email), email)
+            putString(getString(R.string.prefs_user_photo), userPhoto)
             apply()
         }
         this.showHomeScreen()
@@ -174,8 +156,12 @@ class AuthActivity : AppCompatActivity() {
                                     if (task.isSuccessful) {
                                         // Sign in success, update UI with the signed-in user's information
                                         // TODO: Set currente user un firebase aut property
-                                        this.saveSharedPreferences(auth.currentUser?.displayName!!, auth.currentUser?.email!!)
+                                        this.saveSharedPreferences(auth.currentUser?.displayName!!, auth.currentUser?.email!!, auth.currentUser?.photoUrl.toString())
+                                        Session.setUserName( auth.currentUser?.displayName!! )
+                                        Session.setUserEmail( auth.currentUser?.email!! )
+                                        Session.setUserPhoto( auth.currentUser?.photoUrl!! )
                                         Log.d("FirebaseAuth", "Got ID token.")
+                                        Log.d("FirebaseAuth", "${auth.currentUser?.photoUrl}")
                                     }
                                     else {
                                         Log.w("FirebaseAuth", "${task.exception.toString()}")
