@@ -23,7 +23,11 @@
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/container_fragment_home"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph"/>
         <!-- Agregar esta propiedd para que el fragment se muestre al centro
             de la pantalla:
             app:layout_constraintBottom_toTopOf="@+id/layout_navbar" -->

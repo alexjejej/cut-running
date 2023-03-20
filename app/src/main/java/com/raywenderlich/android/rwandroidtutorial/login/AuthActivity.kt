@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -139,7 +138,8 @@ class AuthActivity : AppCompatActivity() {
     /** Este metodo es llamada despues de que se selecciona la cuenta con la que se
      * iniciara sesion con oneTapClient. Es la el metodo donde se valida la respueta
      * del oneTapClient **/
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) { // TODO: Consultar documentacion sobre onActivityResult
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        // TODO: Consultar documentacion sobre onActivityResult
         super.onActivityResult(requestCode, resultCode, data)
         when(requestCode) {
             REQUEST_ONE_TAP -> {

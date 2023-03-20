@@ -19,19 +19,25 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity
 
-            android:name="com.raywenderlich.android.rwandroidtutorial.clasificacion.PrincipaClasificacion"
-            android:exported="false" />
-        <activity
-            android:name="com.raywenderlich.android.rwandroidtutorial.Logros.PrincipalLogros"
-            android:exported="false" />
+<!--        <activity-->
+<!--            android:name="com.raywenderlich.android.rwandroidtutorial.clasificacion.PrincipaClasificacion"-->
+<!--            android:exported="false" />-->
+<!--        <activity-->
+<!--            android:name="com.raywenderlich.android.rwandroidtutorial.Logros.PrincipalLogros"-->
+<!--            android:exported="false" />-->
         <activity
             android:name="com.raywenderlich.android.rwandroidtutorial.Carrera.FinCarrera"
             android:exported="false" />
         <activity
             android:name="com.raywenderlich.android.rwandroidtutorial.login.HomeActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity android:name="com.raywenderlich.android.rwandroidtutorial.login.RegistrationCompletionActivity"
             android:windowSoftInputMode="adjustResize"
@@ -41,12 +47,8 @@
         <activity
             android:name="com.raywenderlich.android.rwandroidtutorial.login.AuthActivity"
             android:windowSoftInputMode="adjustResize"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:exported="false">
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity

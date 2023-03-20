@@ -2,14 +2,9 @@ package com.raywenderlich.android.rwandroidtutorial.login
 
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -23,7 +18,6 @@ import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity
 import com.raywenderlich.android.rwandroidtutorial.Logros.LogrosFragment
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ClasificacionFragment
 import com.raywenderlich.android.rwandroidtutorial.models.Session
-import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -69,14 +63,14 @@ class HomeActivity : AppCompatActivity() {
 
     /** Inicializa la configuracion de los componentes **/
     private fun setup() {
-        // Obtencion del nombre de ususario de shared preferences y formateo para obtener los dos primeros valores
-        val userName: List<String>? = Session.userName.split(" ")
-
-        // Accedemos a modificar el header del Nav Bar
-        var header: View = binding.navigationView.getHeaderView(0)
-        header.findViewById<TextView>(R.id.txtUserName).text = userName?.get(0) + " " + userName?.get(1)
-        Picasso.get().load(Session.userPhoto).into(header.findViewById<ImageView>(R.id.profilePhoto))
-        binding.navigationView.setNavigationItemSelectedListener { item -> this.setNavigation(item) }
+//        // Obtencion del nombre de ususario de shared preferences y formateo para obtener los dos primeros valores
+//        val userName: List<String>? = Session.userName.split(" ")
+//
+//        // Accedemos a modificar el header del Nav Bar
+//        var header: View = binding.navigationView.getHeaderView(0)
+//        header.findViewById<TextView>(R.id.txtUserName).text = userName?.get(0) + " " + userName?.get(1)
+//        Picasso.get().load(Session.userPhoto).into(header.findViewById<ImageView>(R.id.profilePhoto))
+//        binding.navigationView.setNavigationItemSelectedListener { item -> this.setNavigation(item) }
     }
 
     /** Controla la navegacion del menu **/
