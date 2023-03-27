@@ -1,47 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:openDrawer="start">
-
-    <LinearLayout
-        android:id="@+id/home_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"/>
+    android:orientation="vertical">
 
         <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/container_fragment_home"
+            android:id="@+id/main_container_fragment"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/nav_graph"/>
+            android:layout_height="match_parent" />
         <!-- Agregar esta propiedd para que el fragment se muestre al centro
             de la pantalla:
             app:layout_constraintBottom_toTopOf="@+id/layout_navbar" -->
-
-    </LinearLayout>
-
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigation_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header"
-        app:menu="@menu/activity_home_navigation_drawer" />
 
 <!--    Bottom Navigation Bar -->
 <!--    <LinearLayout-->
@@ -57,4 +30,4 @@
 <!--            app:menu="@menu/bottom_navbar_items"/>-->
 <!--    </LinearLayout>-->
 
-</androidx.drawerlayout.widget.DrawerLayout>
+</LinearLayout>

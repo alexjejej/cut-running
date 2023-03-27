@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.fragment.app.commit
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -54,7 +55,7 @@ class LoginFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
-        Log.d("FirebaseAuth", "Inicio de sesion desde fragment login")
+        Log.d("LoginFragment", "Inicio de sesion desde fragment login")
         setup()
         session()
         initialiceGoogleutentication()
@@ -110,7 +111,7 @@ class LoginFragment : Fragment() {
             putString( getString(R.string.prefs_user_photo), userData!!.photoUrl.toString() )
             commit()
         }
-        homeView()
+        session()
     }
 
     /** Comprobacion de si existe una sesion activa **/
@@ -118,13 +119,20 @@ class LoginFragment : Fragment() {
         Session.readPrefs( requireActivity() )
         if ( Session.activeSession ) {
 //            layout.visibility = View.INVISIBLE // Hace invisible el layout
-            homeView()
+            showFragment(
+                NavBarFragment(),
+                getString(R.string.NavBarFragment)
+            )
         }
     }
 
     /** Navegacion a la vista de home **/
-    private fun homeView() {
-        NavHostFragment.findNavController(this).navigate(R.id.clasificacionFragment)
+    private fun showFragment( fragment: Fragment, tag: String ) {
+        parentFragmentManager.commit {
+            setReorderingAllowed(true)
+            replace(R.id.main_container_fragment, fragment)
+            addToBackStack(tag)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

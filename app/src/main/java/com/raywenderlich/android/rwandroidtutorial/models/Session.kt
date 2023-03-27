@@ -37,4 +37,14 @@ object Session {
         setUserPhoto( Uri.parse( _prefs.getString( _stringProvider.getString(R.string.prefs_user_photo), "")!! ) )
     }
 
+    /** Elimina el contenido del archivo de preferencias y esblece como vacias las propiedades de la sesion **/
+    fun signOut() {
+        with(_prefs.edit()) {
+            clear()
+            commit()
+        }
+        _userName = ""
+        _userEmail = ""
+        _userPhoto = Uri.EMPTY
+    }
 }

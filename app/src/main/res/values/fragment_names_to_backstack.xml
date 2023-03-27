@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="LoginFragment">LoginFragment</string>
+    <string name="NavBarFragment">NavBarFragment</string>
+    <string name="ClasificationFragment">ClasificationFragment</string>
+    <string name="AchievementFragment">AchievementFragment</string>
+    <string name="ProfileFragment">ProfileFragment</string>
+    <string name="UserInfoDisplayFragment">UserInfoDisplayFragment</string>
+    <string name="UserInfoUpdateFragment">UserInfoUpdateFragment</string>
+</resources>
