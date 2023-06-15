@@ -47,7 +47,7 @@ class HomeActivity : AppCompatActivity() {
 
         Session.readPrefs( this )
         this.setup()
-        this.sincronizar()
+//        this.sincronizar()
     }
 
     /** Es el evento que se dispara cuadno retrocedemos en la aplicacion (dar clic en el boton atras) **/

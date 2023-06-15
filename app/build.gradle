@@ -96,6 +96,7 @@ dependencies {
   implementation 'com.google.firebase:firebase-firestore-ktx'
   implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
   implementation 'com.google.firebase:firebase-database:20.1.0'
+  implementation 'com.google.firebase:firebase-analytics-ktx'
 
   // Dependencias para la injeccion de dependencias (DI)
   implementation 'com.google.dagger:hilt-android:2.44'
