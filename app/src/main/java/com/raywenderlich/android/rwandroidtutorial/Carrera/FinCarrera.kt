@@ -5,40 +5,31 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
-import com.raywenderlich.android.rwandroidtutorial.MenuPrincipal
-import java.text.SimpleDateFormat
-import java.util.*
-import com.google.firebase.database.DatabaseError
-
-import com.google.firebase.database.DataSnapshot
-
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.firestore.ktx.firestore
 import com.raywenderlich.android.rwandroidtutorial.Logros.ListaNotificacion
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ListaClasificacion
-import kotlin.system.exitProcess
+import com.raywenderlich.android.rwandroidtutorial.login.HomeActivity
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class FinCarrera : AppCompatActivity() {
     val chanelID = "logros"
     val chanelName = "logros"
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fin_carrera)
         ProcesarDatos()
-
 
     }
 
@@ -46,9 +37,9 @@ class FinCarrera : AppCompatActivity() {
         var nuevospasos: Int
         var nuevadistancia: Float
         var DatosUsuario: ListaDatosUsuario
-
         val txtPasos = findViewById<TextView>(R.id.txtPasos)
         val txtDistancia = findViewById<TextView>(R.id.txtDistancia)
+
         //fecha hoy
         val sdf = SimpleDateFormat("dd/M/yyyy")
         val currentDate = sdf.format(Date())
@@ -207,8 +198,12 @@ class FinCarrera : AppCompatActivity() {
         id.setValue(noti)
     }
 
-    fun btnMenu(view: View?) {
-        val intent = Intent(this, MenuPrincipal::class.java)
+    fun ReturnHome(view: View) {
+
+        val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
     }
+
+
+
 }

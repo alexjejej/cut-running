@@ -1,6 +1,7 @@
 package com.raywenderlich.android.runtracking
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -19,6 +20,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.raywenderlich.android.runtracking.databinding.FragmentNavBarBinding
+import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity
+import com.raywenderlich.android.rwandroidtutorial.Home.HomeFragment
 import com.raywenderlich.android.rwandroidtutorial.Logros.LogrosFragment
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ClasificacionFragment
 import com.raywenderlich.android.rwandroidtutorial.models.Logro
@@ -48,12 +51,12 @@ class NavBarFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentNavBarBinding.inflate(inflater, container, false)
-        Log.d("NavBarFragment", "Fragment de varra de navegacion")
+        Log.d("NavBarFragment", "Fragment de barra de navegacion")
         setup()
 
         navigateTo(
-            LogrosFragment(),
-            getString(R.string.AchievementFragment)
+            HomeFragment(),
+            getString(R.string.HomeFragment)
         )
 
         return binding.root
@@ -89,15 +92,14 @@ class NavBarFragment : Fragment() {
                 return navigateTo(ProfileFragment(), getString(R.string.ProfileFragment))
             }
             R.id.btnRaceManagement -> {
-                // TODO: Crear el fragment de gestion de carreras
                 return true
             }
             R.id.btnHome -> {
-                // TODO: Comprobar si sera necesario un apagina de home y su contenido
-                return true
+                return navigateTo(HomeFragment(), getString(R.string.HomeFragment))
             }
             R.id.btnAddTraining -> {
-                // TODO: Craear el fragment de seguimiento de carrera
+                val intent = Intent(activity, MapsActivity::class.java)
+                startActivity(intent)
                 return true
             }
             R.id.btnAchievements -> {

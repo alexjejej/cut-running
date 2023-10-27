@@ -192,7 +192,7 @@ class LoginFragment : Fragment() {
 //                        _stringResourcesProvider.getString() TODO: Delete
                     )
                     // Only show accounts previously used to sign in.
-                    .setFilterByAuthorizedAccounts(true)
+                    .setFilterByAuthorizedAccounts(false)
                     .build())
             // Automatically sign in when exactly one credential is retrieved.
             .setAutoSelectEnabled(true)

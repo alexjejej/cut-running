@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <FrameLayout
+        android:id="@+id/fragment_Home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <!-- TextView "Bienvenido" en la parte superior -->
+    <TextView
+        android:id="@+id/bienvenidaTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bienvenido, "
+        android:textSize="28sp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <!-- ImageView debajo del TextView -->
+    <ImageView
+        android:id="@+id/sportImageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/principal"
+        app:layout_constraintWidth_percent="0.6"
+        app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintTop_toBottomOf="@+id/bienvenidaTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@+id/sportImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="24dp">
+
+        <!-- LinearLayout vertical para los botones -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <!-- Botón Carrera -->
+            <Button
+                android:id="@+id/btnCarrera"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Carrera"
+                android:backgroundTint="#0099CC"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Botón Logros -->
+            <Button
+                android:id="@+id/btnLogros"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Logros"
+                android:backgroundTint="#0099CC"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Botón Gestión De Carreras -->
+            <Button
+                android:id="@+id/btnGestionCarreras"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Gestión De Carreras"
+                android:backgroundTint="#0099CC"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Botón Clasificación -->
+            <Button
+                android:id="@+id/btnClasificacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Clasificación"
+                android:backgroundTint="#0099CC" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

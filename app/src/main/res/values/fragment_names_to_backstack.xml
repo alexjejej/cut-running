@@ -2,9 +2,11 @@
 <resources>
     <string name="LoginFragment">LoginFragment</string>
     <string name="NavBarFragment">NavBarFragment</string>
+    <string name="HomeFragment">HomeFragment</string>
     <string name="ClasificationFragment">ClasificationFragment</string>
     <string name="AchievementFragment">AchievementFragment</string>
     <string name="ProfileFragment">ProfileFragment</string>
     <string name="UserInfoDisplayFragment">UserInfoDisplayFragment</string>
     <string name="UserInfoUpdateFragment">UserInfoUpdateFragment</string>
+    <string name="RacerFragment">RacerFragment</string>
 </resources>

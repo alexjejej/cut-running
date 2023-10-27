@@ -71,6 +71,7 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
+import com.raywenderlich.android.rwandroidtutorial.DIContainer
 import com.raywenderlich.android.rwandroidtutorial.MenuPrincipal
 import java.text.SimpleDateFormat
 
@@ -194,7 +195,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
 
 
   // Repository
-  private fun getTrackingApplicationInstance() = application as TrackingApplication
+  private fun getTrackingApplicationInstance() = application as DIContainer
   private fun getTrackingRepository() = getTrackingApplicationInstance().trackingRepository
 
   // UI related codes
@@ -231,7 +232,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
         isTracking = false
         updateButtonStatus()
         stopTracking()
-        PasosHoy()
         val intent = Intent(this, FinCarrera::class.java)
         startActivity(intent)
 
@@ -243,17 +243,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
   }
 
   private fun valoresIniciales(){
-    //variables locales
-    val sharedPreference =  getSharedPreferences("Datos",Context.MODE_PRIVATE)
-
-    //fecha hoy
-    val sdf = SimpleDateFormat("dd/M/yyyy")
-    val currentDate = sdf.format(Date())
-
-    //sumar datos hoy
-    var pasos = sharedPreference.getInt("pasos",0) + sharedPreference.getInt("Pasos "+currentDate,0)
-    var distancia = sharedPreference.getFloat("distancia",0F) + sharedPreference.getFloat("Distancia "+currentDate,0F)
-    var pasosT = sharedPreference.getInt("PasosTotales",0)
 
     val txtPasos = findViewById<TextView>(R.id.PasosHoy)
     val txtDist = findViewById<TextView>(R.id.DistanciaHoy)
@@ -261,50 +250,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
     txtPasos.setVisibility(View.VISIBLE);
     txtDist.setVisibility(View.VISIBLE);
     txtPasosT.setVisibility(View.VISIBLE);
-    binding.PasosHoy.text = String.format("Pasos hoy: %d", pasos)
-    binding.DistanciaHoy.text = String.format("Distancia hoy: %.2fm", distancia)
-    binding.PasosTotales.text = String.format("Pasos totales: %d", pasosT)
+    //binding.PasosHoy.text = String.format("Pasos hoy: %d", pasos)
+    //binding.DistanciaHoy.text = String.format("Distancia hoy: %.2fm", distancia)
+    //binding.PasosTotales.text = String.format("Pasos totales: %d", pasosT)
 
   }
 
 
-  private fun PasosHoy(){
 
-    //variables locales
-    val sharedPreference =  getSharedPreferences("Datos",Context.MODE_PRIVATE)
-    var editor = sharedPreference.edit()
-
-    //fecha hoy
-    val sdf = SimpleDateFormat("dd/M/yyyy")
-    val currentDate = sdf.format(Date())
-
-    //sumar datos hoy
-    var pasos = sharedPreference.getInt("pasos",0) + sharedPreference.getInt("Pasos "+currentDate,0)
-    var distancia = sharedPreference.getFloat("distancia",0.0F) + sharedPreference.getFloat("Distancia "+currentDate,0.0F)
-    var pasosT = sharedPreference.getInt("pasos",0) + sharedPreference.getInt("PasosTotales",0)
-
-    //guardar datos hoy
-    editor.putInt("Pasos "+currentDate,pasos)
-    editor.putFloat("Distancia "+currentDate,distancia)
-    editor.putInt("PasosTotales",pasosT);
-    editor.commit()
-
-    val txtPasos = findViewById<TextView>(R.id.PasosHoy)
-    val txtDist = findViewById<TextView>(R.id.DistanciaHoy)
-    val txtPasosT = findViewById<TextView>(R.id.PasosTotales)
-    txtPasos.setVisibility(View.VISIBLE);
-    txtDist.setVisibility(View.VISIBLE);
-    txtPasosT.setVisibility(View.VISIBLE);
-    binding.PasosHoy.text = String.format("Pasos hoy: %d", pasos)
-    binding.DistanciaHoy.text = String.format("Distancia hoy: %.2fm", distancia)
-    binding.PasosTotales.text = String.format("Pasos totales: %d", pasosT)
-    //logros(pasosT);
-    //consultar logros
-    //var logros = logros();
-    //logros.pasos(pasosT);
-
-
-  }
 
 
   // Tracking
@@ -411,7 +364,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
       stepCounterSensor,
       SensorManager.SENSOR_DELAY_FASTEST
     )
-
+    Log.d("pasos:",""+stepCounterSensor)
   }
 
 
@@ -457,6 +410,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
       val locationRequest = LocationRequest()
       locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
       locationRequest.interval = 5000 // 5000ms (5s)
+      locationRequest.smallestDisplacement = .5f // .5 metros mínimo de desplazamiento para registrar una actualización
       fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper())
     } else {
       // Do not have permissions, request them now
