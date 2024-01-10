@@ -5,7 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.raywenderlich.android.rwandroidtutorial.Carrera.FinCarrera"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="#f0f0f0">
+
 
     <TextView
         android:id="@+id/textView2"
@@ -13,26 +15,29 @@
         android:layout_height="wrap_content"
         android:text="Tu recorrido de hoy"
         android:textAlignment="center"
-        android:textSize="26sp"
+        android:textSize="30sp"
         android:textStyle="bold"
-        android:background="#33b5e5"
-        android:padding="8dp"
+        android:background="#16A085"
+        android:padding="16dp"
         android:textColor="#ffffff"
+        android:alpha="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />
 
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="136dp"
+        android:layout_marginTop="32dp"
         android:text="Pasos hoy: "
-        android:textSize="22sp"
+        android:textSize="25sp"
         android:gravity="center"
+        android:textColor="#000000"
+        android:alpha="0"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.187"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
@@ -41,20 +46,25 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="x"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:gravity="center"
+        android:textColor="#000000"
+        android:alpha="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
+
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="32dp"
         android:gravity="center"
         android:text="Distancia: "
-        android:textSize="22sp"
+        android:textColor="#000000"
+        android:textSize="25sp"
+        android:alpha="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtPasos" />
@@ -64,25 +74,54 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="x"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:gravity="center"
+        android:textColor="#000000"
+        android:alpha="0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
+    <TextView
+        android:id="@+id/textview10"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Pasos Totales: "
+        android:textSize="25sp"
+        android:gravity="center"
+        android:alpha="0"
+        android:textColor="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDistancia" />
+
+    <TextView
+        android:id="@+id/txtpasosT"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="x"
+        android:textSize="18sp"
+        android:textColor="#000000"
+        android:alpha="0"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textview10" />
+
+
     <Button
         android:id="@+id/btnMenu"
+        android:alpha="0"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Regresar al menú principal"
         android:backgroundTint="#007BFF"
-        android:textColor="#ffffff"
-        android:onClick="ReturnHome"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-
-
+    android:textColor="#ffffff"
+    android:onClick="ReturnHome"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
+    android:layout_marginBottom="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

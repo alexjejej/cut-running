@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
@@ -18,6 +19,7 @@ import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.Logros.ListaNotificacion
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ListaClasificacion
 import com.raywenderlich.android.rwandroidtutorial.login.HomeActivity
+import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,56 +31,52 @@ class FinCarrera : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fin_carrera)
+        animateViews()
         ProcesarDatos()
 
     }
 
     private fun ProcesarDatos(){
-        var nuevospasos: Int
-        var nuevadistancia: Float
-        var DatosUsuario: ListaDatosUsuario
+
         val txtPasos = findViewById<TextView>(R.id.txtPasos)
         val txtDistancia = findViewById<TextView>(R.id.txtDistancia)
+        val txtPasosT = findViewById<TextView>(R.id.txtpasosT)
 
-        //fecha hoy
-        val sdf = SimpleDateFormat("dd/M/yyyy")
-        val currentDate = sdf.format(Date())
-        //variables locales
-        val sharedPreference =  getSharedPreferences("Datos",Context.MODE_PRIVATE)
-        var pasos = sharedPreference.getInt("pasos",0)
-        var distancia = sharedPreference.getFloat("distancia",0F)
-        var pasosT = sharedPreference.getInt("PasosTotales",0)
+        //Obtener datos de sqlite
+        val db = BDsqlite(this)
+        // Obtener datos para el usuario "Alex"
+        val cursorPasosHoy = db.getData(BDsqlite.getColumnPasosHoy(), "Alex")
+        val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), "Alex")
+        val cursorDistancia = db.getData(BDsqlite.getColumnDistancia(), "Alex")
 
-        //obtener usuario
-        val usuario = "alex"
+        // Leer y mostrar los datos de cada consulta
+        if (cursorPasosHoy.moveToFirst()) {
+            val pasosHoy =
+                cursorPasosHoy.getInt(0) // El índice 0 representa la primera columna del resultado
+            Log.d("DBData", "Pasos Hoy para Alex: $pasosHoy")
+            txtPasos.text = (pasosHoy.toString()+" pasos")
+        }
 
-        //Obtener datoa del usuario y sumarlos con los nuevos
-        val database = Firebase.database
-        database.getReference("users").child(usuario).child("datos").
-                get().addOnSuccessListener {
+        if (cursorPasosTotales.moveToFirst()) {
+            val pasosTotales = cursorPasosTotales.getInt(0)
+            Log.d("DBData", "Pasos Totales para Alex: $pasosTotales")
+            consultarlogro(pasosTotales)
+            txtPasosT.text = (pasosTotales.toString()+" pasos")
+        }
 
-                    if (it.exists()){
-                        val bdPasosT = it.child("pasosT").getValue(Int::class.java)
-                        val bdDistancia = it.child("distanciaT").getValue(Float::class.java)
-                        nuevospasos = bdPasosT!!+pasos
-                        nuevadistancia = distancia+bdDistancia!!
-                        DatosUsuario = ListaDatosUsuario((nuevospasos),(nuevadistancia))
-                        val myRef = database.getReference("users").child(usuario).child("datos")
-                        myRef.setValue(DatosUsuario)
-                    }else{
-                        Log.d("Datos no encontrados: ","No existe")
-                        CrearDatos()
-                    }
+        if (cursorDistancia.moveToFirst()) {
+            val distancia = cursorDistancia.getFloat(0)
+            Log.d("DBData", "Distancia para Alex: $distancia")
+            txtDistancia.text = (distancia.toString()+ " metros")
+        }
 
 
-                }.addOnFailureListener{
-                    Log.e("firebase", "Error getting data", it)
-                }
 
-        txtPasos.text = (pasos.toString()+" pasos")
-        txtDistancia.text = (distancia.toString()+ " metros")
-        consultarlogro(pasosT)
-        clasificacion(pasosT,usuario)
+        cursorPasosHoy.close()
+        cursorPasosTotales.close()
+        cursorDistancia.close()
+
+        //clasificacion(pasosT,usuario)
 
 
     }
@@ -93,6 +91,7 @@ class FinCarrera : AppCompatActivity() {
     }
 
     private fun CrearDatos() {
+
         //fecha hoy
         val sdf = SimpleDateFormat("dd/M/yyyy")
         val currentDate = sdf.format(Date())
@@ -106,6 +105,9 @@ class FinCarrera : AppCompatActivity() {
         val myRef = database.getReference("users").child(usuario).child("datos")
         val DatosUsuario = ListaDatosUsuario(pasos,distancia)
         myRef.setValue(DatosUsuario)
+
+
+
     }
 
     private fun consultarlogro(pasosT: Int) {
@@ -203,6 +205,33 @@ class FinCarrera : AppCompatActivity() {
         val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
     }
+
+    private fun animateViews() {
+        val viewsToAnimate = listOf(
+            findViewById<TextView>(R.id.textView2),
+            findViewById<TextView>(R.id.textView),
+            findViewById<TextView>(R.id.txtPasos),
+            findViewById<TextView>(R.id.textView3),
+            findViewById<TextView>(R.id.txtDistancia),
+            findViewById<TextView>(R.id.textview10),
+            findViewById<TextView>(R.id.txtpasosT),
+            findViewById<Button>(R.id.btnMenu)
+        )
+
+        for ((index, view) in viewsToAnimate.withIndex()) {
+            // Desvanecimiento
+            view.animate().alpha(1.0f).setDuration(600)
+                .setStartDelay((index + 1) * 200L)
+                .start()
+
+            // Deslizamiento desde abajo
+            view.translationY = 200f
+            view.animate().translationY(0f).setDuration(600)
+                .setStartDelay((index + 1) * 200L)
+                .start()
+        }
+    }
+
 
 
 

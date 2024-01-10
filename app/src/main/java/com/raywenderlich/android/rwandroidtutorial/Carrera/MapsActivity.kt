@@ -33,9 +33,12 @@
  */
 
 package com.raywenderlich.android.rwandroidtutorial.Carrera
-
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.Manifest.permission.ACTIVITY_RECOGNITION
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.database.Cursor
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -44,6 +47,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Looper
 import android.util.Log
+import android.view.View
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -54,26 +59,13 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.PolylineOptions
+import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.ActivityMainBinding
-import java.util.*
+import com.raywenderlich.android.rwandroidtutorial.DIContainer
+import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.annotations.AfterPermissionGranted
-import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.Manifest.permission.ACTIVITY_RECOGNITION
-
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Intent
-import android.view.View
-import android.widget.TextView
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.raywenderlich.android.runtracking.R
-import com.raywenderlich.android.rwandroidtutorial.DIContainer
-import com.raywenderlich.android.rwandroidtutorial.MenuPrincipal
-import java.text.SimpleDateFormat
+import java.util.*
 
 
 /**
@@ -205,12 +197,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
   }
 
   private fun updateAllDisplayText(stepCount: Int, totalDistanceTravelled: Float) {
+
+    val averagePace = if (stepCount != 0) totalDistanceTravelled / stepCount.toDouble() else 0.0
+    binding.averagePaceTextView.text = String.format("Ritmo promedio: %.2fm/ pasos", averagePace);
+
     binding.numberOfStepTextView.text = String.format("Pasos: %d", stepCount)
     binding.totalDistanceTextView.text =
       String.format("Distancia total: %.2fm", totalDistanceTravelled)
 
-    val averagePace = if (stepCount != 0) totalDistanceTravelled / stepCount.toDouble() else 0.0
-    binding.averagePaceTextView.text = String.format("Ritmo promedio: %.2fm/ pasos", averagePace);
 
     //Variables cache
     val sharedPreference =  getSharedPreferences("Datos",Context.MODE_PRIVATE)
@@ -231,6 +225,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
       .setPositiveButton("Confirmar") { _, _ ->
         isTracking = false
         updateButtonStatus()
+        GuardarEnSQLite()
         stopTracking()
         val intent = Intent(this, FinCarrera::class.java)
         startActivity(intent)
@@ -242,6 +237,48 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
 
   }
 
+  private fun GuardarEnSQLite() {
+    val PasosTotales = (mapsActivityViewModel.initialStepCount +
+            mapsActivityViewModel.currentNumberOfStepCount.value!! + 1)
+
+    val totalDistanceTravelled = mapsActivityViewModel.totalDistanceTravelled.value ?: 0f
+
+    val PasosRecorridoHoy = mapsActivityViewModel.currentNumberOfStepCount.value ?: 0
+
+    val db = BDsqlite(this)
+    db.upsertData("Alex", PasosRecorridoHoy,PasosTotales, totalDistanceTravelled)
+
+    // Obtener datos para el usuario "Alex"
+    val cursorPasosHoy = db.getData(BDsqlite.getColumnPasosHoy(), "Alex")
+    val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), "Alex")
+    val cursorDistancia = db.getData(BDsqlite.getColumnDistancia(), "Alex")
+
+
+// Leer y mostrar los datos de cada consulta
+    if (cursorPasosHoy.moveToFirst()) {
+      val pasosHoy =
+        cursorPasosHoy.getInt(0) // El índice 0 representa la primera columna del resultado
+      Log.d("DBData", "Pasos Hoy para Alex: $pasosHoy")
+    }
+
+    if (cursorPasosTotales.moveToFirst()) {
+      val pasosTotales = cursorPasosTotales.getInt(0)
+      Log.d("DBData", "Pasos Totales para Alex: $pasosTotales")
+    }
+
+    if (cursorDistancia.moveToFirst()) {
+      val distancia = cursorDistancia.getFloat(0)
+      Log.d("DBData", "Distancia para Alex: $distancia")
+    }
+
+//cerrar los cursores después de usarlos
+
+    cursorPasosHoy.close()
+    cursorPasosTotales.close()
+    cursorDistancia.close()
+
+  }
+
   private fun valoresIniciales(){
 
     val txtPasos = findViewById<TextView>(R.id.PasosHoy)
@@ -250,9 +287,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
     txtPasos.setVisibility(View.VISIBLE);
     txtDist.setVisibility(View.VISIBLE);
     txtPasosT.setVisibility(View.VISIBLE);
-    //binding.PasosHoy.text = String.format("Pasos hoy: %d", pasos)
-    //binding.DistanciaHoy.text = String.format("Distancia hoy: %.2fm", distancia)
-    //binding.PasosTotales.text = String.format("Pasos totales: %d", pasosT)
+    val db = BDsqlite(this)
+    val pasos: Cursor = db.getData("pasoshoy","Alex")
+    val pasosT: Cursor = db.getData("pasostotales","Alex")
+    // Obtener datos para el usuario "Alex"
+    if (pasos.moveToFirst()) {
+      val numeroDePasosHoy = pasos.getString(0)
+      txtPasos.text = "Pasos hoy: $numeroDePasosHoy"
+    }
+
+    if (pasosT.moveToFirst()) {
+      val numeroDePasosTotales = pasosT.getString(0)
+      txtPasosT.text = "Pasos T: $numeroDePasosTotales"
+    }
 
   }
 
