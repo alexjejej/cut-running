@@ -10,19 +10,32 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.Carrera.FinCarrera
 import com.raywenderlich.android.rwandroidtutorial.Logros.ListaLogros
 import com.raywenderlich.android.rwandroidtutorial.models.Logro
+import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
+import com.raywenderlich.android.rwandroidtutorial.provider.DatosUsuario
 
 
 class ListaLogrosAdapter(private val logrosList:ArrayList<Logro>, private val context : Context) : RecyclerView.Adapter<ListaLogrosAdapter.ListaLogrosViewHolder>() {
 
-    // variables locales
-    val sharedPreferences =  context.getSharedPreferences("Datos", Context.MODE_PRIVATE)
-    var pasosT = sharedPreferences.getInt("PasosTotales",0)
+    var pasosT = obtenerpasos()
+
+    private fun obtenerpasos(): Int {
+        // Obtener nombre de usuario
+        val userName = DatosUsuario.getUserName(context) ?: "NombrePorDefecto"
+        //Obtener datos de sqlite
+        val db = BDsqlite(context)
+        // Obtener datos para el usuario
+        val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), userName)
+        cursorPasosTotales.moveToFirst()
+        val pasosTotales = cursorPasosTotales.getInt(0)
+        return pasosTotales
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaLogrosViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_listalogros,parent,false)

@@ -110,7 +110,9 @@ class LoginFragment : Fragment() {
             putString( getString(R.string.prefs_email), userData!!.email )
             putString( getString(R.string.prefs_user_photo), userData!!.photoUrl.toString() )
             commit()
+            Log.d("nombreuser",userData.displayName!!)
         }
+
         session()
     }
 
