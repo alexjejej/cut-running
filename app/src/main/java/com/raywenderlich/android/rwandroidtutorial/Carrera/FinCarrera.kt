@@ -20,6 +20,7 @@ import com.raywenderlich.android.rwandroidtutorial.Logros.ListaNotificacion
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ListaClasificacion
 import com.raywenderlich.android.rwandroidtutorial.login.HomeActivity
 import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
+import com.raywenderlich.android.rwandroidtutorial.provider.DatosUsuario
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,12 +43,16 @@ class FinCarrera : AppCompatActivity() {
         val txtDistancia = findViewById<TextView>(R.id.txtDistancia)
         val txtPasosT = findViewById<TextView>(R.id.txtpasosT)
 
+        // Obtener nombre de usuario
+        val userName = DatosUsuario.getUserName(this) ?: "NombrePorDefecto"
+
+
         //Obtener datos de sqlite
         val db = BDsqlite(this)
-        // Obtener datos para el usuario "Alex"
-        val cursorPasosHoy = db.getData(BDsqlite.getColumnPasosHoy(), "Alex")
-        val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), "Alex")
-        val cursorDistancia = db.getData(BDsqlite.getColumnDistancia(), "Alex")
+        // Obtener datos para el usuario
+        val cursorPasosHoy = db.getData(BDsqlite.getColumnPasosHoy(), userName)
+        val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), userName)
+        val cursorDistancia = db.getData(BDsqlite.getColumnDistancia(), userName)
 
         // Leer y mostrar los datos de cada consulta
         if (cursorPasosHoy.moveToFirst()) {
@@ -89,6 +94,7 @@ class FinCarrera : AppCompatActivity() {
         myRef.setValue(lista)
 
     }
+
 
     private fun CrearDatos() {
 

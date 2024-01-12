@@ -12,6 +12,7 @@ import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity
 import com.raywenderlich.android.rwandroidtutorial.Logros.LogrosFragment
 import com.raywenderlich.android.rwandroidtutorial.clasificacion.ClasificacionFragment
+import com.raywenderlich.android.rwandroidtutorial.provider.DatosUsuario
 
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -21,12 +22,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Obtener el nombre del usuario de SharedPreferences
+        val userName = DatosUsuario.getUserName(requireContext()) ?: "Error"
+
         viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
 
         // Observar cambios en el ViewModel
         viewModel.usuario.observe(viewLifecycleOwner, Observer { nombre ->
             // Actualizar el mensaje de bienvenida
-            view.findViewById<TextView>(R.id.bienvenidaTextView).text = "Bienvenido, $nombre"
+            view.findViewById<TextView>(R.id.bienvenidaTextView).text = "Bienvenido, $userName"
         })
 
         view.findViewById<Button>(R.id.btnCarrera).setOnClickListener {
@@ -53,4 +57,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         transaction.addToBackStack(null)  // Permite volver al fragmento anterior con el botón de retroceso
         transaction.commit()
     }
+
+
+
 }

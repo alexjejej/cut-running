@@ -63,6 +63,7 @@ import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.ActivityMainBinding
 import com.raywenderlich.android.rwandroidtutorial.DIContainer
 import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
+import com.raywenderlich.android.rwandroidtutorial.provider.DatosUsuario
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.annotations.AfterPermissionGranted
 import java.util.*
@@ -245,13 +246,18 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
 
     val PasosRecorridoHoy = mapsActivityViewModel.currentNumberOfStepCount.value ?: 0
 
+    // Obtener el nombre del usuario de SharedPreferences
+
+    val userName = DatosUsuario.getUserName(this) ?: "Error"
+
     val db = BDsqlite(this)
-    db.upsertData("Alex", PasosRecorridoHoy,PasosTotales, totalDistanceTravelled)
+    db.upsertData(userName, PasosRecorridoHoy, PasosTotales, totalDistanceTravelled)
+
 
     // Obtener datos para el usuario "Alex"
-    val cursorPasosHoy = db.getData(BDsqlite.getColumnPasosHoy(), "Alex")
-    val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), "Alex")
-    val cursorDistancia = db.getData(BDsqlite.getColumnDistancia(), "Alex")
+    val cursorPasosHoy = db.getData(BDsqlite.getColumnPasosHoy(), userName)
+    val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), userName)
+    val cursorDistancia = db.getData(BDsqlite.getColumnDistancia(), userName)
 
 
 // Leer y mostrar los datos de cada consulta
@@ -287,10 +293,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
     txtPasos.setVisibility(View.VISIBLE);
     txtDist.setVisibility(View.VISIBLE);
     txtPasosT.setVisibility(View.VISIBLE);
+
+    // Obtener el nombre del usuario de SharedPreferences
+    val userName = DatosUsuario.getUserName(this) ?: "Error"
+
     val db = BDsqlite(this)
-    val pasos: Cursor = db.getData("pasoshoy","Alex")
-    val pasosT: Cursor = db.getData("pasostotales","Alex")
-    // Obtener datos para el usuario "Alex"
+    val pasos: Cursor = db.getData("pasoshoy",userName)
+    val pasosT: Cursor = db.getData("pasostotales",userName)
+    // Obtener datos para el usuario
     if (pasos.moveToFirst()) {
       val numeroDePasosHoy = pasos.getString(0)
       txtPasos.text = "Pasos hoy: $numeroDePasosHoy"
@@ -302,9 +312,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
     }
 
   }
-
-
-
 
 
   // Tracking
