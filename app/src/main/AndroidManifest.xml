@@ -23,7 +23,7 @@
             android:name="com.raywenderlich.android.rwandroidtutorial.Carrera.FinCarrera"
             android:exported="false" />
         <activity
-            android:name="com.raywenderlich.android.rwandroidtutorial.login.HomeActivity"
+            android:name="com.raywenderlich.android.rwandroidtutorial.usecases.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,14 +31,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.raywenderlich.android.rwandroidtutorial.login.RegistrationCompletionActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" /> <!-- Activity principal que se muestra al iniciar la app -->
-        <activity
-            android:name="com.raywenderlich.android.rwandroidtutorial.login.AuthActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="com.raywenderlich.android.rwandroidtutorial.MenuPrincipal"
             android:exported="false" />

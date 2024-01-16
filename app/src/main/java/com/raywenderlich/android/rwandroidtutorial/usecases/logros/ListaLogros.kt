@@ -1,4 +1,4 @@
-package com.raywenderlich.android.rwandroidtutorial.Logros
+package com.raywenderlich.android.rwandroidtutorial.usecases.logros
 
 data class ListaLogros (var titulo:String?=null,
                         var descripcion:String?=null,

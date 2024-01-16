@@ -1,4 +1,4 @@
-package com.raywenderlich.android.rwandroidtutorial.Home
+package com.raywenderlich.android.rwandroidtutorial.usecases.home
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,8 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity
-import com.raywenderlich.android.rwandroidtutorial.Logros.LogrosFragment
-import com.raywenderlich.android.rwandroidtutorial.clasificacion.ClasificacionFragment
+import com.raywenderlich.android.rwandroidtutorial.usecases.logros.LogrosFragment
+import com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion.ClasificacionFragment
 import com.raywenderlich.android.rwandroidtutorial.provider.DatosUsuario
 
 

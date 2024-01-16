@@ -1,4 +1,4 @@
-package com.raywenderlich.android.runtracking
+package com.raywenderlich.android.rwandroidtutorial.common.navigation
 
 import android.app.Activity
 import android.content.Intent
@@ -13,20 +13,16 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
-import androidx.fragment.app.commit
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.compose.NavHost
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
+import com.raywenderlich.android.rwandroidtutorial.usecases.profile.ProfileFragment
+import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.FragmentNavBarBinding
 import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity
-import com.raywenderlich.android.rwandroidtutorial.Home.HomeFragment
-import com.raywenderlich.android.rwandroidtutorial.Logros.LogrosFragment
-import com.raywenderlich.android.rwandroidtutorial.clasificacion.ClasificacionFragment
-import com.raywenderlich.android.rwandroidtutorial.models.Logro
+import com.raywenderlich.android.rwandroidtutorial.usecases.home.HomeFragment
+import com.raywenderlich.android.rwandroidtutorial.usecases.logros.LogrosFragment
+import com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion.ClasificacionFragment
 import com.raywenderlich.android.rwandroidtutorial.models.Session
 import com.raywenderlich.android.rwandroidtutorial.provider.services.navigation.NavigationObj
+import com.raywenderlich.android.rwandroidtutorial.usecases.login.LoginFragment
 import com.squareup.picasso.Picasso
 
 /**
@@ -71,7 +67,10 @@ class NavBarFragment : Fragment() {
         activity = requireActivity()
 
         // Configuracion de Nav Bar
-        toggle = ActionBarDrawerToggle(activity, binding.drawerLayout, binding.toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        toggle = ActionBarDrawerToggle(activity, binding.drawerLayout, binding.toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 

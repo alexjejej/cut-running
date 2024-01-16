@@ -1,4 +1,4 @@
-package com.raywenderlich.android.rwandroidtutorial.Logros
+package com.raywenderlich.android.rwandroidtutorial.usecases.logros
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.rwandroidtutorial.models.Logro
 import kotlinx.coroutines.Dispatchers

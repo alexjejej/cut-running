@@ -1,4 +1,4 @@
-package com.raywenderlich.android.rwandroidtutorial.Logros
+package com.raywenderlich.android.rwandroidtutorial.usecases.logros
 
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.FragmentLogrosBinding
-import com.raywenderlich.android.rwandroidtutorial.Logros.adapter.ListaLogrosAdapter
+import com.raywenderlich.android.rwandroidtutorial.usecases.logros.adapter.ListaLogrosAdapter
 
 class LogrosFragment : Fragment() {
     private val logrosViewModel = LogrosViewModel()

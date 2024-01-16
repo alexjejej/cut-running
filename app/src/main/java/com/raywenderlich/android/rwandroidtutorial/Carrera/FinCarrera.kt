@@ -16,9 +16,9 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
-import com.raywenderlich.android.rwandroidtutorial.Logros.ListaNotificacion
-import com.raywenderlich.android.rwandroidtutorial.clasificacion.ListaClasificacion
-import com.raywenderlich.android.rwandroidtutorial.login.HomeActivity
+import com.raywenderlich.android.rwandroidtutorial.usecases.logros.ListaNotificacion
+import com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion.ListaClasificacion
+import com.raywenderlich.android.rwandroidtutorial.usecases.HomeActivity
 import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
 import com.raywenderlich.android.rwandroidtutorial.provider.DatosUsuario
 import java.text.SimpleDateFormat

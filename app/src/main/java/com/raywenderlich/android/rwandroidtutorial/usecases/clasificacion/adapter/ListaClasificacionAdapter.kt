@@ -1,4 +1,4 @@
-package com.raywenderlich.android.rwandroidtutorial.clasificacion.adapter
+package com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion.adapter
 
 import android.content.Context
 import android.graphics.Color
@@ -8,9 +8,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.runtracking.R
-import com.raywenderlich.android.rwandroidtutorial.Logros.ListaLogros
-import com.raywenderlich.android.rwandroidtutorial.Logros.adapter.ListaLogrosAdapter
-import com.raywenderlich.android.rwandroidtutorial.clasificacion.ListaClasificacion
 import com.raywenderlich.android.rwandroidtutorial.models.Posicion
 
 class ListaClasificacionAdapter(private val listaclasificacion:List<Posicion>, private val context : Context) : RecyclerView.Adapter<ListaClasificacionAdapter.ListaClasificacionViewHolder>() {
