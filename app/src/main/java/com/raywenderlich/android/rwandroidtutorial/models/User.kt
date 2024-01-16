@@ -1,9 +1,7 @@
 package com.raywenderlich.android.rwandroidtutorial.models
 
-import com.raywenderlich.android.rwandroidtutorial.login.ProviderType
-
-data class User(
-    val code: Int,
+data class User (
+    val id: Int,
     val firstname: String,
     val lastname: String,
     val age: Int,
@@ -15,10 +13,4 @@ data class User(
     val roleId: Int,
     val enabled: Boolean,
     val updateDate: String
-//    val cu: String,
-//    val career: String,
-//    val completeInformation: Boolean,
-//    val provider: String,
-//    val enable: Boolean,
-//    val semester: Int
 )

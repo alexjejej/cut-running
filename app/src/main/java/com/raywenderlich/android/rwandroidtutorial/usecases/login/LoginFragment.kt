@@ -1,4 +1,4 @@
-package com.raywenderlich.android.runtracking
+package com.raywenderlich.android.rwandroidtutorial.usecases.login
 
 import android.content.Context
 import android.content.Intent
@@ -12,11 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.commit
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -26,6 +21,8 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.raywenderlich.android.rwandroidtutorial.common.navigation.NavBarFragment
+import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.FragmentLoginBinding
 import com.raywenderlich.android.rwandroidtutorial.models.Session
 
@@ -83,7 +80,6 @@ class LoginFragment : Fragment() {
         auth = Firebase.auth
         layout = binding.authLayout
 
-
         binding.btnGoogleSignIn.setOnClickListener {
             oneTapClient.beginSignIn(signInRequest)
                 .addOnSuccessListener { result ->
@@ -112,7 +108,6 @@ class LoginFragment : Fragment() {
             commit()
             Log.d("nombreuser",userData.displayName!!)
         }
-
         session()
     }
 

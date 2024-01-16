@@ -1,4 +1,4 @@
-package com.raywenderlich.android.rwandroidtutorial.clasificacion
+package com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion
 
 import android.os.Bundle
 import android.util.Log
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.FragmentClasificacionBinding
-import com.raywenderlich.android.rwandroidtutorial.clasificacion.adapter.ListaClasificacionAdapter
+import com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion.adapter.ListaClasificacionAdapter
 
 class ClasificacionFragment : Fragment() {
     private val clasificacionViewModel = ClasificacionViewModel()

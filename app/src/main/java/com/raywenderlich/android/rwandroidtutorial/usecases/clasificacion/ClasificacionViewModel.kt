@@ -1,4 +1,4 @@
-package com.raywenderlich.android.rwandroidtutorial.clasificacion
+package com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion
 
 import android.util.Log
 import androidx.lifecycle.LiveData
