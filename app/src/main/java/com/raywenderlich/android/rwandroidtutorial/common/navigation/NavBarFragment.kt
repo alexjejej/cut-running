@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -13,16 +12,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
-import com.raywenderlich.android.rwandroidtutorial.usecases.profile.ProfileFragment
+import androidx.fragment.app.Fragment
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.FragmentNavBarBinding
 import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity
-import com.raywenderlich.android.rwandroidtutorial.usecases.home.HomeFragment
-import com.raywenderlich.android.rwandroidtutorial.usecases.logros.LogrosFragment
-import com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion.ClasificacionFragment
 import com.raywenderlich.android.rwandroidtutorial.models.Session
 import com.raywenderlich.android.rwandroidtutorial.provider.services.navigation.NavigationObj
+import com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion.ClasificacionFragment
+import com.raywenderlich.android.rwandroidtutorial.usecases.home.HomeFragment
 import com.raywenderlich.android.rwandroidtutorial.usecases.login.LoginFragment
+import com.raywenderlich.android.rwandroidtutorial.usecases.logros.LogrosFragment
+import com.raywenderlich.android.rwandroidtutorial.usecases.profile.ProfileFragment
 import com.squareup.picasso.Picasso
 
 /**

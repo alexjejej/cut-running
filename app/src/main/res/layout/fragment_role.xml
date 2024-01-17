@@ -1,0 +1,33 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.raywenderlich.android.rwandroidtutorial.usecases.role.RoleFragment"
+    android:orientation="vertical">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Busqueda por Id"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/roleNameTxt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+
+    <Button
+        style="@style/Widget.Material3.Button.Icon"
+        android:id="@+id/addRoleBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
+        android:paddingTop="4dp"
+        android:paddingRight="4dp"
+        android:text="@string/search"
+        />
+
+</LinearLayout>
