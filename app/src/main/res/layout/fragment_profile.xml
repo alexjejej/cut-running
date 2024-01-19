@@ -1,14 +1,272 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="100"
     tools:context="com.raywenderlich.android.rwandroidtutorial.usecases.profile.ProfileFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+    <!-- Vista de los primeros 2 layouts, foto y pasos (33%) -->
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="33"
+        android:weightSum="40"
+        >
+        <!-- Contenedor Principal para Proporciones -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="40"
+            >
+            <!-- 1 Layout vertical gris -->
+            <LinearLayout
+                android:id="@+id/firstLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                android:background="#FFD9D9D9"
+                android:layout_weight="15">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+
+            <!-- Layout contenedor de fotos y pasos vertical -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="horizontal"
+                android:layout_weight="25"
+                android:weightSum="25"
+                >
+                <!-- Layout lado izquierdo -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="12.5"
+                    android:orientation="vertical"
+                    >
+
+
+                </LinearLayout>
+                <!-- Layout lado derecho con pasos -->
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="12.5"
+                    >
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="50dp"
+                        android:text="Pasos totales"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/txtPasosProfile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:text="50"
+                        android:textSize="25sp"
+                        android:layout_below="@+id/textView1"
+                        android:fontFamily="sans-serif-medium" />
+                </RelativeLayout>
+            </LinearLayout>
+
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imgPerfilProfile"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginStart="30dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/circle_shape"
+
+            />
+
+    </RelativeLayout>
+
+    <!-- Layout logros (15%) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="15"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:fontFamily="sans-serif-medium"
+            android:text="Logros obtenidos:"
+
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <!-- Layout banner info (2%) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="3"
+        >
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textSize="15sp"
+            android:background="#FFD9D9D9"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Información" />
+
+    </LinearLayout>
+    <!-- Layout contenedor de informacion (40%) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="40"
+        android:weightSum="40"
+        android:background="#FFD9D9D9"
+        >
+        <!-- Layout - Seperación lado lizquierdo info -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="7"
+            android:background="#FFD9D9D9"
+            >
+
+        </LinearLayout>
+
+        <!-- Layout vertical con información -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_weight="33"
+            android:background="#FFD9D9D9"
+            >
+
+            <TextView
+                android:id="@+id/txtNombreUsuarioProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:textSize="15dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Nombre: Alejandro Garcia"
+                />
+
+            <TextView
+                android:id="@+id/txtEdadUsuarioProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:layout_marginTop="10dp"
+                android:textSize="15dp"
+                android:text="Edad: 23 años"
+                />
+            <TextView
+                android:id="@+id/txtEstaturaUsuarioProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textSize="15dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Estatura: 175 cm"
+                />
+            <TextView
+                android:id="@+id/txtPesoUsuarioProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textSize="15dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Peso: 65kg"
+                />
+            <TextView
+                android:id="@+id/txtCorreoUsuarioProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textSize="15dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Correo: alex.grc.18@gmail.com"
+                />
+            <TextView
+                android:id="@+id/txtCUUsuarioProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:textSize="15dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Centro Universtario: CUT"
+                />
+            <TextView
+                android:id="@+id/txtCarreraUsuarioProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="15dp"
+                android:text="Carrera: Ingenieria en Nanotecnologia"
+                />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- Layout imagebutton (10%)-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10"
+        android:orientation="horizontal"
+        android:background="#FFD9D9D9"
+        android:gravity="center">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:id="@+id/imageButtonProfile"
+            android:layout_width="180dp"
+            android:layout_height="70dp"
+            android:src="@drawable/editar"
+            android:padding="10dp"
+            android:scaleType="centerInside" />
+    </LinearLayout>
+
+
+
+</LinearLayout>

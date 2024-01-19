@@ -1,16 +1,17 @@
 package com.raywenderlich.android.rwandroidtutorial.usecases.login
 
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
@@ -21,10 +22,12 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.raywenderlich.android.rwandroidtutorial.common.navigation.NavBarFragment
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.FragmentLoginBinding
+import com.raywenderlich.android.rwandroidtutorial.common.navigation.NavBarFragment
 import com.raywenderlich.android.rwandroidtutorial.models.Session
+import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
+
 
 /**
  * A simple [Fragment] subclass.
@@ -107,8 +110,38 @@ class LoginFragment : Fragment() {
             putString( getString(R.string.prefs_user_photo), userData!!.photoUrl.toString() )
             commit()
             Log.d("nombreuser",userData.displayName!!)
+            ConsultarBD(userData.displayName.toString())
         }
         session()
+    }
+
+    private fun ConsultarBD(nombre: String) {
+
+        // Crear una instancia de la base de datos
+        val db = BDsqlite(requireContext())
+
+        //Consultar BD si ya existe registro del usuario
+        val BD = 1 //En lo que se implementa la BD
+        if (BD == 0){
+
+        }else{
+            // Preparar los valores por defecto
+            val values = ContentValues()
+            values.put(BDsqlite.COLUMN_NOMBRE, nombre)
+            values.put(BDsqlite.COLUMN_PASOS_HOY, 0)
+            values.put(BDsqlite.COLUMN_PASOS_TOTALES, 0)
+            values.put(BDsqlite.COLUMN_DISTANCIA, 0.0f)
+            values.put(BDsqlite.COLUMN_EDAD, 0)
+            values.put(BDsqlite.COLUMN_ESTATURA, 0)
+            values.put(BDsqlite.COLUMN_PESO, 0.0f)
+            values.put(BDsqlite.COLUMN_CENTRO_UNIVERSITARIO, "")
+            values.put(BDsqlite.COLUMN_CARRERA, "")
+
+            // Insertar o actualizar en la base de datos
+            db.insertOrUpdate(nombre, values)
+            Log.d("bd","bd creada con exito")
+        }
+
     }
 
     /** Comprobacion de si existe una sesion activa **/
