@@ -4,6 +4,6 @@ data class Achievement (
     val id: Int,
     val name: String,
     val description: String,
-    val enabled: Boolean,
+    val enabled: Int,
     val updateDate: String
 )

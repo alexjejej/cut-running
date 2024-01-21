@@ -99,7 +99,7 @@ dependencies {
   implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
   implementation 'com.google.firebase:firebase-database:20.1.0'
 
-  // Dependencias para la injeccion de dependencias (DI)
+  // Dependencias para la injeccion de dependencias (DI) - D
   implementation 'com.google.dagger:hilt-android:2.44'
   kapt 'com.google.dagger:hilt-android-compiler:2.44'
 
@@ -117,7 +117,7 @@ dependencies {
   implementation "com.squareup.retrofit2:converter-gson:2.9.0"
   implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.6'
 
-  // Dependencias de Navigation
+  // Dependencias de Navigation - D
   def nav_version = "2.5.3"
   implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
   implementation("androidx.navigation:navigation-ui-ktx:$nav_version")

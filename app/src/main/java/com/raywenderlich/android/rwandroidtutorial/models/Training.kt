@@ -6,6 +6,6 @@ data class Training (
     val distance: Double,
     val speed: Double,
     val userCode: Int,
-    val enabled: Boolean,
+    val enabled: Int,
     val updateDate: String
 )
