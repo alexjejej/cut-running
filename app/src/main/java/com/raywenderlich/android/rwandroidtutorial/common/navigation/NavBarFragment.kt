@@ -19,6 +19,7 @@ import com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity
 import com.raywenderlich.android.rwandroidtutorial.models.Session
 import com.raywenderlich.android.rwandroidtutorial.provider.services.navigation.NavigationObj
 import com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion.ClasificacionFragment
+import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.RacesManagement
 import com.raywenderlich.android.rwandroidtutorial.usecases.home.HomeFragment
 import com.raywenderlich.android.rwandroidtutorial.usecases.login.LoginFragment
 import com.raywenderlich.android.rwandroidtutorial.usecases.logros.LogrosFragment
@@ -91,7 +92,7 @@ class NavBarFragment : Fragment() {
                 return navigateTo(ProfileFragment(), getString(R.string.ProfileFragment))
             }
             R.id.btnRaceManagement -> {
-                return true
+                return navigateTo(RacesManagement(), getString(R.string.RaceManagement))
             }
             R.id.btnHome -> {
                 return navigateTo(HomeFragment(), getString(R.string.HomeFragment))
