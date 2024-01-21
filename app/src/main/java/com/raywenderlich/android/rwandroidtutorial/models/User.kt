@@ -11,6 +11,6 @@ data class User (
     val pass: String,
     val specialtyId: Int,
     val roleId: Int,
-    val enabled: Boolean,
+    val enabled: Int,
     val updateDate: String
 )

@@ -6,10 +6,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.FragmentRacesManagementBinding
 import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
 import com.raywenderlich.android.rwandroidtutorial.provider.services.RaceService
+import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.adapter.RaceAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,6 +26,8 @@ class RacesManagement : Fragment() {
     private val binding get() = _binding!!
     private val TAG: String = this::class.java.simpleName
 
+    val raceAdapter: RaceAdapter = RaceAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -34,6 +38,8 @@ class RacesManagement : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentRacesManagementBinding.inflate(inflater, container, false)
+        binding.rcvRaces.adapter = raceAdapter
+        binding.rcvRaces.setHasFixedSize(true)
         getRaces()
         return binding.root
     }
@@ -47,12 +53,15 @@ class RacesManagement : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).getRaces()
             val races = call.body()
-            if (races!!.isSuccess) {
-                Log.d(TAG, races.toString())
-            }
-            else {
-                Log.e(TAG, "Errores")
-                Log.e(TAG, races.message!!)
+            requireActivity().runOnUiThread {
+                if (races!!.isSuccess) {
+                    Log.d(TAG, races.toString())
+                    raceAdapter.races = races.data!!
+                }
+                else {
+                    Log.e(TAG, "Errores")
+                    Log.e(TAG, races.message!!)
+                }
             }
         }
     }

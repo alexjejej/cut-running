@@ -5,6 +5,6 @@ data class Specialty (
     val name: String,
     val acronym: String,
     val uCId: Int,
-    val enabled: Boolean,
+    val enabled: Int,
     val updateDate: String
 )

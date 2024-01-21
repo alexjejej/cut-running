@@ -4,6 +4,6 @@ data class UniversityCenter (
     val id: Int,
     val name: String,
     val acronym: String,
-    val enabled: Boolean,
+    val enabled: Int,
     val updateDate: String
 )
