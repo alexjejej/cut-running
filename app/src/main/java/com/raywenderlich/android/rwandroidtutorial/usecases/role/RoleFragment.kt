@@ -26,7 +26,7 @@ class RoleFragment : Fragment() {
 
     private var _binding: FragmentRoleBinding? = null
     private val binding get() = _binding!!
-    private val TAG: String = RoleFragment.Companion::class.java.simpleName
+    private val TAG: String = this::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,9 +39,9 @@ class RoleFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentRoleBinding.inflate(inflater, container, false)
         Log.d(TAG, "Displaying $TAG")
-        _binding!!.addRoleBtn.setOnClickListener {
+        binding.addRoleBtn.setOnClickListener {
             try {
-                val roleId: Int = _binding!!.roleNameTxt.text.toString().toInt()
+                val roleId: Int = binding.roleNameTxt.text.toString().toInt()
                 getRoles(roleId)
             }
             catch (e: Exception) {

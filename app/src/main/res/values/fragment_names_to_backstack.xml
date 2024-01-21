@@ -9,4 +9,5 @@
     <string name="UserInfoDisplayFragment">UserInfoDisplayFragment</string>
     <string name="UserInfoUpdateFragment">UserInfoUpdateFragment</string>
     <string name="RacerFragment">RacerFragment</string>
+    <string name="RaceManagement">RaceManagement</string>
 </resources>
