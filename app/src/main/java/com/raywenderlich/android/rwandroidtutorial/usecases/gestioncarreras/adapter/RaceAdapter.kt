@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.models.Race
 
-class RaceAdapter: RecyclerView.Adapter<RaceAdapter.RaceViewHolder>() {
+class RaceAdapter(private val onClick: (Race) -> Unit): RecyclerView.Adapter<RaceAdapter.RaceViewHolder>() {
 
     var races = listOf<Race>()
         set(value) {
@@ -21,7 +21,7 @@ class RaceAdapter: RecyclerView.Adapter<RaceAdapter.RaceViewHolder>() {
         val view = LayoutInflater
             .from(parent.context)
             .inflate(R.layout.race_list_item, parent, false)
-        return RaceViewHolder(view)
+        return RaceViewHolder(view, onClick)
     }
 
     override fun getItemCount() = races.size
@@ -31,13 +31,24 @@ class RaceAdapter: RecyclerView.Adapter<RaceAdapter.RaceViewHolder>() {
         holder.bind(race)
     }
 
-    class  RaceViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    class  RaceViewHolder(view: View, val onClick: (Race) -> Unit): RecyclerView.ViewHolder(view) {
+        private var currentRace: Race? = null
+
+        init {
+            view.setOnClickListener {
+                currentRace?.let {
+                    onClick(it)
+                }
+            }
+        }
+
         val imgRace: ImageView = view.findViewById(R.id.imgRace)
         val lblRaceName: TextView = view.findViewById(R.id.lblRaceName)
         val lblDate: TextView = view.findViewById(R.id.lblDate)
         val lblCedeAcronym: TextView = view.findViewById(R.id.lblCedeAcronym)
 
         fun bind(race: Race) {
+            currentRace = race
             lblRaceName.text = race.name
             lblDate.text = race.date
             lblCedeAcronym.text = race.UC.acronym
