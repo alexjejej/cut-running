@@ -2,6 +2,7 @@ package com.raywenderlich.android.rwandroidtutorial.provider.services
 
 import com.raywenderlich.android.rwandroidtutorial.common.response.IResponse
 import com.raywenderlich.android.rwandroidtutorial.models.Race
+import com.raywenderlich.android.rwandroidtutorial.models.dto.RaceDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -19,10 +20,10 @@ interface RaceService {
     suspend fun getRaceById(@Path("id") id: Int): Response<IResponse<Race>>
 
     @POST("race")
-    suspend fun addRace(@Body race: Race): Response<IResponse<Boolean>>
+    suspend fun addRace(@Body race: RaceDto): Response<IResponse<Boolean>>
 
     @PUT("race")
-    suspend fun updateRace(@Body race: Race): Response<IResponse<Boolean>>
+    suspend fun updateRace(@Body race: RaceDto): Response<IResponse<Boolean>>
 
     @DELETE("race/{id}")
     suspend fun deleteRace(): Response<IResponse<Boolean>>

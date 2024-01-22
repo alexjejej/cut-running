@@ -21,4 +21,14 @@
   <color name="cut7">#6a7c6c</color>
   <color name="cut8">#434d59</color>
   <color name="cut9">#54546c</color>
+
+  <!-- BOOTSTRAP COLORS -->
+  <color name="danger_color">#ff4444</color>
+  <color name="danger_color_dark">#cc0000</color>
+  <color name="warning_color">#ffbb33</color>
+  <color name="warning_color_dark">#ff8800</color>
+  <color name="success_color">#00c851</color>
+  <color name="success_color_dark">#007e33</color>
+  <color name="info_color">#33b5e5</color>
+  <color name="info_color_dark">#0099cc</color>
 </resources>
