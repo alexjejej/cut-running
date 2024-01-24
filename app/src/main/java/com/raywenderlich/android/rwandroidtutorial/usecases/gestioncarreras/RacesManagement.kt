@@ -75,18 +75,25 @@ class RacesManagement : Fragment() {
 
     private fun getRaces() {
         CoroutineScope(Dispatchers.IO).launch {
-            val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).getRaces()
-            val result = call.body()
-            requireActivity().runOnUiThread {
-                if (result!!.isSuccess) {
-                    raceAdapter.races = result.data!!
+            try {
+                val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).getRaces()
+                val result = call.body()
+                requireActivity().runOnUiThread {
+                    if (result != null && result.isSuccess) {
+                        raceAdapter.races = result.data!!
+                    } else {
+                        Toast.makeText(requireContext(), "${result?.message ?: "Error desconocido"}", Toast.LENGTH_LONG).show()
+                    }
                 }
-                else {
-                    Toast.makeText(requireContext(), "${result.message}", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error al obtener carreras", e)
+                requireActivity().runOnUiThread {
+                    Toast.makeText(requireContext(), "Error con la conexión", Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
+
 
     private fun tempGetRaces() {
         val tempRaces: List<Race> = listOf(
@@ -121,16 +128,24 @@ class RacesManagement : Fragment() {
         )
 
         CoroutineScope(Dispatchers.IO).launch {
-            val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).addRace(race)
-            val result = call.body()
-            requireActivity().runOnUiThread {
-                if (result!!.isSuccess) {
-                    Toast.makeText(requireContext(), "Carrera agregada exitosamente", Toast.LENGTH_LONG).show()
-                    getRaces()
+            try {
+                val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).addRace(race)
+                val result = call.body()
+                requireActivity().runOnUiThread {
+                    if (result != null && result.isSuccess) {
+                        Toast.makeText(requireContext(), "Carrera agregada exitosamente", Toast.LENGTH_LONG).show()
+                        getRaces()
+                    } else {
+                        Toast.makeText(requireContext(), "${result?.message ?: "Error desconocido"}", Toast.LENGTH_LONG).show()
+                    }
                 }
-                else
-                    Toast.makeText(requireContext(), "${result.message}", Toast.LENGTH_LONG).show()
+            } catch (e: Exception) {
+                Log.e(TAG, "Error al agregar carrera", e)
+                requireActivity().runOnUiThread {
+                    Toast.makeText(requireContext(), "Error con la conexión", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
+
 }
