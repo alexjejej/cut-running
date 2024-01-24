@@ -77,12 +77,22 @@ class NavBarFragment : Fragment() {
 
         // Obtencion del nombre de ususario de shared preferences y formateo para obtener los dos primeros valores
         Session.readPrefs(activity)
-        val userName: List<String>? = Session.userName.split(" ")
+        val userName: List<String>? = Session.userName.split(" ").filter { it.isNotEmpty() }
+
+        // Verifica si userName tiene al menos un elemento
+        val displayName = if (userName != null && userName.isNotEmpty()) {
+            // Usa solo el primer nombre si no hay apellido
+            if (userName.size > 1) "${userName[0]} ${userName[1]}" else userName[0]
+        } else {
+            "userName Nulo" // O alguna cadena por defecto si userName es nulo o vacío
+        }
+
         // Accedemos a modificar el header de Nav Bar
         var header: View = binding.navigationView.getHeaderView(0)
-        header.findViewById<TextView>(R.id.txtUserName).text = userName?.get(0) + " " + userName?.get(1)
+        header.findViewById<TextView>(R.id.txtUserName).text = displayName
         Picasso.get().load(Session.userPhoto).into(header.findViewById<ImageView>(R.id.profilePhoto))
         binding.navigationView.setNavigationItemSelectedListener { item -> setNavigation(item) }
+
     }
 
     /** Controla la navegacion del menu **/

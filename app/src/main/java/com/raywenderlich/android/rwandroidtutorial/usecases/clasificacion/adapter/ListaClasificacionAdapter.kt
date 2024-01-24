@@ -8,9 +8,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.raywenderlich.android.runtracking.R
-import com.raywenderlich.android.rwandroidtutorial.models.Posicion
+import com.raywenderlich.android.rwandroidtutorial.models.Classification
 
-class ListaClasificacionAdapter(private val listaclasificacion:List<Posicion>, private val context : Context) : RecyclerView.Adapter<ListaClasificacionAdapter.ListaClasificacionViewHolder>() {
+class ListaClasificacionAdapter(private val listaclasificacion:List<Classification>, private val context : Context) : RecyclerView.Adapter<ListaClasificacionAdapter.ListaClasificacionViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaClasificacionViewHolder {
         val LayoutInflater = LayoutInflater.from(parent.context).inflate(R.layout.item_listaclasificacion,parent,false)

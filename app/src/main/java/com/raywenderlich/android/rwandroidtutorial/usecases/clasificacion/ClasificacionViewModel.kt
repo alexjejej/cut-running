@@ -5,56 +5,38 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.database.ktx.getValue
-import com.google.firebase.ktx.Firebase
-import com.raywenderlich.android.rwandroidtutorial.models.Posicion
+import com.raywenderlich.android.rwandroidtutorial.models.Classification
+import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
+import com.raywenderlich.android.rwandroidtutorial.provider.services.ClassificationService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class ClasificacionViewModel: ViewModel() {
-//    private val dbref = FirebaseDatabase.getInstance()
-//        .getReference("clasificacion").child("historica")
-    private lateinit var database: DatabaseReference
+class ClasificacionViewModel : ViewModel() {
 
-    private var auxArrayList: ArrayList<Posicion> = ArrayList()
-    private var _listaClasificacion: MutableLiveData<ArrayList<Posicion>> = MutableLiveData<ArrayList<Posicion>>()
-    val listaClasificacion: LiveData<ArrayList<Posicion>>
+    private val classificationService = RetrofitInstance.getRetrofit().create(ClassificationService::class.java)
+    private var _listaClasificacion = MutableLiveData<ArrayList<Classification>>()
+    val listaClasificacion: LiveData<ArrayList<Classification>>
         get() = _listaClasificacion
 
     init {
-        // this.obtenerClasificacion()
-//        Log.d("ClasificacionVM", "Inicio del ViewModel Clasificacion")
-        database = Firebase.database.getReference("clasificacion").child("historica")
-
-        lateinit var positionListener: ValueEventListener
-
-        viewModelScope.launch(Dispatchers.IO) {
-            positionListener = object: ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    Log.d("ClasificacionVM", "${snapshot.childrenCount}")
-                    for (children in snapshot.children) {
-                        Log.d("ClasificacionVM", "${children.getValue(Posicion::class.java)?.nombre ?: "No name"}")
-                        val data = children.getValue(Posicion::class.java)
-                        auxArrayList.add( data!! )
-                    }
-                    _listaClasificacion.value = auxArrayList
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.w("Cancelled", "loadPosition: onCancelled", error.toException())
-                }
-            }
-            database.addValueEventListener(positionListener)
-        }
+        obtenerClasificaciones()
     }
 
-    fun obtenerClasificacion() {
-
+    private fun obtenerClasificaciones() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = classificationService.getClassifications()
+                if (response.isSuccessful && response.body() != null) {
+                    val responseData = response.body()!!.data // Asume que IResponse tiene un campo 'data'
+                    if (responseData != null) {
+                        _listaClasificacion.postValue(ArrayList(responseData))
+                    }
+                } else {
+                    Log.e("API Error", "Error al obtener clasificaciones")
+                }
+            } catch (e: Exception) {
+                Log.e("API Error", "Excepción al obtener clasificaciones", e)
+            }
+        }
     }
 }

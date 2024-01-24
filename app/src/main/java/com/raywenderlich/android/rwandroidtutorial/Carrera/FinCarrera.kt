@@ -1,5 +1,6 @@
 package com.raywenderlich.android.rwandroidtutorial.Carrera
 
+import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -13,14 +14,21 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
+import com.raywenderlich.android.rwandroidtutorial.models.Classification
 import com.raywenderlich.android.rwandroidtutorial.usecases.logros.ListaNotificacion
 import com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion.ListaClasificacion
 import com.raywenderlich.android.rwandroidtutorial.usecases.HomeActivity
 import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
 import com.raywenderlich.android.rwandroidtutorial.provider.DatosUsuario
+import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
+import com.raywenderlich.android.rwandroidtutorial.provider.services.ClassificationService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,6 +36,7 @@ import java.util.*
 class FinCarrera : AppCompatActivity() {
     val chanelID = "logros"
     val chanelName = "logros"
+    private val classificationService = RetrofitInstance.getRetrofit().create(ClassificationService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +54,7 @@ class FinCarrera : AppCompatActivity() {
 
         // Obtener nombre de usuario
         val userName = DatosUsuario.getUserName(this) ?: "NombrePorDefecto"
+        val email = DatosUsuario.getEmail(this)
 
 
         //Obtener datos de sqlite
@@ -67,6 +77,7 @@ class FinCarrera : AppCompatActivity() {
             Log.d("DBData", "Pasos Totales para Alex: $pasosTotales")
             consultarlogro(pasosTotales)
             txtPasosT.text = (pasosTotales.toString()+" pasos")
+            clasificacion(pasosTotales, email)
         }
 
         if (cursorDistancia.moveToFirst()) {
@@ -76,24 +87,51 @@ class FinCarrera : AppCompatActivity() {
         }
 
 
-
         cursorPasosHoy.close()
         cursorPasosTotales.close()
         cursorDistancia.close()
 
-        //clasificacion(pasosT,usuario)
-
 
     }
 
-    private fun clasificacion(pasosT: Int, usuario: String) {
-        //Creador de logros aleatorios
-        val database = Firebase.database
-        val myRef = database.getReference("clasificacion").child("historica").child(""+usuario)
-        val lista = ListaClasificacion("0",""+usuario,pasosT)
-        myRef.setValue(lista)
+    private fun clasificacion(pasosT: Int, email: String) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                // Obtén la clasificación actual por correo electrónico
+                val response = classificationService.getClassificationById(email)
+                if (response.isSuccessful && response.body() != null) {
+                    val clasificacionActual = response.body()!!.data
 
+                    // Comprueba si la clasificación actual no es nula
+                    if (clasificacionActual != null) {
+                        // Crea una nueva instancia con los datos actualizados
+                        val clasificacionActualizada = clasificacionActual.copy(pasos = pasosT+1)
+
+                        // Envía la actualización
+                        val updateResponse = classificationService.updateClassification(clasificacionActualizada)
+                        if (updateResponse.isSuccessful) {
+                            // Manejo exitoso
+                            Log.d("Clasificacion Actualizada", "Clasificación actualizada con éxito")
+                        } else {
+                            // Manejo de errores
+                            Log.e("API Error", "Error al actualizar clasificación")
+                        }
+                    } else {
+                        // Manejo del caso en que la clasificación no se encuentra
+                        Log.e("API Error", "Clasificación no encontrada para el correo electrónico: $email")
+                    }
+                } else {
+                    // Manejo de errores
+                    Log.e("API Error", "Error al obtener clasificación por correo electrónico")
+                }
+            } catch (e: Exception) {
+                // Manejo de excepciones
+                Log.e("API Error", "Excepción al actualizar clasificación", e)
+            }
+        }
     }
+
+
 
 
     private fun CrearDatos() {
