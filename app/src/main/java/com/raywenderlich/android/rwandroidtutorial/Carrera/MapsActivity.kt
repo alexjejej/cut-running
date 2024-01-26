@@ -248,16 +248,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
 
     // Obtener el nombre del usuario de SharedPreferences
 
-    val userName = DatosUsuario.getUserName(this) ?: "Error"
+    val email = DatosUsuario.getEmail(this) ?: "Error"
 
     val db = BDsqlite(this)
-    db.upsertData(userName, PasosRecorridoHoy, PasosTotales, totalDistanceTravelled)
+    db.upsertData(email, PasosRecorridoHoy, PasosTotales, totalDistanceTravelled)
 
 
-    // Obtener datos para el usuario "Alex"
-    val cursorPasosHoy = db.getData(BDsqlite.getColumnPasosHoy(), userName)
-    val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), userName)
-    val cursorDistancia = db.getData(BDsqlite.getColumnDistancia(), userName)
+    // Obtener datos para el email registrado
+    val cursorPasosHoy = db.getData(BDsqlite.getColumnPasosHoy(), email)
+    val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), email)
+    val cursorDistancia = db.getData(BDsqlite.getColumnDistancia(), email)
 
 
 // Leer y mostrar los datos de cada consulta
@@ -295,21 +295,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback, SensorEventListene
     txtPasosT.setVisibility(View.VISIBLE);
 
     // Obtener el nombre del usuario de SharedPreferences
-    val userName = DatosUsuario.getUserName(this) ?: "Error"
+    val email = DatosUsuario.getEmail(this)
 
     val db = BDsqlite(this)
-    val pasos: Cursor = db.getData("pasoshoy",userName)
-    val pasosT: Cursor = db.getData("pasostotales",userName)
-    // Obtener datos para el usuario
-    if (pasos.moveToFirst()) {
-      val numeroDePasosHoy = pasos.getString(0)
-      txtPasos.text = "Pasos hoy: $numeroDePasosHoy"
-    }
+    val pasos = db.getIntData(email,BDsqlite.COLUMN_PASOS_HOY)
+    val pasosT = db.getIntData(email,BDsqlite.COLUMN_PASOS_TOTALES)
 
-    if (pasosT.moveToFirst()) {
-      val numeroDePasosTotales = pasosT.getString(0)
-      txtPasosT.text = "Pasos T: $numeroDePasosTotales"
-    }
+      txtPasos.text = "Pasos hoy: $pasos"
+
+      txtPasosT.text = "Pasos T: $pasosT"
+
 
   }
 

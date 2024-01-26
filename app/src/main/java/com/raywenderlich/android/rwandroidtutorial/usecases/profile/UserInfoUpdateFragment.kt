@@ -4,16 +4,25 @@ import android.content.ContentValues
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
 import com.raywenderlich.android.rwandroidtutorial.provider.DatosUsuario
+import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
+import com.raywenderlich.android.rwandroidtutorial.provider.services.UserService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * A simple [Fragment] subclass.
@@ -24,85 +33,153 @@ class UserInfoUpdateFragment : Fragment() {
     private lateinit var editTexts: List<EditText>
     private lateinit var saveButton: Button
     private lateinit var backButton: Button
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    private lateinit var SpecialityIDSpinner: Spinner
+    private val userService: UserService = RetrofitInstance.getRetrofit().create(
+        UserService::class.java)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_user_info_update, container, false)
-        //Iniciar viewers para optimizar app
         initializeViews(view)
-        //Funcionas para activar el boton de guardar
         setupTextWatchers()
-        checkFieldsForEmptyValues()
-        //Acciones de los botones
-        view.findViewById<Button>(R.id.botonVolverUpdate).setOnClickListener {
-            navigateToFragment(ProfileFragment())
-        }
-        view.findViewById<Button>(R.id.botonGuardarUpdate).setOnClickListener {
-            GuardarDatos(view)
-        }
-
         return view
     }
-
-
-    private fun GuardarDatos(view: View) {
-        // Obtener el nombre del usuario
-        val nombreUsuario = DatosUsuario.getUserName(requireContext()) ?: "Error"
-
-        // Obtener referencias a los EditTexts
-        val edadEditText = view.findViewById<EditText>(R.id.edadEditTextUpdate)
-        val estaturaEditText = view.findViewById<EditText>(R.id.estaturaEditTextUpdate)
-        val pesoEditText = view.findViewById<EditText>(R.id.pesoEditTextUpdate)
-        val centroUniversitarioEditText = view.findViewById<EditText>(R.id.centroUniversitarioEditTextUpdate)
-        val carreraEditText = view.findViewById<EditText>(R.id.carreraEditTextUpdate)
-
-        val botonGuardar = view.findViewById<Button>(R.id.botonGuardarUpdate)
-        botonGuardar.setOnClickListener {
-            val values = ContentValues()
-
-            // Agregar solo si el campo no está vacío
-            edadEditText.text.toString().takeIf { it.isNotBlank() }?.let { edad ->
-                values.put(BDsqlite.COLUMN_EDAD, edad)
-            }
-            estaturaEditText.text.toString().takeIf { it.isNotBlank() }?.let { estatura ->
-                values.put(BDsqlite.COLUMN_ESTATURA, estatura)
-            }
-            pesoEditText.text.toString().takeIf { it.isNotBlank() }?.let { peso ->
-                values.put(BDsqlite.COLUMN_PESO, peso)
-            }
-            centroUniversitarioEditText.text.toString().takeIf { it.isNotBlank() }?.let { centroUniversitario ->
-                values.put(BDsqlite.COLUMN_CENTRO_UNIVERSITARIO, centroUniversitario)
-            }
-            carreraEditText.text.toString().takeIf { it.isNotBlank() }?.let { carrera ->
-                values.put(BDsqlite.COLUMN_CARRERA, carrera)
-            }
-
-            // Guardar datos en la base de datos
-            val myDatabase = BDsqlite(context)
-            myDatabase.insertOrUpdate(nombreUsuario, values)
-
-            // Mensaje de éxito
-            Toast.makeText(context, "Datos guardados correctamente", Toast.LENGTH_SHORT).show()
-
-            // Volver al perfil
-            navigateToFragment(ProfileFragment())
-        }
-    }
-
-
-
 
     private fun initializeViews(view: View) {
         editTexts = listOf(
             view.findViewById(R.id.edadEditTextUpdate),
             view.findViewById(R.id.estaturaEditTextUpdate),
             view.findViewById(R.id.pesoEditTextUpdate),
-            view.findViewById(R.id.centroUniversitarioEditTextUpdate),
-            view.findViewById(R.id.carreraEditTextUpdate)
+            view.findViewById(R.id.codigoEditTextUpdate)
         )
 
-        saveButton = view.findViewById(R.id.botonGuardarUpdate)
+        SpecialityIDSpinner = view.findViewById(R.id.SpecialityIDSpinnerUpdate)
+        setupCentroUniversitarioSpinner()
+
+        saveButton = view.findViewById<Button>(R.id.botonGuardarUpdate).apply {
+            setOnClickListener { GuardarDatosAPI() }
+        }
+
+        backButton = view.findViewById<Button>(R.id.botonVolverUpdate).apply {
+            setOnClickListener { navigateToFragment(ProfileFragment()) }
+        }
+    }
+
+    private fun setupCentroUniversitarioSpinner() {
+        // Crea un ArrayAdapter usando un array de strings y un layout por defecto para el spinner
+        ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.centros_universitarios_array,
+            android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            // Especifica el layout a usar cuando aparece la lista de opciones
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            // Aplica el adaptador al spinner
+            SpecialityIDSpinner.adapter = adapter
+        }
+    }
+
+
+    private fun GuardarDatosAPI() {
+        val email = DatosUsuario.getEmail(requireActivity()) ?: return
+
+        // Realiza la lógica en una coroutina
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val responseActual = userService.getUserByEmail(email)
+                val usuarioActual = responseActual.body()?.data
+
+                // Construir objeto User con los nuevos datos
+                val userActualizado = usuarioActual?.copy(
+                    age = editTexts[0].text.toString().takeIf { it.isNotBlank() }?.toIntOrNull(),
+                    height = editTexts[1].text.toString().takeIf { it.isNotBlank() }?.toIntOrNull(),
+                    weight = editTexts[2].text.toString().takeIf { it.isNotBlank() }?.toIntOrNull(),
+                    specialtyId = when (SpecialityIDSpinner.selectedItem.toString()) {
+                        "Ingeniería en Ciencias Computacionales" -> 1
+                        "Ingeniería en Nanotecnología" -> 2
+                        else -> null
+                    },
+                    code = editTexts[3].text.toString().takeIf { it.isNotBlank() }?.toIntOrNull(),
+                    email = email
+                )
+
+                // Verificar si hay cambios antes de llamar a la API
+                if (usuarioActual != userActualizado) {
+                    var updateResponse = userService.updateUser(userActualizado!!)
+
+                    withContext(Dispatchers.Main) {
+                        if (updateResponse.isSuccessful && updateResponse.body()?.isSuccess == true) {
+                            Toast.makeText(requireContext(), "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
+                            GuardarDatosSQLite()
+                        } else {
+                            Log.e("API Error", "Respuesta fallida: ${updateResponse.errorBody()?.string()}")
+                            Toast.makeText(requireContext(), "Error al actualizar datos en la API", Toast.LENGTH_SHORT).show()                        }
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "No hay cambios para actualizar", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(), "Error al guardar datos: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Log.e("API Error", "Error al actualizar datos: ", e)
+                }
+            }
+        }
+    }
+
+
+
+
+    private fun GuardarDatosSQLite() {
+        val email = DatosUsuario.getEmail(requireActivity())
+
+        // Obtener referencias a los EditTexts (asumiendo que ya están inicializadas en 'initializeViews')
+        val edadEditText = editTexts[0]
+        val estaturaEditText = editTexts[1]
+        val pesoEditText = editTexts[2]
+        val codigoEditText = editTexts[3]
+
+
+        val values = ContentValues()
+
+        // Agregar solo si el campo no está vacío
+        edadEditText.text.toString().takeIf { it.isNotBlank() }?.let { edad ->
+            values.put(BDsqlite.COLUMN_EDAD, edad.toInt())
+        }
+        estaturaEditText.text.toString().takeIf { it.isNotBlank() }?.let { estatura ->
+            values.put(BDsqlite.COLUMN_ESTATURA, estatura.toInt())
+        }
+        pesoEditText.text.toString().takeIf { it.isNotBlank() }?.let { peso ->
+            values.put(BDsqlite.COLUMN_PESO, peso.toInt())
+        }
+        codigoEditText.text.toString().takeIf { it.isNotBlank() }?.let { edad ->
+            values.put(BDsqlite.COLUMN_CODE, edad.toInt())
+        }
+        // Obtener specialtyId del Spinner
+        val specialtyId = when (SpecialityIDSpinner.selectedItem.toString()) {
+            "Ingeniería en Ciencias Computacionales" -> 1
+            "Ingeniería en Nanotecnología" -> 2
+            else -> null
+        }
+
+        specialtyId?.let {
+            values.put(BDsqlite.COLUMN_SPECIALITYID, it)
+        }
+
+        // Guardar datos en SQLite
+        val myDatabase = BDsqlite(requireContext())
+        try{
+            myDatabase.insertOrUpdate(email, values)
+            navigateToFragment(ProfileFragment())
+        }catch (e: Exception){
+            Log.d("UF","No se guardó en la bd, $e")
+        }
+
 
     }
+
+
 
     private fun setupTextWatchers() {
         val textWatcher = object : TextWatcher {

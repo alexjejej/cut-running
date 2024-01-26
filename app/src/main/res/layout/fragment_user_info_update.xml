@@ -28,12 +28,22 @@
             android:layout_gravity="center"
             android:fontFamily="sans-serif-medium"
             android:text="Información disponible a editar"
-            android:textSize="20sp" />
+            android:textSize="24sp" />
 
         </LinearLayout>
+
+        <EditText
+            android:id="@+id/codigoEditTextUpdate"
+            android:layout_width="200dp"
+            android:layout_height="0dp"
+            android:layout_weight="10"
+            android:maxLength="9"
+            android:hint="Código"
+            android:inputType="number" />
+
         <EditText
             android:id="@+id/edadEditTextUpdate"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="0dp"
             android:layout_weight="10"
             android:hint="Edad"
@@ -41,33 +51,30 @@
 
         <EditText
             android:id="@+id/estaturaEditTextUpdate"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="0dp"
             android:layout_weight="10"
             android:hint="Estatura (cm)"
-            android:inputType="numberDecimal" />
+            android:inputType="number"/>
 
         <EditText
             android:id="@+id/pesoEditTextUpdate"
-            android:layout_width="wrap_content"
+            android:layout_width="200dp"
             android:layout_height="0dp"
             android:layout_weight="10"
             android:hint="Peso (kg)"
-            android:inputType="numberDecimal" />
+            android:inputType="number" />
 
-        <EditText
-            android:id="@+id/centroUniversitarioEditTextUpdate"
-            android:layout_width="wrap_content"
+        <Spinner
+            android:id="@+id/SpecialityIDSpinnerUpdate"
+            android:layout_width="250dp"
             android:layout_height="0dp"
             android:layout_weight="10"
-            android:hint="Centro Universitario" />
 
-        <EditText
-            android:id="@+id/carreraEditTextUpdate"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_weight="10"
-            android:hint="Carrera" />
+            android:prompt="@string/Speciality_ID_prompt" />
+
+
+
 
         <View
             android:layout_width="match_parent"

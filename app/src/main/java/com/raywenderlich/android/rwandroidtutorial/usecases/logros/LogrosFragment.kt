@@ -39,7 +39,7 @@ class LogrosFragment : Fragment() {
         // Observer de LiveData de ViewModel
         logrosViewModel.listaLogros.observe(viewLifecycleOwner, Observer { logro ->
             Log.d("ClasFragment", "Actualizacion de datos de LiveData")
-            binding.rvLogrosF.adapter = ListaLogrosAdapter(logro, context?.applicationContext!!)
+            binding.rvLogrosF.adapter = ListaLogrosAdapter(logro, requireActivity(), requireContext())
         })
     }
 
