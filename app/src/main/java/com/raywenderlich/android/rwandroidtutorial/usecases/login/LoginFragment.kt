@@ -11,8 +11,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -26,7 +28,13 @@ import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.FragmentLoginBinding
 import com.raywenderlich.android.rwandroidtutorial.common.navigation.NavBarFragment
 import com.raywenderlich.android.rwandroidtutorial.models.Session
+import com.raywenderlich.android.rwandroidtutorial.models.User
 import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
+import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
+import com.raywenderlich.android.rwandroidtutorial.provider.services.ClassificationService
+import com.raywenderlich.android.rwandroidtutorial.provider.services.UserService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 /**
@@ -42,6 +50,9 @@ class LoginFragment : Fragment() {
     private lateinit var signInRequest: BeginSignInRequest
     private lateinit var oneTapClient: SignInClient
     private var prefs: SharedPreferences? = null
+    //instancia de UserService
+    private val userService: UserService = RetrofitInstance.getRetrofit().create(
+        UserService::class.java)
 
     private val REQUEST_ONE_TAP = 2 // Puede ser cualquier valor entero unico para el Fragment
 
@@ -110,37 +121,95 @@ class LoginFragment : Fragment() {
             putString( getString(R.string.prefs_user_photo), userData!!.photoUrl.toString() )
             commit()
             Log.d("nombreuser",userData.displayName!!)
-            ConsultarBD(userData.displayName.toString())
+            //llamar a consultarDB
+            userData.email?.let { ConsultarBD(userData.displayName.toString(), it) }
         }
         session()
     }
 
-    private fun ConsultarBD(nombre: String) {
+    private fun ConsultarBD(nombre: String, email: String) {
+
+        email.let { userEmail ->
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    val response = userService.getUserByEmail(userEmail)
+
+                    if (response.isSuccessful) {
+                        //Usuario viejo
+                        val user = response.body()?.data
+                        Log.d("LF Login Success","email encontrado en la bd $email")
+                        if (user != null) {
+                            GenerarSQLite(user)
+                        }
+                    } else {
+                        // Manejo de usuario nuevo
+                        Log.d("LF Login Error","No se encontró el email en la BD")
+                        RegistrarUsuario(nombre, email)
+
+                    }
+                } catch (e: Exception) {
+                    // Manejo de excepciones de red
+                    launch(Dispatchers.Main) {
+                        // Mostrar algún mensaje de error en la UI
+                        Log.d("LF Login Error","Error de red")
+                    }
+                }
+            }
+        }
+
+    }
+
+    private fun RegistrarUsuario(nombre: String, email: String) {
+        val nuevoUsuario = User(firstname = nombre, email = email)
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val response = userService.addUser(nuevoUsuario)
+                if (response.isSuccessful) {
+                    // Registro exitoso
+                    Log.d("LF Login Add","Registro de $email exitoso")
+                    GenerarSQLite(nuevoUsuario)
+                } else {
+                    // Manejo de errores
+                    Log.d("LF Error Login","Error al registrar $email")
+                }
+            } catch (e: Exception) {
+                // Manejo de excepciones
+                Log.d("LF Error Login","Se obtuvo la excepcion: $e")
+            }
+        }
+    }
+
+    private fun GenerarSQLite(user: User) {
+        val specialidad = user.specialty?.id
+        Log.d("LF data","datos: $user")
 
         // Crear una instancia de la base de datos
         val db = BDsqlite(requireContext())
+        // Preparar los valores por defecto
 
-        //Consultar BD si ya existe registro del usuario
-        val BD = 1 //En lo que se implementa la BD
-        if (BD == 0){
+        val values = ContentValues()
+        values.put(BDsqlite.COLUMN_CODE, user.code)
+        values.put(BDsqlite.COLUMN_FIRSTNAME, user.firstname)
+        values.put(BDsqlite.COLUMN_EMAIL, user.email)
+        values.put(BDsqlite.COLUMN_PASOS_HOY, 0)
+        values.put(BDsqlite.COLUMN_PASOS_TOTALES, user.totalsteps)
+        values.put(BDsqlite.COLUMN_DISTANCIA, user.totaldistance)
+        values.put(BDsqlite.COLUMN_EDAD, user.age)
+        values.put(BDsqlite.COLUMN_ESTATURA, user.height)
+        values.put(BDsqlite.COLUMN_PESO, user.weight)
+        values.put(BDsqlite.COLUMN_SPECIALITYID, specialidad)
+        values.put(BDsqlite.COLUMN_UPDATE_DATE, user.updateDate)
 
-        }else{
-            // Preparar los valores por defecto
-            val values = ContentValues()
-            values.put(BDsqlite.COLUMN_NOMBRE, nombre)
-            values.put(BDsqlite.COLUMN_PASOS_HOY, 0)
-            values.put(BDsqlite.COLUMN_PASOS_TOTALES, 0)
-            values.put(BDsqlite.COLUMN_DISTANCIA, 0.0f)
-            values.put(BDsqlite.COLUMN_EDAD, 0)
-            values.put(BDsqlite.COLUMN_ESTATURA, 0)
-            values.put(BDsqlite.COLUMN_PESO, 0.0f)
-            values.put(BDsqlite.COLUMN_CENTRO_UNIVERSITARIO, "")
-            values.put(BDsqlite.COLUMN_CARRERA, "")
+        // crear datos base en SQLite
+        try {
+            db.newData(user.email, values)
+            Log.d("LF bd","bd creada con exito")
 
-            // Insertar o actualizar en la base de datos
-            db.insertOrUpdate(nombre, values)
-            Log.d("bd","bd creada con exito")
+        }catch (e:Exception){
+            Log.d("LF bd Error","bd creada sin exito, da la siguiente Exception: $e")
         }
+
 
     }
 

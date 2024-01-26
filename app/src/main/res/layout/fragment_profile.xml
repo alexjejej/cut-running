@@ -175,10 +175,20 @@
             >
 
             <TextView
-                android:id="@+id/txtNombreUsuarioProfile"
+                android:id="@+id/txtCodigoProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
+                android:textSize="15dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Código: 219912434"
+                />
+
+            <TextView
+                android:id="@+id/txtNombreUsuarioProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:textSize="15dp"
                 android:fontFamily="sans-serif-medium"
                 android:text="Nombre: Alejandro Garcia"
@@ -220,15 +230,7 @@
                 android:fontFamily="sans-serif-medium"
                 android:text="Correo: alex.grc.18@gmail.com"
                 />
-            <TextView
-                android:id="@+id/txtCUUsuarioProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="15dp"
-                android:fontFamily="sans-serif-medium"
-                android:text="Centro Universtario: CUT"
-                />
+
             <TextView
                 android:id="@+id/txtCarreraUsuarioProfile"
                 android:layout_width="wrap_content"

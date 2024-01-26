@@ -1,6 +1,7 @@
 package com.raywenderlich.android.rwandroidtutorial.usecases.logros.adapter
 
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
@@ -16,20 +17,18 @@ import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
 import com.raywenderlich.android.rwandroidtutorial.provider.DatosUsuario
 
 
-class ListaLogrosAdapter(private val logrosList:ArrayList<Logro>, private val context : Context) : RecyclerView.Adapter<ListaLogrosAdapter.ListaLogrosViewHolder>() {
+class ListaLogrosAdapter(private val logrosList:ArrayList<Logro>, private val activity : Activity, private val context : Context) : RecyclerView.Adapter<ListaLogrosAdapter.ListaLogrosViewHolder>() {
 
     var pasosT = obtenerpasos()
 
     private fun obtenerpasos(): Int {
         // Obtener nombre de usuario
-        val userName = DatosUsuario.getUserName(context) ?: "NombrePorDefecto"
+        val email = DatosUsuario.getEmail(activity) ?: "NombrePorDefecto"
         //Obtener datos de sqlite
         val db = BDsqlite(context)
         // Obtener datos para el usuario
-        val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), userName)
-        cursorPasosTotales.moveToFirst()
-        val pasosTotales = cursorPasosTotales.getInt(0)
-        return pasosTotales
+        val PasosTotales = db.getIntData(email,BDsqlite.COLUMN_PASOS_TOTALES)
+        return PasosTotales
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaLogrosViewHolder {
