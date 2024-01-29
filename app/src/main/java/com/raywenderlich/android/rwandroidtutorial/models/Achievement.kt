@@ -1,9 +1,12 @@
 package com.raywenderlich.android.rwandroidtutorial.models
 
-data class Achievement (
-    val id: Int,
-    val name: String,
-    val description: String,
-    val enabled: Int,
-    val updateDate: String
+data class Achievement(
+    val id: Int?=null,
+    var name:String?=null,
+    var description:String,
+    var progreso:String?=null,
+    var steps:Int,
+    var photo:String?=null,
+    val enabled: Int?=null,
+    val updateDate: String?=null
 )
