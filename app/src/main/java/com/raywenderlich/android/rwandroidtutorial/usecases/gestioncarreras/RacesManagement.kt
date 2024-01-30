@@ -5,22 +5,37 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
+import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
+import com.google.android.material.timepicker.TimeFormat
+import com.google.api.Context
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.FragmentRacesManagementBinding
+import com.raywenderlich.android.runtracking.databinding.RaceAddDialogFragmentBinding
 import com.raywenderlich.android.rwandroidtutorial.models.Race
 import com.raywenderlich.android.rwandroidtutorial.models.UniversityCenter
 import com.raywenderlich.android.rwandroidtutorial.models.dto.RaceDto
 import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
 import com.raywenderlich.android.rwandroidtutorial.provider.services.RaceService
 import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.adapter.RaceAdapter
+import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.addracedialog.AddRaceDialog
+import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.viewmodel.RaceManagementViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Calendar
+import java.util.Date
+import java.util.TimeZone
 
 /**
  * A simple [Fragment] subclass.
@@ -30,6 +45,7 @@ import kotlinx.coroutines.launch
 class RacesManagement : Fragment() {
     private var _binding: FragmentRacesManagementBinding? = null
     private val binding get() = _binding!!
+    private val raceManagementViewModel: RaceManagementViewModel by viewModels()
     private val TAG: String = this::class.java.simpleName
 
     val raceAdapter: RaceAdapter = RaceAdapter { race -> onItemClick(race) }
@@ -46,19 +62,19 @@ class RacesManagement : Fragment() {
         _binding = FragmentRacesManagementBinding.inflate(inflater, container, false)
         binding.rcvRaces.adapter = raceAdapter
         binding.rcvRaces.setHasFixedSize(true)
-        getRaces()
-//        tempGetRaces()
+//        getRaces()
+        raceManagementViewModel.raceModel.observe(viewLifecycleOwner, Observer {
+            raceAdapter.races = it!!
+        })
+        raceManagementViewModel.getRaces()
+
         binding.btnShowCreateRace.setOnClickListener {
-            val dialogView: View = inflater.inflate(R.layout.race_add_dialog_fragment, null)
-            MaterialAlertDialogBuilder(requireContext())
-                .setView(dialogView)
-                .setPositiveButton(resources.getString(R.string.accept)) { dialog, which ->
-                    addRace(dialogView)
-                }
-                .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
-                    dialog.cancel()
-                }
-                .show()
+            /**
+             * Shows a dialog to add race
+             */
+            val dialogBinding = RaceAddDialogFragmentBinding.inflate(layoutInflater)
+            val addRaceDialog: AddRaceDialog = AddRaceDialog(requireContext(), dialogBinding, resources, childFragmentManager)
+            addRaceDialog.showDialog()
         }
 
         return binding.root
@@ -69,12 +85,18 @@ class RacesManagement : Fragment() {
         fun newInstance(param1: String, param2: String) = RacesManagement()
     }
 
+    /**
+     * Action when click on list item
+     */
     private fun onItemClick(race: Race) {
         Toast.makeText(requireContext(), "${race.id} - ${race.name}", Toast.LENGTH_LONG).show()
     }
 
+    /**
+     * Get list of Races
+     */
     private fun getRaces() {
-        CoroutineScope(Dispatchers.IO).launch {
+        /*CoroutineScope(Dispatchers.IO).launch {
             try {
                 val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).getRaces()
                 val result = call.body()
@@ -91,10 +113,13 @@ class RacesManagement : Fragment() {
                     Toast.makeText(requireContext(), "Error con la conexión", Toast.LENGTH_LONG).show()
                 }
             }
-        }
+        }*/
     }
 
-
+    /**
+     * Get temporal races list to test
+     * @suppress
+     */
     private fun tempGetRaces() {
         val tempRaces: List<Race> = listOf(
             Race(
@@ -115,18 +140,13 @@ class RacesManagement : Fragment() {
                 "2023-12-22")
             )
         raceAdapter.races = tempRaces
+
     }
 
-    private fun addRace(view: View) {
-        val race = RaceDto(null,
-            view.findViewById<TextInputLayout>(R.id.txtRaceName).editText?.text.toString(),
-            view.findViewById<TextInputLayout>(R.id.txtRaceDate).editText?.text.toString(),
-            view.findViewById<TextInputLayout>(R.id.txtRaceDescription).editText?.text.toString(),
-            1,
-            1,
-            null
-        )
-
+    /**
+     * Add new race to Database
+     */
+    private fun addRace(race: RaceDto) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).addRace(race)
@@ -147,5 +167,4 @@ class RacesManagement : Fragment() {
             }
         }
     }
-
 }
