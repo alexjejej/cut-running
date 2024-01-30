@@ -1,8 +1,10 @@
 package com.raywenderlich.android.rwandroidtutorial.usecases.logros.adapter
 
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,25 +13,23 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.raywenderlich.android.runtracking.R
-import com.raywenderlich.android.rwandroidtutorial.models.Logro
+import com.raywenderlich.android.rwandroidtutorial.models.Achievement
 import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
 import com.raywenderlich.android.rwandroidtutorial.provider.DatosUsuario
 
 
-class ListaLogrosAdapter(private val logrosList:ArrayList<Logro>, private val context : Context) : RecyclerView.Adapter<ListaLogrosAdapter.ListaLogrosViewHolder>() {
+class ListaLogrosAdapter(private val logrosList:ArrayList<Achievement>, private val activity : Activity, private val context : Context) : RecyclerView.Adapter<ListaLogrosAdapter.ListaLogrosViewHolder>() {
 
     var pasosT = obtenerpasos()
 
     private fun obtenerpasos(): Int {
         // Obtener nombre de usuario
-        val userName = DatosUsuario.getUserName(context) ?: "NombrePorDefecto"
+        val email = DatosUsuario.getEmail(activity) ?: "NombrePorDefecto"
         //Obtener datos de sqlite
         val db = BDsqlite(context)
         // Obtener datos para el usuario
-        val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), userName)
-        cursorPasosTotales.moveToFirst()
-        val pasosTotales = cursorPasosTotales.getInt(0)
-        return pasosTotales
+        val PasosTotales = db.getIntData(email,BDsqlite.COLUMN_PASOS_TOTALES)
+        return PasosTotales
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListaLogrosViewHolder {
@@ -41,18 +41,19 @@ class ListaLogrosAdapter(private val logrosList:ArrayList<Logro>, private val co
     override fun onBindViewHolder(holder: ListaLogrosViewHolder, position: Int) {
 
         val currentitem = logrosList[position]
-        holder.titulo.text = currentitem.titulo
-        holder.descripcion.text = currentitem.descripcion
-        var pasos = currentitem.pasos.toString()
-        if (Integer.parseInt(pasos)<=pasosT){
-            holder.progreso.text = "Finalizado"
-            holder.progreso.setTextColor(Color.parseColor("#FF0049"))
-            holder.pasos.text = ""+pasos+" pasos de "+pasos+""
-        }else{
-            holder.progreso.text = "En curso"
-            holder.pasos.text = ""+pasosT+" pasos de "+pasos+""
-        }
+        holder.titulo.text = currentitem.name
+        holder.descripcion.text = currentitem.description
+        var pasos = currentitem.steps
+        if (pasos<=pasosT){
+                holder.progreso.text = "Finalizado"
+                holder.progreso.setTextColor(Color.parseColor("#FF0049"))
+                holder.pasos.text = ""+pasos+" pasos de "+pasos+""
+            }else{
+                holder.progreso.text = "En curso"
+                holder.pasos.text = ""+pasosT+" pasos de "+pasos+""
+            }
         Glide.with(holder.photo.context).load(currentitem.photo).into(holder.photo)
+
     }
 
     override fun getItemCount(): Int {

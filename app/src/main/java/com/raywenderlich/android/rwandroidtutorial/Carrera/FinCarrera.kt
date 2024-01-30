@@ -53,45 +53,22 @@ class FinCarrera : AppCompatActivity() {
         val txtPasosT = findViewById<TextView>(R.id.txtpasosT)
 
         // Obtener nombre de usuario
-        val userName = DatosUsuario.getUserName(this) ?: "NombrePorDefecto"
         val email = DatosUsuario.getEmail(this)
 
 
         //Obtener datos de sqlite
         val db = BDsqlite(this)
-        // Obtener datos para el usuario
-        val cursorPasosHoy = db.getData(BDsqlite.getColumnPasosHoy(), userName)
-        val cursorPasosTotales = db.getData(BDsqlite.getColumnPasosTotales(), userName)
-        val cursorDistancia = db.getData(BDsqlite.getColumnDistancia(), userName)
+        val PasosHoy = db.getIntData(email,BDsqlite.COLUMN_PASOS_HOY)
+        val PasosTotales = db.getIntData(email,BDsqlite.COLUMN_PASOS_TOTALES)
+        val Distancia = db.getFloatData(email,BDsqlite.COLUMN_DISTANCIA)
 
-        // Leer y mostrar los datos de cada consulta
-        if (cursorPasosHoy.moveToFirst()) {
-            val pasosHoy =
-                cursorPasosHoy.getInt(0) // El índice 0 representa la primera columna del resultado
-            Log.d("DBData", "Pasos Hoy para Alex: $pasosHoy")
-            txtPasos.text = (pasosHoy.toString()+" pasos")
-        }
+        //mostrar los datos de cada consulta
+        txtPasos.text = (PasosHoy.toString()+" pasos")
+        txtPasosT.text = (PasosTotales.toString()+" pasos")
+        txtDistancia.text = (Distancia.toString()+ " metros")
 
-        if (cursorPasosTotales.moveToFirst()) {
-            val pasosTotales = cursorPasosTotales.getInt(0)
-            Log.d("DBData", "Pasos Totales para Alex: $pasosTotales")
-            consultarlogro(pasosTotales)
-            txtPasosT.text = (pasosTotales.toString()+" pasos")
-            clasificacion(pasosTotales, email)
-        }
-
-        if (cursorDistancia.moveToFirst()) {
-            val distancia = cursorDistancia.getFloat(0)
-            Log.d("DBData", "Distancia para Alex: $distancia")
-            txtDistancia.text = (distancia.toString()+ " metros")
-        }
-
-
-        cursorPasosHoy.close()
-        cursorPasosTotales.close()
-        cursorDistancia.close()
-
-
+        //Procesar clasificacion
+        clasificacion(PasosTotales, email)
     }
 
     private fun clasificacion(pasosT: Int, email: String) {

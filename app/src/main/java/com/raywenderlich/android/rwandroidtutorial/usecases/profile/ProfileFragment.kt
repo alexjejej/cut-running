@@ -55,13 +55,16 @@ class ProfileFragment : Fragment() {
     }
 
     private fun setupProfile(view: View) {
-        // Obtener el nombre de usuario de las preferencias compartidas
-        val activity = requireActivity() // Obtener la Activity
+        // Obtener datos de las preferencias compartidas
+        val activity = requireActivity()
         Session.readPrefs(activity)
 
+        // Crear una instancia de BDsqlite
+        val bd = BDsqlite(context)
 
-        // Obtener el nombre del usuario
+        // Obtener el email y nombre
         val nombreUsuario = DatosUsuario.getUserName(requireContext()) ?: "Error"
+        val email = DatosUsuario.getEmail(requireActivity())
 
         val txtNombre = view.findViewById<TextView>(R.id.txtNombreUsuarioProfile)
         txtNombre.text = "Nombre: $nombreUsuario"
@@ -74,44 +77,43 @@ class ProfileFragment : Fragment() {
             .into(imgPerfilProfile)
 
         // Pasos obtenidos
-        val pasosTotales = DatosUsuario.getPasosTotales(requireContext())
+        val pasosTotales = bd.getIntData(email,BDsqlite.COLUMN_PASOS_TOTALES)
         val txtpasosTotales = view.findViewById<TextView>(R.id.txtPasosProfile)
         txtpasosTotales.text = pasosTotales.toString()
 
         //email
         val txtemail = view.findViewById<TextView>(R.id.txtCorreoUsuarioProfile)
-        txtemail.text = Session.userEmail
+        txtemail.text = "Email: $email"
 
-        // Crear una instancia de BDsqlite
-        val bd = BDsqlite(context)
+        // Codigo
+        val txtcodigo = view.findViewById<TextView>(R.id.txtCodigoProfile)
+        val codigo = bd.getIntData(email, BDsqlite.COLUMN_CODE)
+        txtcodigo.text = if (codigo == 0) "Código: Sin datos" else "Código: $codigo"
 
         // Edad
         val txtedad = view.findViewById<TextView>(R.id.txtEdadUsuarioProfile)
-        val edad = bd.getIntData(nombreUsuario, BDsqlite.COLUMN_EDAD)
-        txtedad.text = if (edad == 0) "Edad: Sin datos" else "Edad: $edad"
+        val edad = bd.getIntData(email, BDsqlite.COLUMN_EDAD)
+        txtedad.text = if (edad == 0) "Edad: Sin datos" else "Edad: $edad años"
 
         // Estatura
         val txtestatura = view.findViewById<TextView>(R.id.txtEstaturaUsuarioProfile)
-        val estatura = bd.getIntData(nombreUsuario, BDsqlite.COLUMN_ESTATURA)
-        txtestatura.text = if (estatura == 0) "Estatura: Sin datos" else "Estatura: $estatura"
+        val estatura = bd.getIntData(email, BDsqlite.COLUMN_ESTATURA)
+        txtestatura.text = if (estatura == 0) "Estatura: Sin datos" else "Estatura: $estatura cm"
 
         //peso
         val txtpeso = view.findViewById<TextView>(R.id.txtPesoUsuarioProfile)
-        val peso = bd.getIntData(nombreUsuario, BDsqlite.COLUMN_PESO)
-        txtpeso.text = if (peso == 0) "Peso: Sin datos" else "Peso: $peso"
+        val peso = bd.getIntData(email, BDsqlite.COLUMN_PESO)
+        txtpeso.text = if (peso == 0) "Peso: Sin datos" else "Peso: $peso kg"
 
         //CU
-        val txtCU = view.findViewById<TextView>(R.id.txtCUUsuarioProfile)
-        val centroUniversitario =
-            bd.getStringData(nombreUsuario, BDsqlite.COLUMN_CENTRO_UNIVERSITARIO)
-        txtCU.text =
-            if (!centroUniversitario.isNullOrEmpty()) "Centro Universitario: $centroUniversitario" else "Centro Universitario: Sin datos"
-
-        //carrera
         val txtcarrera = view.findViewById<TextView>(R.id.txtCarreraUsuarioProfile)
-        val carrera = bd.getStringData(nombreUsuario, BDsqlite.COLUMN_CARRERA)
-        txtcarrera.text =
-            if (!carrera.isNullOrEmpty()) "Carrera: $carrera" else "Carrera: Sin datos"
+        val specialityID = bd.getIntData(email, BDsqlite.COLUMN_SPECIALITYID)
+        txtcarrera.text = when (specialityID) {
+            1 -> "Carrera: Ingeniería en Ciencias Computacionales"
+            2 -> "Carrera: Ingenieria en Nanotecnogogía"
+            else -> "Carrera: Sin datos"
+        }
+
     }
 
 

@@ -5,46 +5,37 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.raywenderlich.android.rwandroidtutorial.models.Logro
+import com.raywenderlich.android.rwandroidtutorial.models.Achievement
+import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
+import com.raywenderlich.android.rwandroidtutorial.provider.services.AchievementService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class LogrosViewModel: ViewModel() {
-    private lateinit var database: DatabaseReference
-    private var auxArrayLiveData: ArrayList<Logro> = ArrayList()
-
-    // Implementacion de Backing properties
-    // Hace que una propiedad sea editabldel desde ViewModel (o clase que lo contenga)
-    // pero que dicha propiedad sea expuesta como solo lectura
-    private var _listaLogros: MutableLiveData<ArrayList<Logro>> = MutableLiveData()
-    val listaLogros: LiveData<ArrayList<Logro>>
+    private val achievementService = RetrofitInstance.getRetrofit().create(AchievementService::class.java)
+    private var _listaLogros: MutableLiveData<ArrayList<Achievement>> = MutableLiveData()
+    val listaLogros: LiveData<ArrayList<Achievement>>
         get() = _listaLogros
 
     init {
-        database = Firebase.database.getReference("logros")
+        fetchAchievements()
+    }
 
-        lateinit var logroListener: ValueEventListener
-
+    private fun fetchAchievements() {
         viewModelScope.launch(Dispatchers.IO) {
-            logroListener = object: ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    Log.d("LogrosVM", "Cantidad de hijos: ${snapshot.childrenCount}")
-                    for(children in snapshot.children) {
-                        Log.d("LogrosVM", "Nombre: ${children.getValue(Logro::class.java)?.titulo ?: "No name"}")
-                        val data = children.getValue(Logro::class.java)
-                        auxArrayLiveData.add(data!!)
-                    }
-                    _listaLogros.value = auxArrayLiveData
+            try {
+                val response = achievementService.getAchievements()
+                if (response.isSuccessful && response.body() != null) {
+                    // Actualizar LiveData con los datos recibidos
+                    _listaLogros.postValue(response.body()?.data as ArrayList<Achievement>?)
+                } else {
+                    // Manejar caso de respuesta fallida
+                    Log.e("API Error", "Failed to fetch achievements")
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Log.e("Cancelled", "loadLogro: onCancelled", error.toException())
-                }
+            } catch (e: Exception) {
+                // Manejar excepciones
+                Log.e("API Error", "Exception when fetching achievements", e)
             }
-            database.addValueEventListener(logroListener)
         }
     }
 }
