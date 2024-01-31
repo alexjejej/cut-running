@@ -1,0 +1,67 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:weightSum="5">
+
+    <!-- Linear Layout para agregar logros -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:weightSum="100"
+        android:orientation="vertical"
+        >
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Seleccione la opción deseada"
+            android:padding="15dp"
+            android:layout_marginTop="50dp"
+            android:textAlignment="center"
+            android:textColor="@color/azulBonito"
+            android:textSize="25dp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAgregarLogro"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center"
+            android:text="Agregar Logro"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEliminarLogro"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center"
+            android:text="Eliminar Logro"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEditarLogro"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:layout_gravity="center"
+            android:text="Editar Logro"
+            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
+
+
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

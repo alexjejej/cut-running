@@ -2,6 +2,7 @@ package com.raywenderlich.android.rwandroidtutorial.provider.services
 
 import com.raywenderlich.android.rwandroidtutorial.common.response.IResponse
 import com.raywenderlich.android.rwandroidtutorial.models.User
+import com.raywenderlich.android.rwandroidtutorial.models.dto.UserDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -19,7 +20,7 @@ interface UserService {
     suspend fun getUserByEmail(@Path("email") email: String): Response<IResponse<User>>
 
     @POST("user")
-    suspend fun addUser(@Body user: User): Response<IResponse<Boolean>>
+    suspend fun addUser(@Body user: UserDto): Response<IResponse<Boolean>>
 
     @PUT("user")
     suspend fun updateUser(@Body user: User): Response<IResponse<Boolean>>

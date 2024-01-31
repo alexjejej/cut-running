@@ -26,4 +26,12 @@ interface AchievementService {
 
     @DELETE("achievement/{id}")
     suspend fun deleteAchievement(@Path("id") id: Int): Response<IResponse<Boolean>>
+
+    // Implementados para la relacion M2M (Achievement-User)
+    @GET("achievement/achievementByUser/{email}")
+    suspend fun getAchievementsByUser(@Path("email") email: String): Response<IResponse<List<Achievement>>>
+
+    @POST("achievement/userachievement/{email}/{achievementId}")
+    suspend fun addUserRelation(@Path("email") email: String, @Path("achievementId") achievementId: Int): Response<IResponse<Boolean>>
 }
+

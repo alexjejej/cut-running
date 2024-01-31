@@ -1,8 +1,8 @@
-package com.raywenderlich.android.rwandroidtutorial.models
+package com.raywenderlich.android.rwandroidtutorial.models.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class User(
+data class UserDto(
     val id: Int? = null,
     val firstname: String,
     val lastname: String? = null,
@@ -12,9 +12,8 @@ data class User(
     val email: String,
     val pass: String? = null,
     val specialtyId: Int? = null,
-    @SerializedName("Specialty") // Mapea el campo JSON "Specialty" a "specialty" en Kotlin
-    val specialty: Specialty? = null,
-    val Role: Role? = null,
+    val specialty: Int? = null,
+    val roleId: Int? = null,
     val enabled: Int? = null,
     val updateDate: String? = null,
     val totalsteps: Int? = null,

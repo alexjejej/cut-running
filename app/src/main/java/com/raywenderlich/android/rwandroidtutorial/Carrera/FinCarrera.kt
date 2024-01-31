@@ -1,8 +1,8 @@
 package com.raywenderlich.android.rwandroidtutorial.Carrera
 
-import android.app.Activity
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -14,18 +14,16 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.lifecycle.MutableLiveData
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.raywenderlich.android.runtracking.R
-import com.raywenderlich.android.rwandroidtutorial.models.Classification
-import com.raywenderlich.android.rwandroidtutorial.usecases.logros.ListaNotificacion
-import com.raywenderlich.android.rwandroidtutorial.usecases.clasificacion.ListaClasificacion
 import com.raywenderlich.android.rwandroidtutorial.usecases.HomeActivity
 import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
 import com.raywenderlich.android.rwandroidtutorial.provider.DatosUsuario
 import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
+import com.raywenderlich.android.rwandroidtutorial.provider.services.AchievementService
 import com.raywenderlich.android.rwandroidtutorial.provider.services.ClassificationService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,8 +32,8 @@ import java.util.*
 
 
 class FinCarrera : AppCompatActivity() {
-    val chanelID = "logros"
-    val chanelName = "logros"
+    val CHANNEL_ID = "logros"
+    val CHANNEL_NAME = "logros"
     private val classificationService = RetrofitInstance.getRetrofit().create(ClassificationService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,6 +67,9 @@ class FinCarrera : AppCompatActivity() {
 
         //Procesar clasificacion
         clasificacion(PasosTotales, email)
+
+        //Procesar logros
+        consultarlogro(PasosTotales, email)
     }
 
     private fun clasificacion(pasosT: Int, email: String) {
@@ -131,95 +132,79 @@ class FinCarrera : AppCompatActivity() {
 
     }
 
-    private fun consultarlogro(pasosT: Int) {
-        //obtener usuario
-        val usuario = "alex"
+    private fun consultarlogro(pasosT: Int, email: String) {
+        //val pasosT = 101
+        // Iniciamos una coroutine en el scope del Fragment
+        lifecycleScope.launch {
+            try {
+                // Creación única de la instancia del servicio para realizar llamadas a la API
+                val achievementsService = RetrofitInstance.getRetrofit().create(AchievementService::class.java)
 
-        val database = Firebase.database
-        database.getReference("logros").
-        get().addOnSuccessListener {
+                // Llamada a la API para obtener todos los logros disponibles
+                achievementsService.getAchievements().body()?.data?.let { achievements ->
+                    // Filtramos los logros basándonos en los pasos realizados por el usuario
+                    achievements.filter { pasosT > it.steps }.forEach { achievement ->
+                        // Para cada logro que cumpla la condición, verificamos si el usuario ya lo tiene
+                        val userAchievementsResponse = achievementsService.getAchievementsByUser(email)
+                        userAchievementsResponse.body()?.data?.let { userAchievements ->
+                            if (userAchievements.none { it.id == achievement.id }) {
+                                // Si el usuario no tiene este logro, intentamos añadir la relación usuario-logro
+                                achievementsService.addUserRelation(email, achievement.id!!).body()?.let { response ->
+                                    if (response.data == true) {
+                                        // Notificación de éxito si se añade el logro correctamente
+                                        notificacion(achievement.steps, achievement.name, achievement.id)
+                                    } else {
+                                        Log.d("FC", "No se pudo añadir la relación usuario-logro para el logro ${achievement.name}")
+                                    }
+                                }
+                            } else {
+                                // Manejo del caso en el que el usuario ya tiene asignado el logro
+                                Log.d("FC consultarlogro", "El usuario ya tiene el logro ${achievement.name}")
+                            }
+                        }
 
-            for (snapshot in it.children) {
-                var tituloL = snapshot.child("titulo").getValue(String::class.java)
-                var pasosL = snapshot.child("pasos").getValue(Int::class.java)
-                if (pasosL!!<=pasosT){
-                    Log.d("Estos son los logros obtenidos: ",""+snapshot.child("titulo").getValue(String::class.java))
-                    Consultarnotificacion(pasosL,tituloL!!)
-                }else{
-                    Log.d("LOG No se obtuvieron logros ","Error"+pasosT)
-                }
+                    }
+                } ?: Log.e("FC consultarlogro", "No se recibieron logros de la API")
+            } catch (e: Exception) {
+                // Manejamos cualquier excepción que pueda ocurrir durante el proceso
+                Log.e("FC consultarlogro", "Error al consultar logros", e)
             }
-
-        }.addOnFailureListener{
-            Log.e("firebase", "Error getting data", it)
         }
     }
 
-    private fun Consultarnotificacion(pasosL: Int, tituloL: String) {
-        //consultar si ya se mostró la notificación
-        //obtener usuario
-        val usuario = "alex"
-        var contador = 0
-        val database = Firebase.database
-        database.getReference("users").child(usuario).child("notificaciones").
-        get().addOnSuccessListener {
-
-            for (snapshot in it.children) {
-                var tituloNoti = snapshot.child("titulo").getValue(String::class.java)
-                if (tituloNoti==tituloL){
-                    Log.d("Estos son los logros obtenidos: ","Ya se obtuvo este logro")
-                    contador = 1
-                }
-            }
-            if (contador==0){
-                notificacion(pasosL, tituloL)
-            }
-
-        }.addOnFailureListener{
-            Log.e("firebase", "Error getting data", it)
-        }
-    }
-    private fun notificacion(pasosLogro: Int, tituloLogro: String){
-
-
+    private fun notificacion(pasosLogro: Int, tituloLogro: String, id: Int) {
+        Log.d("FC notificacion", "Datos a registrar: $tituloLogro, pasos: $pasosLogro")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance)
 
-            // construir canal
-            val importance = NotificationManager.IMPORTANCE_DEFAULT // (5)
-            val channel = NotificationChannel(chanelID, chanelName, importance)
-
-            //manager de notificaciones
-            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val manager = this.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.createNotificationChannel(channel)
 
-            //configurando notificacion
+            // Crear un intent que se abrirá al hacer clic en la notificación
+            val intent = Intent(this, HomeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                putExtra("fragmentoDestino", "LogrosFragment")
+            }
 
-            val notificacion = NotificationCompat.Builder(this, chanelID).also { noti ->
-                noti.setSmallIcon(R.drawable.logro)
-                noti.setContentTitle(""+tituloLogro)
-                noti.setContentText("!Felicidades¡ obtuviste un logro por haber realizado un total" +
-                        " de "+pasosLogro+" pasos")
-                noti.setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            // Crear el PendingIntent
+            val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+
+            val notificacion = NotificationCompat.Builder(this, CHANNEL_ID).apply {
+                setSmallIcon(R.drawable.logro)
+                setContentTitle(tituloLogro)
+                setContentText("!Felicidades! obtuviste un logro por haber realizado un total de $pasosLogro pasos")
+                priority = NotificationCompat.PRIORITY_DEFAULT
+                setContentIntent(pendingIntent) // Establecer el PendingIntent
+                setAutoCancel(true) // La notificación se cancela automáticamente al hacer clic en ella
             }.build()
 
-            val notificationManageer = NotificationManagerCompat.from(applicationContext)
-            notificationManageer.notify(1,notificacion);
+            NotificationManagerCompat.from(this).notify(id, notificacion)
         }
-        RegistrarNotificacion(pasosLogro, tituloLogro)
     }
 
-    private fun RegistrarNotificacion(pasosLogro: Int, tituloLogro: String) {
-        //obtener usuario
-        var usuario = "alex"
-        //Creador de logros aleatorios
-        val database = Firebase.database
-        //Creador de logros
-        val id = database.getReference("users").child(usuario).child("notificaciones")
-            .child(""+tituloLogro)
-        val noti = ListaNotificacion(""+tituloLogro,"Corre por "+pasosLogro+" pasos",
-            "Finalizado",pasosLogro)
-        id.setValue(noti)
-    }
+
+
 
     fun ReturnHome(view: View) {
 

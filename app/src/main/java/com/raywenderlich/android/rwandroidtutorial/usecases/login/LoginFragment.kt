@@ -29,6 +29,7 @@ import com.raywenderlich.android.runtracking.databinding.FragmentLoginBinding
 import com.raywenderlich.android.rwandroidtutorial.common.navigation.NavBarFragment
 import com.raywenderlich.android.rwandroidtutorial.models.Session
 import com.raywenderlich.android.rwandroidtutorial.models.User
+import com.raywenderlich.android.rwandroidtutorial.models.dto.UserDto
 import com.raywenderlich.android.rwandroidtutorial.provider.BDsqlite
 import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
 import com.raywenderlich.android.rwandroidtutorial.provider.services.ClassificationService
@@ -119,7 +120,7 @@ class LoginFragment : Fragment() {
             putString( getString(R.string.prefs_user_name), userData!!.displayName )
             putString( getString(R.string.prefs_email), userData!!.email )
             putString( getString(R.string.prefs_user_photo), userData!!.photoUrl.toString() )
-            commit()
+            apply()
             Log.d("nombreuser",userData.displayName!!)
             //llamar a consultarDB
             userData.email?.let { ConsultarBD(userData.displayName.toString(), it) }
@@ -160,7 +161,8 @@ class LoginFragment : Fragment() {
     }
 
     private fun RegistrarUsuario(nombre: String, email: String) {
-        val nuevoUsuario = User(firstname = nombre, email = email)
+        val nuevoUsuario = UserDto(firstname = nombre, email = email, roleId = 2)
+        val nuevoUsuarioSQLite = User(firstname = nombre, email = email)
 
         lifecycleScope.launch(Dispatchers.IO) {
             try {
@@ -168,7 +170,7 @@ class LoginFragment : Fragment() {
                 if (response.isSuccessful) {
                     // Registro exitoso
                     Log.d("LF Login Add","Registro de $email exitoso")
-                    GenerarSQLite(nuevoUsuario)
+                    GenerarSQLite(nuevoUsuarioSQLite)
                 } else {
                     // Manejo de errores
                     Log.d("LF Error Login","Error al registrar $email")

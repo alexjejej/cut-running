@@ -2,7 +2,7 @@ package com.raywenderlich.android.rwandroidtutorial.models
 
 data class Achievement(
     val id: Int?=null,
-    var name:String?=null,
+    var name:String,
     var description:String,
     var progreso:String?=null,
     var steps:Int,

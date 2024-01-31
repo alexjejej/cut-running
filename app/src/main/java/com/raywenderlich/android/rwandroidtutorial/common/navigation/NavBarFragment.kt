@@ -128,7 +128,8 @@ class NavBarFragment : Fragment() {
     /** Navega al fragmento dado como parametro **/
     private fun navigateTo( fragment: Fragment, tag: String ): Boolean {
         binding.drawerLayout.closeDrawer(GravityCompat.START) // Cierra el DrawerLayout (NavBar)
-        return NavigationObj.navigateTo(childFragmentManager, fragment, tag)
+        return NavigationObj.navigateTo(requireActivity().supportFragmentManager, fragment, tag)
+
     }
 
     /** Acciones para el cierre de sesion **/

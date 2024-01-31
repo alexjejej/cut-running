@@ -8,7 +8,7 @@ import com.raywenderlich.android.runtracking.R
 
 object NavigationObj {
     fun navigateTo(fragmentManager: FragmentManager, fragment: Fragment, tag: String): Boolean {
-        fragmentManager.popBackStack()
+        //fragmentManager.popBackStack()
         fragmentManager.commit {
             setReorderingAllowed(true)
             replace(R.id.home_container_fragment, fragment)

@@ -12,6 +12,8 @@ import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.ActivityHomeBinding
 import com.raywenderlich.android.rwandroidtutorial.Carrera.ListaDatosUsuario
 import com.raywenderlich.android.rwandroidtutorial.models.Session
+import com.raywenderlich.android.rwandroidtutorial.usecases.logros.LogrosFragment
+import com.raywenderlich.android.rwandroidtutorial.usecases.logros.admin.AdminLogrosFragment_update
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,36 +23,41 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityHomeBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+        setContentView(binding.root)
 
-        if ( savedInstanceState == null ) {
-            /**La transaccion del fragmento solo se crea cuando "savedInstanceState" es null. Esto  para
-             * garantizar que el fragmento se agregue  una sola vez, cuando se crea  la actividad por
-             * primera vez**/
+        if (savedInstanceState == null) {
+            // Intenta obtener un fragmento destino desde el Intent
+            val fragmentoDestino = intent.getStringExtra("fragmentoDestino")
+            val fragment = when (fragmentoDestino) {
+                "LogrosFragment" -> LogrosFragment()
+                else -> LoginFragment()
+            }
+
+            // Cargar el fragmento determinado
             supportFragmentManager.commit {
                 setReorderingAllowed(true)
-                replace(R.id.main_container_fragment, LoginFragment())
-                addToBackStack("LoginFragment")
+                replace(R.id.main_container_fragment, fragment)
+                if (fragmentoDestino == null) addToBackStack("LoginFragment") // Solo añade a back stack si es el LoginFragment
             }
-            Log.d("HomeActivity", "Home Activity")
-            Log.d("HomeActivity","${supportFragmentManager.backStackEntryCount}")
         }
 
-        Session.readPrefs( this )
+        Session.readPrefs(this)
         this.setup()
-//        this.sincronizar()
+        // this.sincronizar()
     }
+
 
     /** Es el evento que se dispara cuadno retrocedemos en la aplicacion (dar clic en el boton atras) **/
     override fun onBackPressed() {
-        Log.d("HomeActivity", "On Back Pressed")
-        Log.d("HomeActivity", "${supportFragmentManager.backStackEntryCount}")
-//        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START))
-//            binding.drawerLayout.closeDrawer(GravityCompat.START)
-//        else
-//            super.onBackPressed()
+
+        if (supportFragmentManager.backStackEntryCount > 0) {
+            supportFragmentManager.popBackStack()
+        } else {
+            super.onBackPressed()
+        }
+
     }
+
 
     /** Maneja el BackStack de fragments para que no se sobrepongan los fragments **/
     private fun manageBackStack() {
