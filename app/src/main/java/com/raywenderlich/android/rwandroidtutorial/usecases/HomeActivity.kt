@@ -1,5 +1,6 @@
 package com.raywenderlich.android.rwandroidtutorial.usecases
 
+import LogroConseguidoFragment
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -26,10 +27,13 @@ class HomeActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         if (savedInstanceState == null) {
-            // Intenta obtener un fragmento destino desde el Intent
+            //obtener info de la notificacion
             val fragmentoDestino = intent.getStringExtra("fragmentoDestino")
+            val nombreLogro = intent.getStringExtra("nombreLogro")
+            val pasosLogro = intent.getIntExtra("pasosLogro", 0) // Usar un valor predeterminado
+
             val fragment = when (fragmentoDestino) {
-                "LogrosFragment" -> LogrosFragment()
+                "LogroConseguidoFragment" -> LogroConseguidoFragment.newInstance(nombreLogro!!, pasosLogro)
                 else -> LoginFragment()
             }
 
