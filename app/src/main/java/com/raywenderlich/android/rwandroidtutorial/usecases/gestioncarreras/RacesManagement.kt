@@ -47,7 +47,6 @@ class RacesManagement : Fragment() {
     private val binding get() = _binding!!
     private val raceManagementViewModel: RaceManagementViewModel by viewModels()
     private val TAG: String = this::class.java.simpleName
-
     val raceAdapter: RaceAdapter = RaceAdapter { race -> onItemClick(race) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,9 +61,22 @@ class RacesManagement : Fragment() {
         _binding = FragmentRacesManagementBinding.inflate(inflater, container, false)
         binding.rcvRaces.adapter = raceAdapter
         binding.rcvRaces.setHasFixedSize(true)
-//        getRaces()
-        raceManagementViewModel.raceModel.observe(viewLifecycleOwner, Observer {
+
+        raceManagementViewModel.getRaceModel.observe(viewLifecycleOwner, Observer {
             raceAdapter.races = it!!
+        })
+        raceManagementViewModel.raceActionsModel.observe(viewLifecycleOwner, Observer {
+            if (it) {
+                raceManagementViewModel.getRaces()
+                Log.d(TAG, "Registro y obtencion")
+                Toast.makeText(
+                    requireContext(),
+                    "Carrera agregada correctamente",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            else
+                Toast.makeText(requireContext(), "Ocurrio un error al agregar la carrera", Toast.LENGTH_SHORT).show()
         })
         raceManagementViewModel.getRaces()
 
@@ -73,7 +85,7 @@ class RacesManagement : Fragment() {
              * Shows a dialog to add race
              */
             val dialogBinding = RaceAddDialogFragmentBinding.inflate(layoutInflater)
-            val addRaceDialog: AddRaceDialog = AddRaceDialog(requireContext(), dialogBinding, resources, childFragmentManager)
+            val addRaceDialog: AddRaceDialog = AddRaceDialog(requireContext(), dialogBinding, resources, childFragmentManager, raceManagementViewModel)
             addRaceDialog.showDialog()
         }
 
@@ -90,30 +102,6 @@ class RacesManagement : Fragment() {
      */
     private fun onItemClick(race: Race) {
         Toast.makeText(requireContext(), "${race.id} - ${race.name}", Toast.LENGTH_LONG).show()
-    }
-
-    /**
-     * Get list of Races
-     */
-    private fun getRaces() {
-        /*CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).getRaces()
-                val result = call.body()
-                requireActivity().runOnUiThread {
-                    if (result != null && result.isSuccess) {
-                        raceAdapter.races = result.data!!
-                    } else {
-                        Toast.makeText(requireContext(), "${result?.message ?: "Error desconocido"}", Toast.LENGTH_LONG).show()
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error al obtener carreras", e)
-                requireActivity().runOnUiThread {
-                    Toast.makeText(requireContext(), "Error con la conexión", Toast.LENGTH_LONG).show()
-                }
-            }
-        }*/
     }
 
     /**
@@ -154,7 +142,6 @@ class RacesManagement : Fragment() {
                 requireActivity().runOnUiThread {
                     if (result != null && result.isSuccess) {
                         Toast.makeText(requireContext(), "Carrera agregada exitosamente", Toast.LENGTH_LONG).show()
-                        getRaces()
                     } else {
                         Toast.makeText(requireContext(), "${result?.message ?: "Error desconocido"}", Toast.LENGTH_LONG).show()
                     }
