@@ -16,7 +16,7 @@ android {
   }
 
   defaultConfig {
-    applicationId "com.raywenderlich.android.runtracking"
+    applicationId "com.cut.android.running"
     minSdkVersion 24
     targetSdkVersion 31
     versionCode 1
@@ -46,7 +46,8 @@ dependencies {
   kapt "org.jetbrains.kotlinx:kotlinx-metadata-jvm:0.5.0"
   implementation('nl.dionsegijn:konfetti-xml:2.0.2')
 
-
+  //Optimizar datos de maps
+  implementation 'com.google.maps.android:android-maps-utils:2.2.0'
 
   // Kotlin
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

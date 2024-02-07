@@ -1,0 +1,37 @@
+package com.cut.android.running.provider.services
+
+import com.cut.android.running.common.response.IResponse
+import com.cut.android.running.models.Achievement
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.DELETE
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
+
+interface AchievementService {
+
+    @GET("achievement")
+    suspend fun getAchievements(): Response<IResponse<List<Achievement>>>
+
+    @GET("achievement/{id}")
+    suspend fun getAchievementById(@Path("id") id: Int): Response<IResponse<Achievement>>
+
+    @POST("achievement")
+    suspend fun addAchievement(@Body achievement: Achievement): Response<IResponse<Boolean>>
+
+    @PUT("achievement")
+    suspend fun updateAchievement(@Body achievement: Achievement): Response<IResponse<Boolean>>
+
+    @DELETE("achievement/{id}")
+    suspend fun deleteAchievement(@Path("id") id: Int): Response<IResponse<Boolean>>
+
+    // Implementados para la relacion M2M (Achievement-User)
+    @GET("achievement/achievementByUser/{email}")
+    suspend fun getAchievementsByUser(@Path("email") email: String): Response<IResponse<List<Achievement>>>
+
+    @POST("achievement/userachievement/{email}/{achievementId}")
+    suspend fun addUserRelation(@Path("email") email: String, @Path("achievementId") achievementId: Int): Response<IResponse<Boolean>>
+}
+

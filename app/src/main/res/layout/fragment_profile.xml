@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:weightSum="100"
-    tools:context="com.raywenderlich.android.rwandroidtutorial.usecases.profile.ProfileFragment">
+    tools:context="com.cut.android.running.usecases.profile.ProfileFragment">
 
 
     <!-- Vista de los primeros 2 layouts, foto y pasos (33%) -->

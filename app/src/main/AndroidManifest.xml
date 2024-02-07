@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.raywenderlich.android.runtracking">
+    package="com.cut.android.running">
 
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-feature android:name="android.hardware.sensor.stepdetector" android:required="true"/>
+
 
     <application
-        android:name="com.raywenderlich.android.rwandroidtutorial.DIContainer"
+        android:name="com.cut.android.running.DIContainer"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -19,13 +21,17 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning"
         android:usesCleartextTraffic="true"
-        tools:replace="android:usesCleartextTraffic">
+        tools:replace="android:usesCleartextTraffic"
+        >
+        <service
+            android:name="com.cut.android.running.provider.services.TrackingService"
+            android:exported="false" />
 
         <activity
-            android:name="com.raywenderlich.android.rwandroidtutorial.Carrera.FinCarrera"
+            android:name="com.cut.android.running.Carreras.FinCarrera"
             android:exported="false" />
         <activity
-            android:name="com.raywenderlich.android.rwandroidtutorial.usecases.HomeActivity"
+            android:name="com.cut.android.running.usecases.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -34,14 +40,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.raywenderlich.android.rwandroidtutorial.MenuPrincipal"
+            android:name="com.cut.android.running.MenuPrincipal"
             android:exported="false" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" /> <!-- Main Activity -->
         <activity
-            android:name="com.raywenderlich.android.rwandroidtutorial.Carrera.MapsActivity"
+            android:name="com.cut.android.running.Carrera.MapsActivity"
             android:exported="false"
             android:theme="@style/SplashTheme" />
     </application>

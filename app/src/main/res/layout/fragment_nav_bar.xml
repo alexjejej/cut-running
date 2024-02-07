@@ -6,7 +6,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.raywenderlich.android.rwandroidtutorial.common.navigation.NavBarFragment"
+    tools:context="com.cut.android.running.common.navigation.NavBarFragment"
     tools:openDrawer="start">
 
     <LinearLayout

@@ -10,6 +10,8 @@
   <color name="lugar1">#D4AF37</color>
   <color name="black">#000000</color>
   <color name="white">#FFFFFF</color>
+  <color name="button_started">#4CAF50</color> <!-- Color cuando el seguimiento está activo -->
+  <color name="button_stopped">#F44336</color> <!-- Color cuando el seguimiento está inactivo -->
 
   <!-- CUT Colors -->
   <color name="cut1">#192637</color>
