@@ -127,6 +127,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
             startLocationUpdates()
             startStepCounting()
             startAnimation()
+            mandarDatosAViewModel()
             btnCentrar.visibility = View.VISIBLE
             btnCentrarCut.visibility = View.VISIBLE
                 
@@ -153,6 +154,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         }
     }
 
+    private fun mandarDatosAViewModel() {
+        // Obtener nombre de usuario y estatura
+        val email = DatosUsuario.getEmail(requireActivity())
+        val db = BDsqlite(requireContext())
+        val userEstatura = (db.getFloatData(email, BDsqlite.COLUMN_ESTATURA))/100//Convertir cm a m
+        // Pasar estatura al ViewModel
+        viewModel.updateEstaturaUser(userEstatura.toDouble())
+
+    }
+
     private fun startAnimation() {
         val layoutMaps = view?.findViewById<LinearLayout>(R.id.LayoutMaps)
         val params = layoutMaps?.layoutParams as? LinearLayout.LayoutParams
@@ -175,7 +186,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         val PasosRecorridoHoy = viewModel.totalSteps.value
 
         val totalDistanceTravelled = viewModel.totalDistance.value
-
 
         // Obtener el nombre del usuario de SharedPreferences
 

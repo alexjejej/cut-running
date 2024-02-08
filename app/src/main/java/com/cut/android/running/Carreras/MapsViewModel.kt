@@ -1,7 +1,8 @@
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.cut.android.running.provider.RetrofitInstance
+import com.cut.android.running.provider.services.UserService
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 
@@ -10,6 +11,8 @@ class MapsViewModel : ViewModel() {
     val totalDistance = MutableLiveData<Float>(0f)
     val totalSteps = MutableLiveData<Int>(0)
     var distancie = 0.0
+    var EstaturaUser = 0.0
+
 
 
     fun addPathPoint(newPoint: LatLng) {
@@ -26,10 +29,6 @@ class MapsViewModel : ViewModel() {
                 pathPoints.value?.apply {
                     add(newPoint)
                     pathPoints.postValue(this)
-
-                    // Actualiza la distancia total
-                    val currentTotalDistance = totalDistance.value ?: 0f
-                    totalDistance.postValue(currentTotalDistance.plus(distance.toFloat()))
                 }
             }
         } else {
@@ -50,37 +49,31 @@ class MapsViewModel : ViewModel() {
 
     fun addStep() {
         val currentSteps = totalSteps.value ?: 0
-
         totalSteps.postValue(currentSteps + 1)
-
+        // Actualiza la distancia total
+        val PasoDistancia = verificarPromedioPasos()
+        totalDistance.postValue((currentSteps*PasoDistancia).toFloat())
     }
 
     fun getSteps(): Int? {
         return totalSteps.value
     }
 
-    private fun verificarDistancia(distance: Double): Boolean {
-        val distanciaPromedioPorPaso = 0.75 // metros
-        val desviacionPermitida = 0.25 // 25%
-        val distanciaEsperada = 1 * distanciaPromedioPorPaso
-
-        val limiteInferior = distanciaEsperada * (1 - desviacionPermitida)
-        val limiteSuperior = distanciaEsperada * (1 + desviacionPermitida)
-
-        return distance in limiteInferior..limiteSuperior
+    fun updateEstaturaUser(estatura: Double) {
+        EstaturaUser = estatura
     }
 
-    private fun verificarPromedio(currentSteps: Int): Boolean {
-        val currentTotalDistance = totalDistance.value ?: 0f
+    private fun verificarPromedioPasos(): Double {
+        //.415 longitud del paso en función de la estatura
+        // https://www.edu-casio.es/wp-content/uploads/2020/04/El-paso-humano.pdf
 
-        val distanciaPromedioPorPaso = 0.75 // metros
-        val desviacionPermitida = 0.25 // 25%
-        val distanciaEsperada = currentSteps * distanciaPromedioPorPaso
+        var distanciaPromedioPorPaso =.75
+        if (EstaturaUser!=0.0){
+            distanciaPromedioPorPaso = EstaturaUser * .415
+        }
 
-        val limiteInferior = distanciaEsperada * (1 - desviacionPermitida)
-        val limiteSuperior = distanciaEsperada * (1 + desviacionPermitida)
 
-        return currentTotalDistance in limiteInferior..limiteSuperior
+        return distanciaPromedioPorPaso
     }
 
 
