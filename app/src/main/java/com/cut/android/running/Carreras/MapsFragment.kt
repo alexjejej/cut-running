@@ -83,6 +83,15 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         btnCentrarCut.setOnClickListener {
             centrarMapaEnCut()
         }
+
+        //observar el viewmodel para mostrar toast
+        viewModel.showToastEvent.observe(viewLifecycleOwner) { messages ->
+            if (messages.isNotEmpty()) {
+                Toast.makeText(context, messages.first(), Toast.LENGTH_LONG).show()
+                viewModel.messageShown() // Indica al ViewModel que el mensaje se ha mostrado
+            }
+        }
+
     }
 
     // Sets up the map once it's ready
