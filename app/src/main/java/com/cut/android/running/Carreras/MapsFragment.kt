@@ -1,4 +1,5 @@
 import android.Manifest
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,11 +16,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.cut.android.running.Carreras.FinCarrera
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
@@ -37,6 +41,8 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     private lateinit var locationCallback: LocationCallback
     private lateinit var viewModel: MapsViewModel
     private lateinit var sensorManager: SensorManager
+    private lateinit var btnCentrar: ImageButton
+    private lateinit var btnCentrarCut: ImageButton
     private var stepSensor: Sensor? = null
 
     companion object {
@@ -68,6 +74,15 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         viewModel.totalSteps.observe(viewLifecycleOwner) { steps ->
             view.findViewById<TextView>(R.id.tvPasos).text = getString(R.string.steps_template, steps)
         }
+        //botón para centrar el mapa
+        btnCentrar = view.findViewById(R.id.btnCentrar)
+        btnCentrar.setOnClickListener {
+            centrarMapaEnUbicacion()
+        }
+        btnCentrarCut = view.findViewById(R.id.btnCentrarCut)
+        btnCentrarCut.setOnClickListener {
+            centrarMapaEnCut()
+        }
     }
 
     // Sets up the map once it's ready
@@ -75,6 +90,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         map = googleMap
         val initialLocation = LatLng(20.5665, -103.2273) // Guadalajara, Jalisco, México
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(initialLocation, 15f))
+
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            map.isMyLocationEnabled = true
+            map.uiSettings.isMyLocationButtonEnabled = true
+        }
     }
 
     // Toggles tracking, updates UI and starts/stops location and step counting
@@ -97,6 +117,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
             btnIniciar?.text = getString(R.string.detener) // Actualiza el texto del botón a "Detener"
             btnIniciar?.setBackgroundColor(resources.getColor(R.color.button_started))
 
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context?.startForegroundService(serviceIntent)
             } else {
@@ -105,6 +126,10 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
 
             startLocationUpdates()
             startStepCounting()
+            startAnimation()
+            btnCentrar.visibility = View.VISIBLE
+            btnCentrarCut.visibility = View.VISIBLE
+                
         } else {
             // Si el seguimiento se ha detenido
             Log.d("MapsFragment","Se ha detenido")
@@ -116,12 +141,35 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
             stopLocationUpdates()
             drawPolyline()
             stopStepCounting()
+
+            //lanzar FinCarrera
+            val intent = Intent(context, FinCarrera::class.java)
+            startActivity(intent)
+
         }
 
         btnIniciar?.animate()?.scaleX(1.1f)?.scaleY(1.1f)?.setDuration(150)?.withEndAction {
             btnIniciar?.animate()?.scaleX(1f)?.scaleY(1f)?.duration = 150
         }
     }
+
+    private fun startAnimation() {
+        val layoutMaps = view?.findViewById<LinearLayout>(R.id.LayoutMaps)
+        val params = layoutMaps?.layoutParams as? LinearLayout.LayoutParams
+        val startWeight = params?.weight ?: 90f // Asume 90f como peso inicial si es nulo
+        val endWeight = 80f // El peso objetivo
+
+        // Crea un ValueAnimator que va desde el peso inicial al final
+        val valueAnimator = ValueAnimator.ofFloat(startWeight, endWeight)
+        valueAnimator.duration = 500 // Duración de la animación en milisegundos
+        valueAnimator.addUpdateListener { animation ->
+            val animatedValue = animation.animatedValue as Float
+            params?.weight = animatedValue
+            layoutMaps?.layoutParams = params
+        }
+        valueAnimator.start()
+    }
+
 
     private fun GuardarEnSQLite() {
         val PasosRecorridoHoy = viewModel.totalSteps.value
@@ -134,7 +182,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         val email = DatosUsuario.getEmail(requireActivity())
 
         val db = BDsqlite(requireContext())
-        val PasosTotales = db.getIntData(email,BDsqlite.COLUMN_PASOS_TOTALES)
+        val PasosTotales = db.getIntData(email,BDsqlite.COLUMN_PASOS_TOTALES) + PasosRecorridoHoy!!
         db.upsertData(email, PasosRecorridoHoy!!, PasosTotales, totalDistanceTravelled!!)
 
 
@@ -144,30 +192,14 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         val cursorDistancia = db.getData(BDsqlite.getColumnDistancia(), email)
 
 
-// Leer y mostrar los datos de cada consulta
-        if (cursorPasosHoy.moveToFirst()) {
-            val pasosHoy =
-                cursorPasosHoy.getInt(0) // El índice 0 representa la primera columna del resultado
-            Log.d("DBData", "Pasos Hoy para Alex: $pasosHoy")
-        }
-
-        if (cursorPasosTotales.moveToFirst()) {
-            val pasosTotales = cursorPasosTotales.getInt(0)
-            Log.d("DBData", "Pasos Totales para Alex: $pasosTotales")
-        }
-
-        if (cursorDistancia.moveToFirst()) {
-            val distancia = cursorDistancia.getFloat(0)
-            Log.d("DBData", "Distancia para Alex: $distancia")
-        }
-
-//cerrar los cursores después de usarlos
+        //cerrar los cursores después de usarlos
 
         cursorPasosHoy.close()
         cursorPasosTotales.close()
         cursorDistancia.close()
 
     }
+
 
 
     // Starts counting steps by registering the sensor event listener
@@ -282,6 +314,33 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     // Called when the accuracy of a sensor has changed
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
         // This can be left empty unless your application needs to respond to changes in sensor accuracy.
+    }
+
+    private fun centrarMapaEnUbicacion() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestActivityRecognitionPermission()
+            return
+        }
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+            // Si se obtiene la ubicación correctamente, mueve la cámara
+            location?.let {
+                val userLocation = LatLng(it.latitude, it.longitude)
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15f))
+            }
+        }
+    }
+    private fun centrarMapaEnCut() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            requestActivityRecognitionPermission()
+            return
+        }
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+            // Si se obtiene la ubicación correctamente, mueve la cámara
+            location?.let {
+                val cutubicacion = LatLng(20.5665, -103.2273)
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(cutubicacion, 15f))
+            }
+        }
     }
 
 
