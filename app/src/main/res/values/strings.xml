@@ -67,7 +67,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="Speciality_ID_prompt">Selecciona una carrera disponible</string>
-    <string name="distance_template">Distancia: %1$.2f m</string>
-    <string name="steps_template">Pasos: %d</string>
+    <string name="distance_template">%1$.2f</string>
+    <string name="steps_template">%d</string>
 
 </resources>
