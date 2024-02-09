@@ -3,48 +3,54 @@ package com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.add
 import android.content.Context
 import android.content.res.Resources
 import android.util.Log
-import android.view.View
-import android.widget.Toast
-import androidx.fragment.app.FragmentActivity
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.RaceAddDialogFragmentBinding
 import com.raywenderlich.android.rwandroidtutorial.models.dto.RaceDto
-import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
-import com.raywenderlich.android.rwandroidtutorial.provider.services.RaceService
-import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.viewmodel.RaceManagementViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.RaceManagementViewModel
+import com.raywenderlich.android.rwandroidtutorial.usecases.gestionuc.UcManagementViewModel
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
+import kotlin.properties.Delegates
 
 class AddRaceDialog constructor(
     context: Context,
     binding: RaceAddDialogFragmentBinding,
     resources: Resources,
     childFragmentManager: FragmentManager,
-    raceManagementViewModel: RaceManagementViewModel
+    raceManagementViewModel: RaceManagementViewModel,
+    ucManagementViewModel: UcManagementViewModel,
+    viewLifecycleOwner: LifecycleOwner
 ) {
     private val _context = context
     private val _binding = binding
     private val _resources = resources
     private val _childFragmentManager = childFragmentManager
     private val _raceManagementViewModel = raceManagementViewModel
+    private val _ucManagementViewModel = ucManagementViewModel
+    private val _viewLifecycleOwner = viewLifecycleOwner
 
     private val TAG: String = this::class.java.simpleName
     private lateinit var raceDate: String
     private lateinit var raceHour: String
+    private var ucIdSelected by Delegates.notNull<Int>()
 
     /**
      * Build Mat dialog
      */
     public fun showDialog() {
+        getUc()
         _binding.btnRaceDate.setOnClickListener { buildDatePicker().show(_childFragmentManager, "tagDatePicker") }
         _binding.btnRaceHour.setOnClickListener { buildTimePicker().show(_childFragmentManager, "tagTimePicker") }
 
@@ -56,7 +62,7 @@ class AddRaceDialog constructor(
                         _binding.txtRaceName.text.toString(),
                         "${raceDate}T${raceHour}.00Z",
                         _binding.txtRaceDescription.text.toString(),
-                        1,
+                        ucIdSelected,
                         1,
                         null
                     )
@@ -113,5 +119,25 @@ class AddRaceDialog constructor(
             _binding.btnRaceHour.text = raceHour
         }
         return materialTimePicker
+    }
+
+    /**
+     * Get Univercity Centers
+     */
+    private fun getUc() {
+        _ucManagementViewModel.getUcModel.observe(_viewLifecycleOwner, Observer {
+            if (it?.isNotEmpty() == true) {
+                val items = it.map { uc -> uc.acronym }
+                val adapter = ArrayAdapter(_context, R.layout.uc_dropdown_item, items)
+                _binding.txtRaceSede.setAdapter(adapter)
+                _binding.txtRaceSede.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
+                    // val itemSelected = adapterView.getItemAtPosition(i)
+                    val ucSelected = it[i]
+                    ucIdSelected = ucSelected.id
+                    Log.d(TAG, "$ucSelected")
+                }
+            }
+        })
+        _ucManagementViewModel.getUc()
     }
 }

@@ -2,6 +2,7 @@ package com.raywenderlich.android.rwandroidtutorial.provider.services
 
 import com.raywenderlich.android.rwandroidtutorial.common.response.IResponse
 import com.raywenderlich.android.rwandroidtutorial.models.Race
+import com.raywenderlich.android.rwandroidtutorial.models.User
 import com.raywenderlich.android.rwandroidtutorial.models.dto.RaceDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -26,5 +27,17 @@ interface RaceService {
     suspend fun updateRace(@Body race: RaceDto): Response<IResponse<Boolean>>
 
     @DELETE("race/{id}")
-    suspend fun deleteRace(): Response<IResponse<Boolean>>
+    suspend fun deleteRace(@Path("id") id: Int): Response<IResponse<Boolean>>
+
+    @POST("race/userrace/{userCode}/{raceId}")
+    suspend fun addUserRelation(@Path("userCode") userCode: Int, @Path("raceId") raceId: Int): Response<IResponse<Boolean>>
+
+    @GET("race/racebyuser/{userCode}")
+    suspend fun getRaceByUser(@Path("userCode") userCode: Int): Response<IResponse<List<Race>>>
+
+    @GET("race/userbyrace/{raceId}")
+    suspend fun getUserByRace(@Path("raceId") raceId: Int): Response<IResponse<List<User>>>
+
+    @DELETE("race/userrace/{userCode}/{raceId}")
+    suspend fun deleteUserRelation(@Path("userCode") userCode: Int, @Path("raceId") raceId: Int): Response<IResponse<Boolean>>
 }

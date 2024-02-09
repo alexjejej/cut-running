@@ -5,23 +5,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import com.google.android.material.datepicker.MaterialDatePicker
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import com.google.android.material.timepicker.MaterialTimePicker
-import com.google.android.material.timepicker.MaterialTimePicker.INPUT_MODE_CLOCK
-import com.google.android.material.timepicker.TimeFormat
-import com.google.api.Context
-import com.raywenderlich.android.runtracking.R
 import com.raywenderlich.android.runtracking.databinding.FragmentRacesManagementBinding
 import com.raywenderlich.android.runtracking.databinding.RaceAddDialogFragmentBinding
+import com.raywenderlich.android.runtracking.databinding.RaceInfoDialogFragmentBinding
 import com.raywenderlich.android.rwandroidtutorial.models.Race
 import com.raywenderlich.android.rwandroidtutorial.models.UniversityCenter
 import com.raywenderlich.android.rwandroidtutorial.models.dto.RaceDto
@@ -29,13 +19,11 @@ import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
 import com.raywenderlich.android.rwandroidtutorial.provider.services.RaceService
 import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.adapter.RaceAdapter
 import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.addracedialog.AddRaceDialog
-import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.viewmodel.RaceManagementViewModel
+import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.raceinfordialog.RaceInfoDialog
+import com.raywenderlich.android.rwandroidtutorial.usecases.gestionuc.UcManagementViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Calendar
-import java.util.Date
-import java.util.TimeZone
 
 /**
  * A simple [Fragment] subclass.
@@ -46,8 +34,10 @@ class RacesManagement : Fragment() {
     private var _binding: FragmentRacesManagementBinding? = null
     private val binding get() = _binding!!
     private val raceManagementViewModel: RaceManagementViewModel by viewModels()
-    private val TAG: String = this::class.java.simpleName
+    private val ucManagementViewModel: UcManagementViewModel by viewModels()
+
     val raceAdapter: RaceAdapter = RaceAdapter { race -> onItemClick(race) }
+    private val TAG: String = this::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,27 +55,24 @@ class RacesManagement : Fragment() {
         raceManagementViewModel.getRaceModel.observe(viewLifecycleOwner, Observer {
             raceAdapter.races = it!!
         })
-        raceManagementViewModel.raceActionsModel.observe(viewLifecycleOwner, Observer {
+        raceManagementViewModel.addRaceActionsModel.observe(viewLifecycleOwner, Observer {
             if (it) {
                 raceManagementViewModel.getRaces()
-                Log.d(TAG, "Registro y obtencion")
-                Toast.makeText(
-                    requireContext(),
-                    "Carrera agregada correctamente",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(requireContext(), "Carrera agregada correctamente", Toast.LENGTH_SHORT).show()
             }
             else
                 Toast.makeText(requireContext(), "Ocurrio un error al agregar la carrera", Toast.LENGTH_SHORT).show()
         })
-        raceManagementViewModel.getRaces()
+        // raceManagementViewModel.getRaces()
+        tempGetRaces()
 
         binding.btnShowCreateRace.setOnClickListener {
             /**
              * Shows a dialog to add race
              */
             val dialogBinding = RaceAddDialogFragmentBinding.inflate(layoutInflater)
-            val addRaceDialog: AddRaceDialog = AddRaceDialog(requireContext(), dialogBinding, resources, childFragmentManager, raceManagementViewModel)
+            val addRaceDialog: AddRaceDialog = AddRaceDialog(
+                requireContext(), dialogBinding, resources, childFragmentManager, raceManagementViewModel, ucManagementViewModel, viewLifecycleOwner)
             addRaceDialog.showDialog()
         }
 
@@ -101,7 +88,11 @@ class RacesManagement : Fragment() {
      * Action when click on list item
      */
     private fun onItemClick(race: Race) {
-        Toast.makeText(requireContext(), "${race.id} - ${race.name}", Toast.LENGTH_LONG).show()
+        // Toast.makeText(requireContext(), "${race.id} - ${race.name}", Toast.LENGTH_LONG).show()
+
+        val dialogBinding = RaceInfoDialogFragmentBinding.inflate(layoutInflater)
+        val raceInforDialog = RaceInfoDialog(requireContext(), dialogBinding, raceManagementViewModel)
+        raceInforDialog.showDialog(race)
     }
 
     /**
@@ -129,29 +120,5 @@ class RacesManagement : Fragment() {
             )
         raceAdapter.races = tempRaces
 
-    }
-
-    /**
-     * Add new race to Database
-     */
-    private fun addRace(race: RaceDto) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).addRace(race)
-                val result = call.body()
-                requireActivity().runOnUiThread {
-                    if (result != null && result.isSuccess) {
-                        Toast.makeText(requireContext(), "Carrera agregada exitosamente", Toast.LENGTH_LONG).show()
-                    } else {
-                        Toast.makeText(requireContext(), "${result?.message ?: "Error desconocido"}", Toast.LENGTH_LONG).show()
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "Error al agregar carrera", e)
-                requireActivity().runOnUiThread {
-                    Toast.makeText(requireContext(), "Error con la conexión", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
     }
 }

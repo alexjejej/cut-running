@@ -66,41 +66,25 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- TODO: hacerlo desplegable -->
-<!--            <com.google.android.material.textfield.TextInputLayout-->
-<!--                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"-->
-<!--                android:id="@+id/txtRaceSede"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:hint="@string/txt_race_sede">-->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:id="@+id/layRaceSede"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/txt_race_sede">
 
-<!--                <AutoCompleteTextView-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:inputType="none"-->
-<!--                    app:simpleItems="@array/simple_items"/>-->
+                <AutoCompleteTextView
+                    android:id="@+id/txtRaceSede"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none"/>
 
-<!--            </com.google.android.material.textfield.TextInputLayout>-->
+            </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <!-- TODO: hacerlo fecha -->
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    android:id="@+id/layRaceDate"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:hint="@string/txt_race_date">-->
-
-<!--                    <com.google.android.material.textfield.TextInputEditText-->
-<!--                        android:id="@+id/txtRaceTime"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content" />-->
-
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
 
                 <Button
                     android:id="@+id/btnRaceDate"
@@ -114,21 +98,6 @@
                 <Space
                     android:layout_width="10dp"
                     android:layout_height="match_parent"/>
-
-                <!-- TODO: hacerlo tiempo -->
-<!--                <com.google.android.material.textfield.TextInputLayout-->
-<!--                    android:id="@+id/layRaceTime"-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:hint="@string/txt_race_time">-->
-
-<!--                    <com.google.android.material.textfield.TextInputEditText-->
-<!--                        android:id="@+id/txtRaceTime"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content" />-->
-
-<!--                </com.google.android.material.textfield.TextInputLayout>-->
 
                 <Button
                     android:id="@+id/btnRaceHour"
