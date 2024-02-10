@@ -16,16 +16,19 @@
             android:id="@+id/txtLogros"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Logros"
+            android:text="  Logros"
             android:textAlignment="center"
-            android:textColor="@color/azulBonito"
+            android:textColor="@color/cut1"
             android:textSize="25dp"
             android:textStyle="bold"
-            />
+            android:drawableLeft="@drawable/icon_military_tech_24"
+            android:layout_gravity="center"
+            android:layout_marginBottom="15dp"            />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvLogrosF"
             android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             />

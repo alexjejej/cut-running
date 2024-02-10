@@ -14,6 +14,7 @@ import com.cut.android.running.R
 import com.cut.android.running.usecases.clasificacion.ClasificacionFragment
 import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.usecases.logros.admin.AdminLogrosFragment
+import com.cut.android.running.usecases.profile.ProfileFragment
 
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -24,6 +25,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private lateinit var btnClasificacion: Button
     private lateinit var btnAdminLogros: Button
     private lateinit var btnAdminCarreras: Button
+    private lateinit var btnPerfil: Button
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,12 +39,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnClasificacion = view.findViewById(R.id.btnClasificacion)
         btnAdminLogros = view.findViewById(R.id.btnAdminLogros)
         btnAdminCarreras = view.findViewById(R.id.btnAdminCarreras)
+        btnPerfil = view.findViewById(R.id.btnProfile)
 
         btnCarrera.setOnClickListener { navigateToFragment(MapsFragment()) }
         btnLogros.setOnClickListener { navigateToFragment(LogroConseguidoFragment()) }
         btnClasificacion.setOnClickListener { navigateToFragment(ClasificacionFragment()) }
         btnAdminLogros.setOnClickListener { navigateToFragment(AdminLogrosFragment()) }
         btnAdminCarreras.setOnClickListener{ navigateToFragment(RacesManagement()) }
+        btnPerfil.setOnClickListener{ navigateToFragment(ProfileFragment()) }
     }
 
     private fun setupViewModel() {

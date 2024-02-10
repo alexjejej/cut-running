@@ -6,85 +6,163 @@
     android:padding="16dp"
     android:weightSum="10">
 
-    <!-- TextView "Bienvenido" en la parte superior -->
-    <TextView
-        android:id="@+id/bienvenidaTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Bienvenido, "
-        android:textSize="30sp"
-        android:gravity="center"
-        android:layout_weight="1"/>
-
-    <!-- ImageView debajo del TextView -->
-    <ImageView
-        android:id="@+id/sportImageView"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:src="@drawable/principal"
-        android:layout_weight="3"/>
+        android:layout_weight="3"
+        android:orientation="vertical"
+        >
+        <!-- TextView "Bienvenido" en la parte superior -->
+        <TextView
+            android:id="@+id/bienvenidaTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bienvenido, "
+            android:textSize="30sp"
+            android:gravity="center"
+            android:textColor="@color/cut1"
+            android:layout_weight="1"/>
 
-    <!-- LinearLayout vertical para los botones -->
+        <!-- ImageView debajo del TextView -->
+        <ImageView
+            android:id="@+id/sportImageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:src="@drawable/principal"
+            android:layout_weight="3"/>
+
+    </LinearLayout>
+
+
+    <!-- LinearLayout vertical para el botón Carrera y división -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_weight="6"
-        android:weightSum="5"
+        android:layout_weight="3"
+        android:weightSum="3"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Comenzar a contar pasos"
+            android:layout_gravity="center"
+            android:textSize="15dp"
+            > </TextView>
+
+        <!-- Botón Carrera modificado -->
+        <Button
+            android:id="@+id/btnCarrera"
+            android:layout_width="140dp"
+            android:layout_height="0dp"
+            android:layout_weight="1.4"
+            android:text="Contar pasos"
+            android:textSize="15dp"
+            android:layout_margin="10dp"
+            android:drawableLeft="@drawable/icon_run_24"
+            android:background="#FFFFFF"
+            android:layout_marginBottom="8dp" />
+
+        <!-- TextView como divisor -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#D3D3D3"
+            android:layout_marginVertical="8dp"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="O explora la aplicación"
+        android:layout_gravity="center"
+        android:textSize="15dp"
+        >
+
+    </TextView>
+    <!-- LinearLayout vertical para los botones Logros y Clasificación -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="2"
+        android:weightSum="3"
+        android:gravity="center">
+
+        <!-- Botón Logros -->
+
+        <!-- Botón Clasificación -->
+        <Button
+            android:id="@+id/btnLogros"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="8dp"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:background="#FFFFFF"
+            android:drawableLeft="@drawable/icon_military_tech_24"
+            android:text="Logros" />
+
+        <Button
+            android:id="@+id/btnClasificacion"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:text="Ranking"
+            android:drawableLeft="@drawable/baseline_format_list_numbered_24"
+            android:background="#FFFFFF"
+            android:layout_marginBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnProfile"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
+            android:layout_weight="1"
+            android:layout_margin="10dp"
+            android:text="Perfil"
+            android:drawableLeft="@drawable/baseline_account_box_24"
+            android:background="#FFFFFF"
+            android:layout_marginBottom="8dp"/>
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#D3D3D3"
+        android:layout_marginVertical="8dp"/>
+    <!-- LinearLayout horizontal para los botones de administración -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="horizontal"
+        android:weightSum="2"
         android:gravity="center">
 
         <!-- Botón admin Logros -->
         <Button
             android:id="@+id/btnAdminLogros"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
             android:layout_weight="1"
             android:text="Administrar logros"
-            android:visibility="gone"
             android:backgroundTint="#B7950B"
-            android:layout_marginBottom="8dp"/>
-
-        <!-- Botón Carrera -->
-        <Button
-            android:id="@+id/btnCarrera"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="Carrera"
-            android:backgroundTint="#0099CC"
-            android:layout_marginBottom="8dp" />
-
-        <!-- Botón Logros -->
-        <Button
-            android:id="@+id/btnLogros"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="Logros"
-            android:backgroundTint="#0099CC"
-            android:layout_marginBottom="8dp" />
-
-
-
-        <!-- Botón Clasificación -->
-        <Button
-            android:id="@+id/btnClasificacion"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="Clasificación"
-            android:backgroundTint="#0099CC"
-            android:layout_marginBottom="8dp"/>
+            android:visibility="gone"
+            android:textColor="#FFFFFF"
+            android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
+            android:layout_marginEnd="8dp"/>
 
         <!-- Botón admin carreras -->
         <Button
             android:id="@+id/btnAdminCarreras"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:layout_height="80dp"
             android:layout_weight="1"
+            android:textColor="#FFFFFF"
             android:visibility="gone"
+            android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
             android:text="Administrar carreras"
-            android:backgroundTint="#B7950B"
-            android:layout_marginBottom="8dp"/>
+            android:backgroundTint="#B7950B"/>
     </LinearLayout>
 </LinearLayout>

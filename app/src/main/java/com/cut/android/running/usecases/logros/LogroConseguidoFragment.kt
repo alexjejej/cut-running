@@ -2,12 +2,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.cut.android.running.R
-import com.google.android.material.button.MaterialButton
 import com.cut.android.running.provider.resources.Presets
 import com.cut.android.running.usecases.home.HomeFragment
 import com.cut.android.running.usecases.logros.LogrosFragment
@@ -55,11 +55,11 @@ class LogroConseguidoFragment : Fragment() {
     }
 
     private fun setupButtonListeners(view: View) {
-        view.findViewById<MaterialButton>(R.id.btnVolverInicio).setOnClickListener {
+        view.findViewById<Button>(R.id.btnVolverInicio).setOnClickListener {
             navigateToFragment(HomeFragment())
         }
 
-        view.findViewById<MaterialButton>(R.id.btnVerLogros).setOnClickListener {
+        view.findViewById<Button>(R.id.btnVerLogros).setOnClickListener {
             navigateToFragment(LogrosFragment())
 
         }
