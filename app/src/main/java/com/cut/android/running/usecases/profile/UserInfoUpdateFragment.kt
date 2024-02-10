@@ -3,6 +3,7 @@ package com.cut.android.running.usecases.profile
 import android.content.ContentValues
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
@@ -20,6 +21,7 @@ import com.cut.android.running.provider.BDsqlite
 import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.RetrofitInstance
 import com.cut.android.running.provider.services.UserService
+import com.google.android.material.textfield.TextInputLayout
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -56,13 +58,36 @@ class UserInfoUpdateFragment : Fragment() {
         setupCentroUniversitarioSpinner()
 
         saveButton = view.findViewById<Button>(R.id.botonGuardarUpdate).apply {
-            setOnClickListener { GuardarDatosAPI() }
+            setOnClickListener {
+                if (validarCampos()) {
+                    GuardarDatosAPI()
+                }
+            }
         }
 
         backButton = view.findViewById<Button>(R.id.botonVolverUpdate).apply {
             setOnClickListener { navigateToFragment(ProfileFragment()) }
         }
+
+        // Definir el filtro
+        val filter = InputFilter { source, start, end, dest, dstart, dend ->
+            for (index in start until end) {
+                // Caracteres a filtrar
+                if (source[index] == '.' || source[index] == ' ' || source[index] == ',') {
+                    return@InputFilter ""
+                }
+            }
+            null // Retorna null para aceptar el original
+        }
+
+        // Aplicar el filtro a cada EditText en la lista
+        editTexts.forEach { editText ->
+            val currentFilters = editText.filters.toMutableList()
+            currentFilters.add(filter)
+            editText.filters = currentFilters.toTypedArray()
+        }
     }
+
 
     private fun setupCentroUniversitarioSpinner() {
         // Crea un ArrayAdapter usando un array de strings y un layout por defecto para el spinner
@@ -80,6 +105,8 @@ class UserInfoUpdateFragment : Fragment() {
 
 
     private fun GuardarDatosAPI() {
+        Log.d("UserInfoUpdateFragment","entramos a api")
+
         val email = DatosUsuario.getEmail(requireActivity()) ?: return
 
         // Realiza la lógica en una coroutina
@@ -128,6 +155,66 @@ class UserInfoUpdateFragment : Fragment() {
         }
     }
 
+
+    private fun validarCampos(): Boolean {
+        // Inicializar la bandera de validez como true
+        var esValido = true
+
+
+        // Validación para el campo código
+        val codigo = view?.findViewById<EditText>(R.id.codigoEditTextUpdate)?.text.toString()
+        if (codigo.isNotEmpty() && codigo.length != 9) {
+            view?.findViewById<TextInputLayout>(R.id.codigoTextInputLayout)?.error = "El código debe tener 9 números"
+            esValido = false
+        } else {
+            view?.findViewById<TextInputLayout>(R.id.codigoTextInputLayout)?.error = null
+        }
+
+        // Validación para el campo edad
+        val edad = view?.findViewById<EditText>(R.id.edadEditTextUpdate)?.text.toString().toIntOrNull()
+        when {
+            edad != null && edad <= 10 -> {
+                view?.findViewById<TextInputLayout>(R.id.edadTextInputLayout)?.error = "No se permiten peques"
+                esValido = false
+            }
+            edad != null && edad >= 100 -> {
+                view?.findViewById<TextInputLayout>(R.id.edadTextInputLayout)?.error = "Mmmmm no creo que tengas esa edad"
+                esValido = false
+            }
+            else -> view?.findViewById<TextInputLayout>(R.id.edadTextInputLayout)?.error = null
+        }
+
+        // Validación para el campo estatura
+        val estatura = view?.findViewById<EditText>(R.id.estaturaEditTextUpdate)?.text.toString().toIntOrNull()
+        when {
+            estatura != null && estatura <= 100 -> {
+                view?.findViewById<TextInputLayout>(R.id.estaturaTextInputLayout)?.error = "No se aceptan minions"
+                esValido = false
+            }
+            estatura != null && estatura >= 250 -> {
+                view?.findViewById<TextInputLayout>(R.id.estaturaTextInputLayout)?.error = "No se aceptan jirafas"
+                esValido = false
+            }
+            else -> view?.findViewById<TextInputLayout>(R.id.estaturaTextInputLayout)?.error = null
+        }
+
+        // Validación para el campo peso
+        val peso = view?.findViewById<EditText>(R.id.pesoEditTextUpdate)?.text.toString().toIntOrNull()
+        when {
+            peso != null && peso <= 30 -> {
+                view?.findViewById<TextInputLayout>(R.id.pesoTextInputLayout)?.error = "Ya quisieras"
+                esValido = false
+            }
+            peso != null && peso >= 597 -> {
+                view?.findViewById<TextInputLayout>(R.id.pesoTextInputLayout)?.error = "Lo dudamos mucho"
+                esValido = false
+            }
+            else -> view?.findViewById<TextInputLayout>(R.id.pesoTextInputLayout)?.error = null
+        }
+
+        // Retorna el resultado de la validación
+        return esValido
+    }
 
 
 
