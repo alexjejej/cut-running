@@ -2,7 +2,7 @@ package com.cut.android.running.usecases.home
 
 import LogroConseguidoFragment
 import MapsFragment
-import android.content.Intent
+import RacesManagement
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,7 +13,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.cut.android.running.R
 import com.cut.android.running.usecases.clasificacion.ClasificacionFragment
 import com.cut.android.running.provider.DatosUsuario
-import com.cut.android.running.usecases.gestioncarreras.RacesManagement
 import com.cut.android.running.usecases.logros.admin.AdminLogrosFragment
 
 

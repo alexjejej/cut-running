@@ -1,9 +1,8 @@
-package com.raywenderlich.android.rwandroidtutorial.provider.services
 
-import com.raywenderlich.android.rwandroidtutorial.common.response.IResponse
-import com.raywenderlich.android.rwandroidtutorial.models.Race
-import com.raywenderlich.android.rwandroidtutorial.models.User
-import com.raywenderlich.android.rwandroidtutorial.models.dto.RaceDto
+import com.cut.android.running.common.response.IResponse
+import com.cut.android.running.models.Race
+import com.cut.android.running.models.User
+import com.cut.android.running.models.dto.RaceDto
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE

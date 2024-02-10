@@ -1,12 +1,11 @@
-package com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.raceinfordialog
 
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
+import com.cut.android.running.databinding.RaceInfoDialogFragmentBinding
+import com.cut.android.running.models.Race
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.raywenderlich.android.runtracking.databinding.RaceInfoDialogFragmentBinding
-import com.raywenderlich.android.rwandroidtutorial.models.Race
-import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.RaceManagementViewModel
+
 
 class RaceInfoDialog (
     context: Context,

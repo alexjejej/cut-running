@@ -1,7 +1,7 @@
-package com.raywenderlich.android.rwandroidtutorial.provider.services
 
-import com.raywenderlich.android.rwandroidtutorial.common.response.IResponse
-import com.raywenderlich.android.rwandroidtutorial.models.UniversityCenter
+
+import com.cut.android.running.common.response.IResponse
+import com.cut.android.running.models.UniversityCenter
 import com.raywenderlich.android.rwandroidtutorial.models.dto.UniversityCenterDto
 import retrofit2.Response
 import retrofit2.http.Body

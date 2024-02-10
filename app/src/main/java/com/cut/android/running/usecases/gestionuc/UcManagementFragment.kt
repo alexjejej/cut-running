@@ -1,11 +1,11 @@
-package com.raywenderlich.android.rwandroidtutorial.usecases.gestionuc
+package com.cut.android.running.usecases.gestionuc
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.raywenderlich.android.runtracking.R
+import com.cut.android.running.R
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

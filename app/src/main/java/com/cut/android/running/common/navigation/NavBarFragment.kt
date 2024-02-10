@@ -1,6 +1,7 @@
 package com.cut.android.running.common.navigation
 
 import MapsFragment
+import RacesManagement
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -19,7 +20,6 @@ import com.cut.android.running.databinding.FragmentNavBarBinding
 import com.cut.android.running.models.Session
 import com.cut.android.running.provider.services.navigation.NavigationObj
 import com.cut.android.running.usecases.clasificacion.ClasificacionFragment
-import com.cut.android.running.usecases.gestioncarreras.RacesManagement
 import com.cut.android.running.usecases.home.HomeFragment
 import com.cut.android.running.usecases.login.LoginFragment
 import com.cut.android.running.usecases.logros.LogrosFragment

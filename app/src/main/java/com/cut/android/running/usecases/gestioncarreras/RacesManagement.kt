@@ -1,7 +1,5 @@
-package com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,21 +7,15 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import com.raywenderlich.android.runtracking.databinding.FragmentRacesManagementBinding
-import com.raywenderlich.android.runtracking.databinding.RaceAddDialogFragmentBinding
-import com.raywenderlich.android.runtracking.databinding.RaceInfoDialogFragmentBinding
-import com.raywenderlich.android.rwandroidtutorial.models.Race
-import com.raywenderlich.android.rwandroidtutorial.models.UniversityCenter
-import com.raywenderlich.android.rwandroidtutorial.models.dto.RaceDto
-import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
-import com.raywenderlich.android.rwandroidtutorial.provider.services.RaceService
-import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.adapter.RaceAdapter
-import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.addracedialog.AddRaceDialog
-import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.raceinfordialog.RaceInfoDialog
-import com.raywenderlich.android.rwandroidtutorial.usecases.gestionuc.UcManagementViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.cut.android.running.databinding.FragmentRacesManagementBinding
+import com.cut.android.running.databinding.RaceAddDialogFragmentBinding
+import com.cut.android.running.databinding.RaceInfoDialogFragmentBinding
+import com.cut.android.running.models.Race
+import com.cut.android.running.models.UniversityCenter
+import com.cut.android.running.usecases.gestioncarreras.adapter.RaceAdapter
+
+import com.cut.android.running.usecases.gestioncarreras.addracedialog.AddRaceDialog
+import com.cut.android.running.usecases.gestionuc.UcManagementViewModel
 
 /**
  * A simple [Fragment] subclass.

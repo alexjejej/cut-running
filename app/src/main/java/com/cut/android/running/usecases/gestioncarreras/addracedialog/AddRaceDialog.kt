@@ -1,24 +1,23 @@
-package com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.addracedialog
+package com.cut.android.running.usecases.gestioncarreras.addracedialog
 
+import RaceManagementViewModel
 import android.content.Context
 import android.content.res.Resources
 import android.util.Log
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
+import com.cut.android.running.R
+import com.cut.android.running.databinding.RaceAddDialogFragmentBinding
+import com.cut.android.running.models.dto.RaceDto
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
-import com.raywenderlich.android.runtracking.R
-import com.raywenderlich.android.runtracking.databinding.RaceAddDialogFragmentBinding
-import com.raywenderlich.android.rwandroidtutorial.models.dto.RaceDto
-import com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras.RaceManagementViewModel
-import com.raywenderlich.android.rwandroidtutorial.usecases.gestionuc.UcManagementViewModel
+
+import com.cut.android.running.usecases.gestionuc.UcManagementViewModel
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone

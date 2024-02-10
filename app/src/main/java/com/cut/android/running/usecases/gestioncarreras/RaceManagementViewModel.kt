@@ -1,14 +1,12 @@
-package com.raywenderlich.android.rwandroidtutorial.usecases.gestioncarreras
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.raywenderlich.android.rwandroidtutorial.models.Race
-import com.raywenderlich.android.rwandroidtutorial.models.User
-import com.raywenderlich.android.rwandroidtutorial.models.dto.RaceDto
-import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
-import com.raywenderlich.android.rwandroidtutorial.provider.services.RaceService
+import com.cut.android.running.models.Race
+import com.cut.android.running.models.User
+import com.cut.android.running.models.dto.RaceDto
+import com.cut.android.running.provider.RetrofitInstance
 import kotlinx.coroutines.launch
 
 class RaceManagementViewModel : ViewModel() {

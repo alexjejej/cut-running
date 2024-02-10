@@ -1,12 +1,12 @@
-package com.raywenderlich.android.rwandroidtutorial.usecases.gestionuc
+package com.cut.android.running.usecases.gestionuc
 
+import UcService
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.raywenderlich.android.rwandroidtutorial.models.UniversityCenter
-import com.raywenderlich.android.rwandroidtutorial.provider.RetrofitInstance
-import com.raywenderlich.android.rwandroidtutorial.provider.services.UcService
+import com.cut.android.running.models.UniversityCenter
+import com.cut.android.running.provider.RetrofitInstance
 import kotlinx.coroutines.launch
 
 class UcManagementViewModel: ViewModel() {
