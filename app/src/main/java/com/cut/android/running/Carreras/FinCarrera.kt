@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,10 +13,12 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import com.cut.android.running.R
+import com.cut.android.running.models.Achievement
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.cut.android.running.usecases.HomeActivity
@@ -24,6 +27,7 @@ import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.RetrofitInstance
 import com.cut.android.running.provider.services.AchievementService
 import com.cut.android.running.provider.services.ClassificationService
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -34,6 +38,9 @@ class FinCarrera : AppCompatActivity() {
     val CHANNEL_ID = "logros"
     val CHANNEL_NAME = "logros"
     private val classificationService = RetrofitInstance.getRetrofit().create(ClassificationService::class.java)
+    private val achievementsService: AchievementService by lazy {
+        RetrofitInstance.getRetrofit().create(AchievementService::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -109,8 +116,6 @@ class FinCarrera : AppCompatActivity() {
     }
 
 
-
-
     private fun CrearDatos() {
 
         //fecha hoy
@@ -131,48 +136,44 @@ class FinCarrera : AppCompatActivity() {
 
     }
 
+    // Asume que tus métodos de API ya son suspendidos
+    private suspend fun getAchievementsByEmail(email: String): List<Achievement>? {
+        val response = achievementsService.getAchievementsByUser(email)
+        return if (response.isSuccessful) response.body()?.data else null
+    }
+
+    private suspend fun addAchievementIfNotExists(pasos: Int, email: String, achievements: List<Achievement>, userAchievements: List<Achievement>?) {
+        achievements.filter { pasos > it.steps }.forEach { achievement ->
+            if (userAchievements?.none { it.id == achievement.id } != false) {
+                val response = achievementsService.addUserRelation(email, achievement.id!!)
+                if (response.isSuccessful && response.body()?.data == true) {
+                    notificacion(achievement.steps, achievement.name, achievement.id)
+                } else {
+                    Log.d("FC consultarlogro", "No se pudo añadir la relación usuario-logro para el logro ${achievement.name}")
+                }
+            } else {
+                Log.d("FC consultarlogro", "El usuario ya tiene el logro ${achievement.name}")
+            }
+        }
+    }
+
     private fun consultarlogro(pasos: Int, email: String) {
-        val pasosT = 101
-        // Iniciamos una coroutine en el scope del Fragment
-        lifecycleScope.launch {
+        lifecycleScope.launch(CoroutineExceptionHandler { _, exception ->
+            Log.e("FC consultarlogro", "Error en la coroutine", exception)
+        }) {
             try {
-                // Creación única de la instancia del servicio para realizar llamadas a la API
-                val achievementsService = RetrofitInstance.getRetrofit().create(AchievementService::class.java)
-
-                // Llamada a la API para obtener todos los logros disponibles
-                achievementsService.getAchievements().body()?.data?.let { achievements ->
-                    // Filtramos los logros basándonos en los pasos realizados por el usuario
-                    achievements.filter { pasosT > it.steps }.forEach { achievement ->
-                        // Para cada logro que cumpla la condición, verificamos si el usuario ya lo tiene
-                        val userAchievementsResponse = achievementsService.getAchievementsByUser(email)
-                        userAchievementsResponse.body()?.data?.let { userAchievements ->
-                            if (userAchievements.none { it.id == achievement.id }) {
-                                // Si el usuario no tiene este logro, intentamos añadir la relación usuario-logro
-                                achievementsService.addUserRelation(email, achievement.id!!).body()?.let { response ->
-                                    if (response.data == true) {
-                                        // Notificación de éxito si se añade el logro correctamente
-                                        notificacion(achievement.steps, achievement.name, achievement.id)
-                                    } else {
-                                        Log.d("FC", "No se pudo añadir la relación usuario-logro para el logro ${achievement.name}")
-                                    }
-                                }
-                            } else {
-                                // Manejo del caso en el que el usuario ya tiene asignado el logro
-                                Log.d("FC consultarlogro", "El usuario ya tiene el logro ${achievement.name}")
-                            }
-                        }
-
-                    }
-                } ?: Log.e("FC consultarlogro", "No se recibieron logros de la API")
+                val achievements = achievementsService.getAchievements().body()?.data ?: emptyList()
+                val userAchievements = getAchievementsByEmail(email)
+                addAchievementIfNotExists(pasos, email, achievements, userAchievements)
             } catch (e: Exception) {
-                // Manejamos cualquier excepción que pueda ocurrir durante el proceso
                 Log.e("FC consultarlogro", "Error al consultar logros", e)
             }
         }
     }
 
+
     private fun notificacion(pasosLogro: Int, tituloLogro: String, id: Int) {
-        Log.d("FC notificacion", "Datos a registrar: $tituloLogro, pasos: $pasosLogro")
+        Log.d("FC consultarlogro", "Datos a registrar: $tituloLogro, pasos: $pasosLogro")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_DEFAULT
             val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance)
@@ -200,6 +201,20 @@ class FinCarrera : AppCompatActivity() {
                 setAutoCancel(true) // La notificación se cancela automáticamente al hacer clic en ella
             }.build()
 
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    "android.permission.POST_NOTIFICATIONS"
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
             NotificationManagerCompat.from(this).notify(id, notificacion)
         }
     }

@@ -118,6 +118,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="16dp"
                         android:text="Volver al Inicio"
+                        android:background="#FFFFFF"
                         app:cornerRadius="4dp" />
 
                     <!-- Botón para ver logros -->
@@ -129,6 +130,7 @@
                         android:text="Ver Logros"
                         app:cornerRadius="4dp"
                         android:layout_margin="16dp"
+                        android:background="#FFFFFF"
                          />
 
             </LinearLayout>
