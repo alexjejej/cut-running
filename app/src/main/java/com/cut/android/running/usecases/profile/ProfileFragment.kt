@@ -1,18 +1,26 @@
 package com.cut.android.running.usecases.profile
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.cut.android.running.R
+import com.cut.android.running.models.Achievement
 import com.cut.android.running.models.Session
 import com.cut.android.running.provider.BDsqlite
 import com.cut.android.running.provider.DatosUsuario
+import com.cut.android.running.provider.RetrofitInstance
+import com.cut.android.running.provider.services.AchievementService
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -36,7 +44,7 @@ class ProfileFragment : Fragment() {
         // Llama aquí a setupProfile y pasa la vista inflada
         setupProfile(view)
 
-        view.findViewById<ImageButton>(R.id.imageButtonProfile).setOnClickListener {
+        view.findViewById<Button>(R.id.ButtonProfile).setOnClickListener {
             navigateToFragment(UserInfoUpdateFragment())
         }
 
@@ -64,6 +72,9 @@ class ProfileFragment : Fragment() {
 
         val txtNombre = view.findViewById<TextView>(R.id.txtNombreUsuarioProfile)
         txtNombre.text = "Nombre: $nombreUsuario"
+
+        //configurar logros obtenidos
+        loadAchievements(email)
 
         // Configurar la foto del perfil
         val imgPerfilProfile = view.findViewById<ImageView>(R.id.imgPerfilProfile)
@@ -111,6 +122,33 @@ class ProfileFragment : Fragment() {
         }
 
     }
+
+
+    private fun loadAchievements(email: String) {
+        lifecycleScope.launch {
+            try {
+                val response = RetrofitInstance.getRetrofit().create(AchievementService::class.java).getAchievementsByUser(email)
+                if (response.isSuccessful && response.body() != null) {
+                    val achievements = response.body()?.data ?: emptyList()
+                    updateAchievementsView(achievements)
+                } else {
+                    // Manejar respuesta fallida
+                    Log.e("ProfileFragment", "Error cargando logros: ${response.errorBody()?.string()}")
+                }
+            } catch (e: Exception) {
+                // Manejar excepción
+                Log.e("ProfileFragment", "Excepción al cargar logros", e)
+            }
+        }
+    }
+
+    private fun updateAchievementsView(achievements: List<Achievement>) {
+        val recyclerView = view?.findViewById<RecyclerView>(R.id.recyclerViewLogros)
+        // Configura el LayoutManager para horizontal
+        recyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        recyclerView?.adapter = AdaptadorLogros(achievements)
+    }
+
 
 
     companion object {
