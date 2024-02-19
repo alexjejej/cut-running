@@ -28,7 +28,8 @@
             android:id="@+id/sportImageView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:src="@drawable/principal"
+            android:src="@drawable/sport_image"
+            android:scaleType="centerInside"
             android:layout_weight="3"/>
 
     </LinearLayout>

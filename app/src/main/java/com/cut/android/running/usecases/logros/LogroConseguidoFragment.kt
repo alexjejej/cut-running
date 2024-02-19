@@ -1,4 +1,8 @@
+import android.graphics.Typeface
 import android.os.Bundle
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +46,26 @@ class LogroConseguidoFragment : Fragment() {
     private fun initializeUI(view: View) {
         // Configuración del mensaje de felicitación
         val tvFelicidades = view.findViewById<TextView>(R.id.tvFelicidades)
-        tvFelicidades.text = "Conseguiste el logro $nombreLogro por haber caminado más de $pasosLogro pasos. ¡Sigue así!"
+        val textoCompleto = "Conseguiste el logro $nombreLogro por haber caminado más de $pasosLogro pasos. ¡Sigue así!"
+
+        // Crea un SpannableString a partir del texto completo
+        val spannableString = SpannableString(textoCompleto)
+
+        // Encuentra el índice de inicio y fin para el nombre del logro y los pasos
+        val inicioLogro = textoCompleto.indexOf(nombreLogro!!)
+        val finLogro = inicioLogro + nombreLogro!!.length
+        val inicioPasos = textoCompleto.indexOf(pasosLogro.toString())
+        val finPasos = inicioPasos + pasosLogro.toString().length
+
+        // Aplica estilo negrita al nombre del logro
+        spannableString.setSpan(StyleSpan(Typeface.BOLD), inicioLogro, finLogro, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+
+        // Aplica estilo cursiva a los pasos
+        spannableString.setSpan(StyleSpan(Typeface.ITALIC), inicioPasos, finPasos, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+
+        // Establece el SpannableString en el TextView
+        tvFelicidades.text = spannableString
+
 
         // Configuración de la animación de confeti
         viewKonfetti = view.findViewById(R.id.konfettiView)

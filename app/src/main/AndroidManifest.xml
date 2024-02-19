@@ -11,6 +11,7 @@
     <uses-feature android:name="android.hardware.sensor.stepdetector" android:required="true"/>
 
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
         android:name="com.cut.android.running.DIContainer"
         android:allowBackup="false"
