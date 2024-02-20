@@ -4,16 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="100"
+    android:weightSum="108"
     tools:context="com.cut.android.running.usecases.profile.UserInfoUpdateFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="100"
+        android:layout_weight="108"
         android:orientation="vertical"
-        android:padding="16dp"
-        android:weightSum="100">
+        android:padding="10dp"
+        android:weightSum="108">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -94,20 +94,63 @@
 
         <Spinner
             android:id="@+id/SpecialityIDSpinnerUpdate"
-            android:layout_width="250dp"
+            android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="10"
             android:prompt="@string/Speciality_ID_prompt" />
 
-        <View
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="18"/>
+            android:orientation="vertical"
+            android:layout_weight="32">
+
+            <!-- Configuraciones Avanzadas -->
+            <TextView
+                android:id="@+id/tvConfigAvanzadas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Configuraciones Avanzadas"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:textStyle="bold"
+                android:paddingTop="16dp"
+                android:paddingBottom="8dp"
+                android:background="?attr/selectableItemBackground" />
+
+            <!-- Contenedor de Configuración Avanzada (Inicialmente Oculto) -->
+            <LinearLayout
+                android:id="@+id/llConfigAvanzadas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/distanciaPromedioPorPasoTextInputLayout"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/distanciaPromedioPorPasoEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Distancia promedio por paso (cm)"
+                        android:inputType="numberDecimal"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="15"
+            android:layout_weight="12"
             android:weightSum="5"
             android:orientation="horizontal">
 
@@ -118,11 +161,10 @@
                 android:layout_height="wrap_content"
                 android:text="Volver"
                 android:background="#FFFFFF"
-                android:layout_marginTop="16dp"
                 android:gravity="center"
+                android:layout_marginLeft="10dp"
                 android:textSize="18sp"
-                android:padding="12dp"
-                android:elevation="4dp" />
+                 />
 
             <View
                 android:layout_width="0dp"
@@ -136,11 +178,11 @@
                 android:layout_height="wrap_content"
                 android:text="Guardar"
                 android:background="#FFFFFF"
-                android:layout_marginTop="16dp"
                 android:gravity="center"
+                android:layout_marginEnd="10dp"
                 android:textSize="18sp"
-                android:padding="12dp"
-                android:elevation="4dp" />
+                android:enabled="false"
+                 />
 
         </LinearLayout>
     </LinearLayout>

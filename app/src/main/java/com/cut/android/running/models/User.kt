@@ -17,6 +17,7 @@ data class User(
     val Role: Role? = null,
     val enabled: Int? = null,
     val updateDate: String? = null,
+    val distanceperstep: Int? = null,
     val totalsteps: Int? = null,
     val totaldistance: Float? = null,
     val code: Int? = null

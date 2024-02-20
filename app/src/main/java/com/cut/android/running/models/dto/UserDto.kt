@@ -13,6 +13,7 @@ data class UserDto(
     val specialty: Int? = null,
     val roleId: Int? = null,
     val enabled: Int? = null,
+    val distanceperstep: Int? = null,
     val updateDate: String? = null,
     val totalsteps: Int? = null,
     val totaldistance: Float? = null,

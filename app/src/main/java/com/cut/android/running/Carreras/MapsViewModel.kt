@@ -1,3 +1,4 @@
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -12,6 +13,7 @@ class MapsViewModel : ViewModel() {
     val totalSteps = MutableLiveData<Int>(0)
     var distancie = 0.0
     var EstaturaUser = 0.0
+    var distancePerStep = 0.0
     //mostrar toast en viewmodel
     val showToastEvent = MutableLiveData<List<String>>()
     private val messageQueue: MutableList<String> = mutableListOf()
@@ -60,7 +62,7 @@ class MapsViewModel : ViewModel() {
         totalDistance.postValue(0f)
     }
 
-    fun addStep() {
+    fun addStep(context: Context) {
         val currentTime = System.currentTimeMillis()
 
         // Restablecer al intervalo original si la penalización ha expirado
@@ -79,7 +81,9 @@ class MapsViewModel : ViewModel() {
 
             // Actualiza la distancia total
             val pasoDistancia = verificarPromedioDistanciaPorPaso()
-            totalDistance.postValue((currentSteps * pasoDistancia).toFloat())
+            totalDistance.postValue(((currentSteps + 1) * pasoDistancia).toFloat())
+
+            saveTrackingData(context)
         } else {
             if (currentTime - ultimaVezToastMostrado > tiempoEsperaToast) {
                 ultimaVezToastMostrado = currentTime
@@ -94,16 +98,21 @@ class MapsViewModel : ViewModel() {
 
 
     private fun verificarPromedioDistanciaPorPaso(): Double {
-        //.415 longitud del paso en función de la estatura, bibliografia hasta abajo
 
+        if (distancePerStep > 0.0) {
+            return distancePerStep
+        }
+        //.415 longitud del paso en función de la estatura, bibliografia hasta abajo
         var distanciaPromedioPorPaso =.75
         if (EstaturaUser!=0.0){
             distanciaPromedioPorPaso = EstaturaUser * .415
         }
-
-
         return distanciaPromedioPorPaso
     }
+    fun updateDistancePerStep(distanciaporpaso: Double) {
+        distancePerStep = distanciaporpaso
+    }
+
 
 
     fun getSteps(): Int? {
@@ -129,6 +138,23 @@ class MapsViewModel : ViewModel() {
             messageQueue.removeAt(0) // Elimina el mensaje mostrado de la cola
         }
     }
+
+    fun saveTrackingData(context: Context) {
+        val sharedPref = context.getSharedPreferences("MyTrackingPref", Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            putInt("steps", totalSteps.value ?: 0)
+            putFloat("distance", totalDistance.value ?: 0f)
+            apply()
+        }
+    }
+
+    fun loadTrackingData(context: Context) {
+        val sharedPref = context.getSharedPreferences("MyTrackingPref", Context.MODE_PRIVATE)
+        totalSteps.postValue(sharedPref.getInt("steps", 0))
+        totalDistance.postValue(sharedPref.getFloat("distance", 0f))
+    }
+
+
 }
 
 /*

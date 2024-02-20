@@ -197,6 +197,7 @@ class LoginFragment : Fragment() {
         values.put(BDsqlite.COLUMN_DISTANCIA, user.totaldistance)
         values.put(BDsqlite.COLUMN_EDAD, user.age)
         values.put(BDsqlite.COLUMN_ESTATURA, user.height)
+        values.put(BDsqlite.COLUMN_DISTANCEPERSTEP, user.distanceperstep)
         values.put(BDsqlite.COLUMN_PESO, user.weight)
         values.put(BDsqlite.COLUMN_SPECIALITYID, specialidad)
         values.put(BDsqlite.COLUMN_UPDATE_DATE, user.updateDate)

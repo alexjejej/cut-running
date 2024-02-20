@@ -29,7 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="vertical"
-                android:background="#FFD9D9D9"
+                android:background="@color/backgroundgris"
                 android:layout_weight="15">
 
                 <View
@@ -108,7 +108,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_weight="3"
+        android:layout_weight="3.2"
         >
 
         <TextView
@@ -118,7 +118,7 @@
             android:fontFamily="sans-serif-medium"
             android:text="Logros obtenidos:"
 
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 
@@ -127,6 +127,7 @@
         android:layout_height="0dp"
         android:orientation="horizontal"
         android:layout_weight="17"
+        android:layout_marginTop="8dp"
         >
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewLogros"
@@ -152,7 +153,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:textSize="15sp"
-            android:background="#FFD9D9D9"
+            android:background="@color/backgroundgris"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             android:fontFamily="sans-serif-medium"
@@ -166,7 +167,8 @@
         android:orientation="horizontal"
         android:layout_weight="35"
         android:weightSum="40"
-        android:background="#FFD9D9D9"
+        android:background="@color/backgroundgris"
+
         >
         <!-- Layout - Seperación lado lizquierdo info -->
         <LinearLayout
@@ -174,7 +176,8 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"
             android:layout_weight="7"
-            android:background="#FFD9D9D9"
+            android:background="@color/backgroundgris"
+
             >
 
         </LinearLayout>
@@ -185,7 +188,8 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_weight="33"
-            android:background="#FFD9D9D9"
+            android:background="@color/backgroundgris"
+
             >
 
             <TextView
@@ -255,6 +259,16 @@
                 android:text="Carrera: Ingenieria en Nanotecnologia"
                 />
 
+            <TextView
+                android:id="@+id/txtDistanciaxPasoUsuarioProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="15dp"
+                android:text="Distancia por paso: Predeterminado"
+                />
+
 
         </LinearLayout>
 
@@ -266,7 +280,8 @@
         android:layout_height="0dp"
         android:layout_weight="10"
         android:orientation="horizontal"
-        android:background="#FFD9D9D9"
+        android:background="@color/backgroundgris"
+
         android:gravity="center">
 
         <View

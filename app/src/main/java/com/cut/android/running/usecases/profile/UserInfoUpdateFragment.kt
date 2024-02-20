@@ -9,10 +9,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -51,7 +54,8 @@ class UserInfoUpdateFragment : Fragment() {
             view.findViewById(R.id.edadEditTextUpdate),
             view.findViewById(R.id.estaturaEditTextUpdate),
             view.findViewById(R.id.pesoEditTextUpdate),
-            view.findViewById(R.id.codigoEditTextUpdate)
+            view.findViewById(R.id.codigoEditTextUpdate),
+            view.findViewById(R.id.distanciaPromedioPorPasoEditText)
         )
 
         SpecialityIDSpinner = view.findViewById(R.id.SpecialityIDSpinnerUpdate)
@@ -73,7 +77,7 @@ class UserInfoUpdateFragment : Fragment() {
         val filter = InputFilter { source, start, end, dest, dstart, dend ->
             for (index in start until end) {
                 // Caracteres a filtrar
-                if (source[index] == '.' || source[index] == ' ' || source[index] == ',') {
+                if (source[index] == '.' || source[index] == ' ' || source[index] == ',' || source[index] == '-') {
                     return@InputFilter ""
                 }
             }
@@ -85,6 +89,18 @@ class UserInfoUpdateFragment : Fragment() {
             val currentFilters = editText.filters.toMutableList()
             currentFilters.add(filter)
             editText.filters = currentFilters.toTypedArray()
+        }
+
+        //Menú configuración avanzada
+        val tvConfigAvanzadas = view.findViewById<TextView>(R.id.tvConfigAvanzadas)
+        val llConfigAvanzadas = view.findViewById<LinearLayout>(R.id.llConfigAvanzadas)
+
+        tvConfigAvanzadas.setOnClickListener {
+            if (llConfigAvanzadas.visibility == View.GONE) {
+                llConfigAvanzadas.visibility = View.VISIBLE
+            } else {
+                llConfigAvanzadas.visibility = View.GONE
+            }
         }
     }
 
@@ -100,6 +116,17 @@ class UserInfoUpdateFragment : Fragment() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             // Aplica el adaptador al spinner
             SpecialityIDSpinner.adapter = adapter
+        }
+
+        // Añadir el listener
+        SpecialityIDSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                checkFieldsForEmptyValues() // Verifica los campos cada vez que cambia la selección
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Opcionalmente puedes manejar el caso de "nada seleccionado" si es necesario
+            }
         }
     }
 
@@ -126,7 +153,8 @@ class UserInfoUpdateFragment : Fragment() {
                         else -> null
                     },
                     code = editTexts[3].text.toString().takeIf { it.isNotBlank() }?.toIntOrNull(),
-                    email = email
+                    email = email,
+                    distanceperstep = editTexts[4].text.toString().takeIf { it.isNotBlank() }?.toIntOrNull()
                 )
 
                 // Verificar si hay cambios antes de llamar a la API
@@ -212,6 +240,20 @@ class UserInfoUpdateFragment : Fragment() {
             else -> view?.findViewById<TextInputLayout>(R.id.pesoTextInputLayout)?.error = null
         }
 
+        // Validación para el campo distancia por paso
+        val distanciaPorPaso = view?.findViewById<EditText>(R.id.distanciaPromedioPorPasoEditText)?.text.toString().toIntOrNull()
+        when {
+            distanciaPorPaso != null && distanciaPorPaso <= 50 -> {
+                view?.findViewById<TextInputLayout>(R.id.distanciaPromedioPorPasoTextInputLayout)?.error = "Ingresa un valor más alto"
+                esValido = false
+            }
+            distanciaPorPaso != null && distanciaPorPaso >= 120 -> {
+                view?.findViewById<TextInputLayout>(R.id.distanciaPromedioPorPasoTextInputLayout)?.error = "Ingresa un valor más bajo"
+                esValido = false
+            }
+            else -> view?.findViewById<TextInputLayout>(R.id.distanciaPromedioPorPasoTextInputLayout)?.error = null
+        }
+
         // Retorna el resultado de la validación
         return esValido
     }
@@ -226,6 +268,7 @@ class UserInfoUpdateFragment : Fragment() {
         val estaturaEditText = editTexts[1]
         val pesoEditText = editTexts[2]
         val codigoEditText = editTexts[3]
+        val distanciapasoEditText = editTexts[4]
 
 
         val values = ContentValues()
@@ -240,8 +283,11 @@ class UserInfoUpdateFragment : Fragment() {
         pesoEditText.text.toString().takeIf { it.isNotBlank() }?.let { peso ->
             values.put(BDsqlite.COLUMN_PESO, peso.toInt())
         }
-        codigoEditText.text.toString().takeIf { it.isNotBlank() }?.let { edad ->
-            values.put(BDsqlite.COLUMN_CODE, edad.toInt())
+        codigoEditText.text.toString().takeIf { it.isNotBlank() }?.let { codigo ->
+            values.put(BDsqlite.COLUMN_CODE, codigo.toInt())
+        }
+        distanciapasoEditText.text.toString().takeIf { it.isNotBlank() }?.let { distanciapaso ->
+            values.put(BDsqlite.COLUMN_DISTANCEPERSTEP, distanciapaso.toInt())
         }
         // Obtener specialtyId del Spinner
         val specialtyId = when (SpecialityIDSpinner.selectedItem.toString()) {
@@ -282,6 +328,7 @@ class UserInfoUpdateFragment : Fragment() {
 
     private fun checkFieldsForEmptyValues() {
         saveButton.isEnabled = editTexts.any { it.text.isNotEmpty() }
+        saveButton.isEnabled = SpecialityIDSpinner.selectedItemPosition > 0
     }
 
     /** Navega al fragmento dado como parametro **/

@@ -121,6 +121,11 @@ class ProfileFragment : Fragment() {
             else -> "Carrera: Sin datos"
         }
 
+        //DistanciaPorPaso
+        val txtdistancia = view.findViewById<TextView>(R.id.txtDistanciaxPasoUsuarioProfile)
+        val distancia = bd.getIntData(email, BDsqlite.COLUMN_DISTANCEPERSTEP)
+        txtdistancia.text = if (distancia == 0) "Distancia por paso: Predeterminado" else "Distancia por paso: $distancia cm"
+
     }
 
 

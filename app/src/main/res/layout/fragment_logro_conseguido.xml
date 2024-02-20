@@ -107,31 +107,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="10"
-                android:weightSum="2"
+                android:weightSum="3"
                 android:orientation="horizontal">
 
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    ></View>
                     <!-- Botón para volver al inicio -->
                     <Button
-                        android:id="@+id/btnVolverInicio"
+                        android:id="@+id/btnCerrar"
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:layout_margin="16dp"
-                        android:text="Volver al Inicio"
+                        android:text="Cerrar"
                         android:background="#FFFFFF"
                         app:cornerRadius="4dp" />
 
-                    <!-- Botón para ver logros -->
-                    <Button
-                        android:id="@+id/btnVerLogros"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:text="Ver Logros"
-                        app:cornerRadius="4dp"
-                        android:layout_margin="16dp"
-                        android:background="#FFFFFF"
-                         />
+
 
             </LinearLayout>
 
