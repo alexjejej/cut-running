@@ -21,6 +21,7 @@ public class BDsqlite extends SQLiteOpenHelper {
     public static final String COLUMN_PESO = "peso";
     public static final String COLUMN_EDAD = "edad";
     public static final String COLUMN_ESTATURA = "estatura";
+    public static final String COLUMN_DISTANCEPERSTEP = "distanciaporpaso";
     public static final String COLUMN_CENTRO_UNIVERSITARIO = "centro_universitario";
     public static final String COLUMN_SPECIALITYID = "carrera";
     public static final String COLUMN_UPDATE_DATE = "date";
@@ -36,6 +37,7 @@ public class BDsqlite extends SQLiteOpenHelper {
                     COLUMN_EDAD + " INTEGER, " +
                     COLUMN_DISTANCIA + " FLOAT, " +
                     COLUMN_ESTATURA + " REAL, " +
+                    COLUMN_DISTANCEPERSTEP + " REAL, " +
                     COLUMN_PESO + " REAL, " +
                     COLUMN_PASOS_HOY + " INTEGER, " +
                     COLUMN_PASOS_TOTALES + " INTEGER, " +

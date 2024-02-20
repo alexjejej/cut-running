@@ -19,9 +19,10 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.lifecycleScope
 import com.cut.android.running.R
 import com.cut.android.running.models.Achievement
+import com.cut.android.running.models.Classification
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.cut.android.running.usecases.HomeActivity
+import com.cut.android.running.usecases.home.HomeActivity
 import com.cut.android.running.provider.BDsqlite
 import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.RetrofitInstance
@@ -65,6 +66,7 @@ class FinCarrera : AppCompatActivity() {
         val PasosHoy = db.getIntData(email,BDsqlite.COLUMN_PASOS_HOY)
         val PasosTotales = db.getIntData(email,BDsqlite.COLUMN_PASOS_TOTALES)
         val Distancia = db.getFloatData(email,BDsqlite.COLUMN_DISTANCIA)
+        val nombreUsuario = DatosUsuario.getUserName(this)
 
         //mostrar los datos de cada consulta
         txtPasos.text = (PasosHoy.toString()+" pasos")
@@ -72,48 +74,52 @@ class FinCarrera : AppCompatActivity() {
         txtDistancia.text = (Distancia.toString()+ " metros")
 
         //Procesar clasificacion
-        clasificacion(PasosTotales, email)
+        if (nombreUsuario != null) {
+            clasificacion(PasosTotales, email, nombreUsuario)
+        }
 
         //Procesar logros
         consultarlogro(PasosTotales, email)
     }
 
-    private fun clasificacion(pasosT: Int, email: String) {
+    private fun clasificacion(pasosT: Int, email: String, nombreUsuario: String) {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
-                // Obtén la clasificación actual por correo electrónico
+                // Intenta obtener la clasificación actual por correo electrónico
                 val response = classificationService.getClassificationById(email)
-                if (response.isSuccessful && response.body() != null) {
+                if (response.isSuccessful && response.body() != null && response.body()!!.isSuccess) {
                     val clasificacionActual = response.body()!!.data
 
-                    // Comprueba si la clasificación actual no es nula
                     if (clasificacionActual != null) {
-                        // Crea una nueva instancia con los datos actualizados
-                        val clasificacionActualizada = clasificacionActual.copy(pasos = pasosT+1)
-
-                        // Envía la actualización
+                        // Si existe, actualiza la clasificación
+                        val clasificacionActualizada = clasificacionActual.copy(pasos = pasosT + 1)
                         val updateResponse = classificationService.updateClassification(clasificacionActualizada)
                         if (updateResponse.isSuccessful) {
-                            // Manejo exitoso
                             Log.d("Clasificacion Actualizada", "Clasificación actualizada con éxito")
                         } else {
-                            // Manejo de errores
                             Log.e("API Error", "Error al actualizar clasificación")
                         }
+                    }
+                } else if (response.code() == 404) {
+                    // Si no existe la clasificación, crea una nueva
+                    val nuevaClasificacion = Classification(id = email, nombre = nombreUsuario, pasos = pasosT) // Asume la existencia de un constructor adecuado
+                    val createResponse = classificationService.addClassification(nuevaClasificacion)
+                    if (createResponse.isSuccessful) {
+                        Log.d("Clasificacion Creada", "Clasificación creada con éxito")
                     } else {
-                        // Manejo del caso en que la clasificación no se encuentra
-                        Log.e("API Error", "Clasificación no encontrada para el correo electrónico: $email")
+                        Log.e("API Error", "Error al crear clasificación")
                     }
                 } else {
-                    // Manejo de errores
-                    Log.e("API Error", "Error al obtener clasificación por correo electrónico")
+                    // Otros errores
+                    Log.e("API Error", "Error al obtener clasificación por correo electrónico: $response")
                 }
             } catch (e: Exception) {
-                // Manejo de excepciones
                 Log.e("API Error", "Excepción al actualizar clasificación", e)
             }
         }
     }
+
+
 
 
     private fun CrearDatos() {

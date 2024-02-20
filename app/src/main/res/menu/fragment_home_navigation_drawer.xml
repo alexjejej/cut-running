@@ -15,11 +15,7 @@
     <group
         android:id="@+id/principal_views_group"
         android:checkableBehavior="single">
-        <item
-            android:id="@+id/btnRaceManagement"
-            android:enabled="true"
-            android:icon="@drawable/icon_run_24"
-            android:title="@string/item_race_managements"/>
+
         <item
             android:id="@+id/btnHome"
             android:enabled="true"

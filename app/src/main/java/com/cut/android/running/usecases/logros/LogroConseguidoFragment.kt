@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.cut.android.running.R
 import com.cut.android.running.provider.resources.Presets
+import com.cut.android.running.usecases.home.HomeActivity
 import com.cut.android.running.usecases.home.HomeFragment
 import com.cut.android.running.usecases.logros.LogrosFragment
 import nl.dionsegijn.konfetti.xml.KonfettiView
@@ -29,8 +30,8 @@ class LogroConseguidoFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            nombreLogro = it.getString(ARG_NOMBRE_LOGRO)
-            pasosLogro = it.getInt(ARG_PASOS_LOGRO)
+            nombreLogro = it.getString(ARG_NOMBRE_LOGRO,"Error en el logro")
+            pasosLogro = it.getInt(ARG_PASOS_LOGRO,0)
         }
     }
 
@@ -78,14 +79,10 @@ class LogroConseguidoFragment : Fragment() {
     }
 
     private fun setupButtonListeners(view: View) {
-        view.findViewById<Button>(R.id.btnVolverInicio).setOnClickListener {
-            navigateToFragment(HomeFragment())
+        view.findViewById<Button>(R.id.btnCerrar).setOnClickListener {
+            activity?.finishAffinity()
         }
 
-        view.findViewById<Button>(R.id.btnVerLogros).setOnClickListener {
-            navigateToFragment(LogrosFragment())
-
-        }
 
         imageButton.setOnClickListener {
             setRandomMovement()

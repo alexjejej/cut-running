@@ -101,9 +101,6 @@ class NavBarFragment : Fragment() {
             R.id.btnProfile -> {
                 return navigateTo(ProfileFragment(), getString(R.string.ProfileFragment))
             }
-            R.id.btnRaceManagement -> {
-                return navigateTo(RacesManagement(), getString(R.string.RaceManagement))
-            }
             R.id.btnHome -> {
                 return navigateTo(HomeFragment(), getString(R.string.HomeFragment))
             }

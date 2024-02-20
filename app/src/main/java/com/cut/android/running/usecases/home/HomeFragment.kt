@@ -13,6 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.cut.android.running.R
 import com.cut.android.running.usecases.clasificacion.ClasificacionFragment
 import com.cut.android.running.provider.DatosUsuario
+import com.cut.android.running.usecases.logros.LogrosFragment
 import com.cut.android.running.usecases.logros.admin.AdminLogrosFragment
 import com.cut.android.running.usecases.profile.ProfileFragment
 
@@ -42,7 +43,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnPerfil = view.findViewById(R.id.btnProfile)
 
         btnCarrera.setOnClickListener { navigateToFragment(MapsFragment()) }
-        btnLogros.setOnClickListener { navigateToFragment(LogroConseguidoFragment()) }
+        btnLogros.setOnClickListener { navigateToFragment(LogrosFragment()) }
         btnClasificacion.setOnClickListener { navigateToFragment(ClasificacionFragment()) }
         btnAdminLogros.setOnClickListener { navigateToFragment(AdminLogrosFragment()) }
         btnAdminCarreras.setOnClickListener{ navigateToFragment(RacesManagement()) }

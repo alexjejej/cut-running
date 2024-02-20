@@ -1,9 +1,11 @@
-package com.cut.android.running.usecases
+package com.cut.android.running.usecases.home
 
 import LogroConseguidoFragment
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.cut.android.running.usecases.login.LoginFragment
 import com.cut.android.running.R
@@ -18,29 +20,41 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        if (savedInstanceState == null) {
-            //obtener info de la notificacion
-            val fragmentoDestino = intent.getStringExtra("fragmentoDestino")
-            val nombreLogro = intent.getStringExtra("nombreLogro")
-            val pasosLogro = intent.getIntExtra("pasosLogro", 0) // Usar un valor predeterminado
-
-            val fragment = when (fragmentoDestino) {
-                "LogroConseguidoFragment" -> LogroConseguidoFragment.newInstance(nombreLogro!!, pasosLogro)
-                else -> LoginFragment()
-            }
-
-            // Cargar el fragmento determinado
-            supportFragmentManager.commit {
-                setReorderingAllowed(true)
-                replace(R.id.main_container_fragment, fragment)
-                if (fragmentoDestino == null) addToBackStack("LoginFragment") // Solo añade a back stack si es el LoginFragment
-            }
-        }
-
+        handleIntent(intent) // Añade esta llamada aquí
         Session.readPrefs(this)
         this.setup()
         // this.sincronizar()
     }
+
+    private fun handleIntent(intent: Intent) {
+        val fragmentoDestino = intent.getStringExtra("fragmentoDestino")
+        val nombreLogro = intent.getStringExtra("nombreLogro")
+        val pasosLogro = intent.getIntExtra("pasosLogro", 0) // Usar un valor predeterminado
+        val lanzadoDesdeNotificacion = intent.getBooleanExtra("lanzadoDesdeNotificacion", false)
+
+        val fragment = when (fragmentoDestino) {
+            "LogroConseguidoFragment" -> LogroConseguidoFragment.newInstance(nombreLogro!!, pasosLogro)
+            "MapsFragment" -> MapsFragment.newInstance().apply {
+                arguments = Bundle().apply {
+                    putBoolean("lanzadoDesdeNotificacion", lanzadoDesdeNotificacion)
+                }
+            }
+            else -> LoginFragment()
+        }
+
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container_fragment, fragment)
+            .commit()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent) // Asegúrate de que la actividad utilice el nuevo intent
+        handleIntent(intent) // Reutiliza el método para manejar el intent
+    }
+
+
+
 
 
     /** Es el evento que se dispara cuadno retrocedemos en la aplicacion (dar clic en el boton atras) **/
@@ -59,6 +73,13 @@ class HomeActivity : AppCompatActivity() {
     private fun manageBackStack() {
         supportFragmentManager.popBackStack()
         Log.d("BackStack", "${supportFragmentManager.backStackEntryCount}")
+    }
+    fun navigateToFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().apply {
+            replace(R.id.main_container_fragment, fragment)
+            addToBackStack(null) // Opcional, si quieres agregar la transacción al back stack
+            commit()
+        }
     }
 
     /** Inicializa la configuracion de los componentes **/

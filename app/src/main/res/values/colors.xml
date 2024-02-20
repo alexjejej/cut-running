@@ -10,6 +10,7 @@
   <color name="lugar1">#D4AF37</color>
   <color name="black">#000000</color>
   <color name="white">#FFFFFF</color>
+  <color name="backgroundgris">#EAEAEA</color>
   <color name="button_stopped">#4CAF50</color> <!-- Color cuando el seguimiento está activo -->
   <color name="button_started">#F44336</color> <!-- Color cuando el seguimiento está inactivo -->
 
@@ -33,4 +34,7 @@
   <color name="success_color_dark">#007e33</color>
   <color name="info_color">#33b5e5</color>
   <color name="info_color_dark">#0099cc</color>
+
+
+
 </resources>
