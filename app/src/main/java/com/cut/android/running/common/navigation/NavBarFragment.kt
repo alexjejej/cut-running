@@ -1,9 +1,7 @@
 package com.cut.android.running.common.navigation
 
 import MapsFragment
-import RacesManagement
 import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.cut.android.running.R
 import com.cut.android.running.databinding.FragmentNavBarBinding
@@ -65,6 +64,9 @@ class NavBarFragment : Fragment() {
     }
 
     private fun setup() {
+        //Restablecer el Estado del DrawerLayout al Iniciar Sesión:
+        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+
         activity = requireActivity()
 
         // Configuracion de Nav Bar
@@ -131,6 +133,7 @@ class NavBarFragment : Fragment() {
     private fun logout(): Boolean {
         Session.signOut()
         Log.d("NavBarFragment","Cerrando session")
+        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
         super.onDestroy() // Destruye el NavBarFragment
         NavigationObj.navigateTo(parentFragmentManager, LoginFragment(), getString(R.string.LoginFragment))
         return true
