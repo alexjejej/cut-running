@@ -5,16 +5,21 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentSender
 import android.content.SharedPreferences
+import android.content.res.Resources
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import android.widget.LinearLayout
+import android.widget.VideoView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.cut.android.running.R
+import com.cut.android.running.R.animator
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -42,6 +47,8 @@ import kotlinx.coroutines.launch
  * create an instance of this fragment.
  */
 class LoginFragment : Fragment() {
+
+    private lateinit var videoView: VideoView
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
     private lateinit var layout: LinearLayout
@@ -59,18 +66,90 @@ class LoginFragment : Fragment() {
         super.onCreate(savedInstanceState)
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         // Inflate the layout for this fragment
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
         Log.d("LoginFragment", "Inicio de sesion desde fragment login")
         setup()
         session()
         initialiceGoogleutentication()
+
         return binding.root
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        videoView = view.findViewById(R.id.videoView)
+        configureVideoView()
+        startVideoPlayback()
+        setupVideoLoop()
+        setupAnimation(view)
+    }
+
+    private fun setupAnimation(view: View) {
+        // Referencia a tu LinearLayout usando su ID
+        val layoutIniciarSesion = view.findViewById<LinearLayout>(R.id.LayoutIniciarSesion)
+
+        // Retrasar la ejecución de la animación
+        layoutIniciarSesion.postDelayed({
+            // Cargar la animación desde los recursos
+            val fadeInAnimation = AnimationUtils.loadAnimation(context, R.anim.fade_in)
+            // Iniciar la animación
+            layoutIniciarSesion.startAnimation(fadeInAnimation)
+            // Hacer el layout visible ahora que va a empezar la animación
+            layoutIniciarSesion.visibility = View.VISIBLE
+        }, 2500) // Retraso en milisegundos
+    }
+
+    private fun configureVideoView() {
+        val videoUri: Uri = Uri.parse("android.resource://" + requireActivity().packageName + "/" + R.raw.videofondo)
+        videoView.setVideoURI(videoUri)
+
+        videoView.setOnPreparedListener { mediaPlayer ->
+            // Aquí puedes obtener las dimensiones del video
+            val videoWidth = mediaPlayer.videoWidth
+            val videoHeight = mediaPlayer.videoHeight
+            val videoProportion = videoWidth.toFloat() / videoHeight.toFloat()
+
+            // Ajustar el tamaño de VideoView después de que se prepare el video
+            adjustVideoViewSize(videoView, videoProportion)
+        }
+    }
+
+    private fun startVideoPlayback() {
+        videoView.start()
+    }
+
+    private fun setupVideoLoop() {
+        videoView.setOnCompletionListener {
+            videoView.start()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        startVideoPlayback() // Reanudar la reproducción cuando el fragmento se vuelve a mostrar.
+    }
+
+    override fun onPause() {
+        super.onPause()
+        videoView.pause() // Pausar la reproducción cuando el fragmento ya no es visible.
+    }
+
+    private fun adjustVideoViewSize(videoView: VideoView, videoProportion: Float) {
+        val screenWidth = Resources.getSystem().displayMetrics.widthPixels
+        val screenHeight = (screenWidth.toFloat() / videoProportion).toInt()
+
+        val params = videoView.layoutParams
+        params.width = screenWidth
+        params.height = screenHeight
+        videoView.layoutParams = params
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
