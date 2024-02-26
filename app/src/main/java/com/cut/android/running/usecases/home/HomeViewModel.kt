@@ -20,6 +20,11 @@ class HomeViewModel : ViewModel() {
     val roleId: MutableLiveData<Int?>
         get() = _roleId
 
+    // Nuevo LiveData para el estado de la conexión
+    private val _apiConnection = MutableLiveData<Boolean>()
+    val apiConnection: LiveData<Boolean>
+        get() = _apiConnection
+
     private val userService = RetrofitInstance.getRetrofit().create(UserService::class.java)
 
     // Llamada a la API para verificar el rol del usuario
@@ -32,6 +37,7 @@ class HomeViewModel : ViewModel() {
                         val user = response.body()?.data
                         _roleId.postValue(user?.Role?.id) // Actualiza el LiveData del roleId
                         _usuario.postValue(user?.firstname)
+                        _apiConnection.postValue(response.isSuccessful)
                         if (user != null) {
                             //Log.d("HVM DATA","DATA: ${user}")
                         }
@@ -43,6 +49,18 @@ class HomeViewModel : ViewModel() {
                     // Manejo de excepciones
                     Log.d("HVM Exception","$e")
                 }
+            }
+        }
+    }
+
+    // Nueva función para verificar la conexión con la API
+    fun checkApiConnection(email: String) {
+        viewModelScope.launch {
+            try {
+                val response = userService.getUserByEmail(email)
+                _apiConnection.postValue(response.isSuccessful)
+            } catch (e: Exception) {
+                _apiConnection.postValue(false)
             }
         }
     }
