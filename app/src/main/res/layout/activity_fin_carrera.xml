@@ -110,13 +110,64 @@
         app:layout_constraintTop_toBottomOf="@+id/textview10" />
 
 
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintBottom_toTopOf="@+id/btnMenu"
+        app:layout_constraintTop_toBottomOf="@+id/txtpasosT"
+        tools:layout_editor_absoluteX="16dp">
+
+        <TextView
+            android:id="@+id/txtEstatusPasos"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/icon_update"
+            android:fontFamily="@font/kodemono_medium"
+            android:padding="8dp"
+            android:text="Cargando datos..."
+            android:textSize="15dp" />
+
+
+        <Button
+            android:id="@+id/btnReintentarEstatus"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:backgroundTint="#FF8D8D"
+            android:visibility="gone"
+            android:fontFamily="@font/kodemono_medium"
+            android:text="Reintentar" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtAlert"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/kodemono_bold"
+        android:padding="8dp"
+        android:text="NO SE GUARDARON LOS DATOS, SI CIERRAS ESTA VENTANA, SE PERDERÁ EL PROGRESO DE ESTE RECORRIDO"
+        android:textAlignment="center"
+        android:textColor="#FF8D8D"
+        android:textSize="20dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/txtpasosT"
+         />
+
+
+
     <Button
         android:id="@+id/btnMenu"
         android:alpha="0"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Regresar al menú principal"
-        android:onClick="ReturnHome"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

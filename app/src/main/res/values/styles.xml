@@ -49,4 +49,19 @@
     <item name="android:windowTranslucentNavigation">true</item>
   </style>
 
+  <!-- Personalización alert dialog -->
+  <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
+    <item name="colorAccent">#FFCC00</item>
+    <item name="android:textColorPrimary">#FFFFFF</item>
+    <item name="android:background">#FF7676</item>
+  </style>
+
+  <!-- En styles.xml -->
+  <style name="DialogAnimation">
+    <item name="android:windowEnterAnimation">@anim/slide_in</item>
+    <item name="android:windowExitAnimation">@anim/slide_out</item>
+  </style>
+
+
+
 </resources>

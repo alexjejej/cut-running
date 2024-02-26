@@ -8,10 +8,13 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -20,25 +23,39 @@ import androidx.lifecycle.lifecycleScope
 import com.cut.android.running.R
 import com.cut.android.running.models.Achievement
 import com.cut.android.running.models.Classification
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.cut.android.running.usecases.home.HomeActivity
 import com.cut.android.running.provider.BDsqlite
 import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.RetrofitInstance
+import com.cut.android.running.provider.resources.AccionFallida
+import com.cut.android.running.provider.resources.ManejadorAccionesFallidas
 import com.cut.android.running.provider.services.AchievementService
 import com.cut.android.running.provider.services.ClassificationService
-import kotlinx.coroutines.CoroutineExceptionHandler
+import com.google.gson.Gson
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
+import kotlinx.coroutines.withContext
+import kotlin.math.roundToInt
 
 
 class FinCarrera : AppCompatActivity() {
     val CHANNEL_ID = "logros"
     val CHANNEL_NAME = "logros"
     private val classificationService = RetrofitInstance.getRetrofit().create(ClassificationService::class.java)
+    private lateinit var manejadorAcciones: ManejadorAccionesFallidas
+    private lateinit var btnReintentarEstatus: Button
+    private lateinit var txtEstatusPasos: TextView
+    private lateinit var txtAlert: TextView
+    private lateinit var btnHome: Button
+    private lateinit var handler: Handler
+    private lateinit var runnable: Runnable
+    private var contadorEjecuciones = 0
+    private var contadorEjecucionesUI = 0
+    private val viewModel: FinCarreraViewModel by viewModels()
+
     private val achievementsService: AchievementService by lazy {
         RetrofitInstance.getRetrofit().create(AchievementService::class.java)
     }
@@ -46,10 +63,131 @@ class FinCarrera : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fin_carrera)
+        manejadorAcciones = ManejadorAccionesFallidas(this)
+        initializeUI()
         animateViews()
         ProcesarDatos()
+        viewModel.accionesFallidas.observe(this) { tieneAcciones ->
+            actualizarEstadoUI()
+        }
+        iniciarTareaRepetitiva()
 
     }
+
+    private fun initializeUI() {
+        //iniciar botones
+        btnReintentarEstatus = findViewById(R.id.btnReintentarEstatus)
+        btnHome = findViewById(R.id.btnMenu)
+        txtAlert = findViewById(R.id.txtAlert)
+        txtEstatusPasos = findViewById(R.id.txtEstatusPasos)
+
+        btnReintentarEstatus.setOnClickListener {
+            txtEstatusPasos.text = "Cargando datos..."
+            txtEstatusPasos.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_update, 0, 0, 0)
+            txtEstatusPasos.invalidate()
+            it.isEnabled = false
+            reintentarAccionesFallidas()
+        }
+        btnHome.setOnClickListener{
+            ReturnHome()
+        }
+    }
+
+
+    private fun actualizarEstadoUI() {
+
+        //Ya intenté de muchas maneras pero sólo funcionó asi, las primeras llamadas a actualizar la IU son despreciables
+        if (contadorEjecucionesUI>1) {
+
+            val tieneAccionesEspecificasFallidas =
+                manejadorAcciones.obtenerAccionesFallidas().any { accion ->
+                    accion.tipo in listOf(
+                        "CrearClasificacion",
+                        "CrearClasificacionNueva",
+                        "consultarlogro"
+                    )
+                }
+            Log.d("FinCarrera", "se lanzo actualizar $tieneAccionesEspecificasFallidas")
+            if (tieneAccionesEspecificasFallidas) {
+                // Caso: Error guardando datos
+                txtEstatusPasos.text = "Error"
+                txtEstatusPasos.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.icon_desconnected,
+                    0,
+                    0,
+                    0
+                )
+                btnReintentarEstatus.visibility = View.VISIBLE
+                txtAlert.visibility = View.VISIBLE
+                btnHome.isEnabled = false
+            } else {
+                // Caso: Datos guardados con éxito
+                txtEstatusPasos.text = "Datos guardados con éxito"
+                txtEstatusPasos.setCompoundDrawablesWithIntrinsicBounds(
+                    R.drawable.icon_connected,
+                    0,
+                    0,
+                    0
+                )
+                btnReintentarEstatus.visibility = View.GONE
+                txtAlert.visibility = View.GONE
+                btnHome.isEnabled = true
+            }
+
+            // Forzar la actualización de las vistas
+            txtEstatusPasos.invalidate()
+            btnReintentarEstatus.invalidate()
+            txtAlert.invalidate()
+            btnHome.invalidate()
+        }
+        contadorEjecucionesUI++
+    }
+
+
+
+    private fun reintentarAccionesFallidas() {
+        lifecycleScope.launch { // Este es el contexto de corutina
+            val accionesFallidas = manejadorAcciones.obtenerAccionesFallidas()
+
+            for (accion in accionesFallidas) {
+                when (accion.tipo) {
+                    "CrearClasificacion", "CrearClasificacionNueva" -> {
+                        val clasificacionData = Gson().fromJson(accion.payload, Map::class.java)
+                        val pasosT = clasificacionData["pasosT"].toString().toDouble().roundToInt()
+                        val email = clasificacionData["email"].toString()
+                        val nombreUsuario = clasificacionData["nombreUsuario"].toString()
+
+                        // Ahora .await() debería ser reconocido correctamente
+                        val exito = clasificacion(pasosT, email, nombreUsuario).await()
+                        if (exito) {
+                            manejadorAcciones.eliminarAccionFallida(accion)
+                            actualizarEstadoUI()
+                        }
+                    }
+                    "consultarlogro" -> {
+                        val logroData = Gson().fromJson(accion.payload, Map::class.java)
+                        val pasos = logroData["pasos"].toString().toDouble().roundToInt()
+                        val email = logroData["email"].toString()
+                        // Intenta consultar logro y verifica el éxito
+                        val exito = consultarlogro(pasos, email)
+                        if (exito) {
+                            manejadorAcciones.eliminarAccionFallida(accion)
+                            actualizarEstadoUI()
+                        }
+                    }
+                }
+            }
+
+            withContext(Dispatchers.Main) {
+                btnReintentarEstatus.isEnabled = true
+                actualizarEstadoUI()
+            }
+        }
+
+    }
+
+
+
 
     private fun ProcesarDatos(){
 
@@ -79,68 +217,61 @@ class FinCarrera : AppCompatActivity() {
         }
 
         //Procesar logros
-        consultarlogro(PasosTotales, email)
-    }
-
-    private fun clasificacion(pasosT: Int, email: String, nombreUsuario: String) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                // Intenta obtener la clasificación actual por correo electrónico
-                val response = classificationService.getClassificationById(email)
-                if (response.isSuccessful && response.body() != null && response.body()!!.isSuccess) {
-                    val clasificacionActual = response.body()!!.data
-
-                    if (clasificacionActual != null) {
-                        // Si existe, actualiza la clasificación
-                        val clasificacionActualizada = clasificacionActual.copy(pasos = pasosT + 1)
-                        val updateResponse = classificationService.updateClassification(clasificacionActualizada)
-                        if (updateResponse.isSuccessful) {
-                            Log.d("Clasificacion Actualizada", "Clasificación actualizada con éxito")
-                        } else {
-                            Log.e("API Error", "Error al actualizar clasificación")
-                        }
-                    }
-                } else if (response.code() == 404) {
-                    // Si no existe la clasificación, crea una nueva
-                    val nuevaClasificacion = Classification(id = email, nombre = nombreUsuario, pasos = pasosT) // Asume la existencia de un constructor adecuado
-                    val createResponse = classificationService.addClassification(nuevaClasificacion)
-                    if (createResponse.isSuccessful) {
-                        Log.d("Clasificacion Creada", "Clasificación creada con éxito")
-                    } else {
-                        Log.e("API Error", "Error al crear clasificación")
-                    }
-                } else {
-                    // Otros errores
-                    Log.e("API Error", "Error al obtener clasificación por correo electrónico: $response")
-                }
-            } catch (e: Exception) {
-                Log.e("API Error", "Excepción al actualizar clasificación", e)
+        lifecycleScope.launch {
+            val exito = consultarlogro(PasosTotales, email)
+            if (exito) {
+                // La operación fue exitosa
+            } else {
+                // La operación falló
+            }
+            withContext(Dispatchers.Main) {
+                Log.d("FinCarrera procesar","Se actualiza la UI")
+                actualizarEstadoUI()
             }
         }
     }
 
-
-
-
-    private fun CrearDatos() {
-
-        //fecha hoy
-        val sdf = SimpleDateFormat("dd/M/yyyy")
-        val currentDate = sdf.format(Date())
-        //variables locales
-        val sharedPreference =  getSharedPreferences("Datos",Context.MODE_PRIVATE)
-        var pasos = sharedPreference.getInt("pasos",0)
-        var distancia = sharedPreference.getFloat("distancia",0F)
-        //obtener usuario
-        val usuario = "alex"
-        val database = Firebase.database
-        val myRef = database.getReference("users").child(usuario).child("datos")
-        val DatosUsuario = ListaDatosUsuario(pasos,distancia)
-        myRef.setValue(DatosUsuario)
-
-
+    private fun clasificacion(pasosT: Int, email: String, nombreUsuario: String): Deferred<Boolean> {
+        return lifecycleScope.async(Dispatchers.IO) {
+            try {
+                val response = classificationService.getClassificationById(email)
+                when {
+                    response.isSuccessful && response.body() != null && response.body()!!.isSuccess -> {
+                        val clasificacionActual = response.body()!!.data
+                        if (clasificacionActual != null) {
+                            val clasificacionActualizada = clasificacionActual.copy(pasos = pasosT + 1)
+                            val updateResponse = classificationService.updateClassification(clasificacionActualizada)
+                            updateResponse.isSuccessful
+                        } else false
+                    }
+                    response.code() == 404 -> {
+                        val nuevaClasificacion = Classification(id = email, nombre = nombreUsuario, pasos = pasosT)
+                        val createResponse = classificationService.addClassification(nuevaClasificacion)
+                        if (!createResponse.isSuccessful) {
+                            guardarAccionFallida("CrearClasificacionNueva", nuevaClasificacion)
+                        }
+                        createResponse.isSuccessful
+                    }
+                    else -> {
+                        guardarAccionFallida("CrearClasificacion", mapOf("pasosT" to pasosT, "email" to email, "nombreUsuario" to nombreUsuario))
+                        false
+                    }
+                }
+            } catch (e: Exception) {
+                guardarAccionFallida("CrearClasificacion", mapOf("pasosT" to pasosT, "email" to email, "nombreUsuario" to nombreUsuario))
+                false
+            }
+        }
 
     }
+
+
+    private fun guardarAccionFallida(tipo: String, datos: Any) {
+        val jsonDatos = Gson().toJson(datos)
+        manejadorAcciones.guardarAccionFallida(AccionFallida(tipo, jsonDatos))
+    }
+
+
 
     // Asume que tus métodos de API ya son suspendidos
     private suspend fun getAchievementsByEmail(email: String): List<Achievement>? {
@@ -163,19 +294,29 @@ class FinCarrera : AppCompatActivity() {
         }
     }
 
-    private fun consultarlogro(pasos: Int, email: String) {
-        lifecycleScope.launch(CoroutineExceptionHandler { _, exception ->
-            Log.e("FC consultarlogro", "Error en la coroutine", exception)
-        }) {
-            try {
-                val achievements = achievementsService.getAchievements().body()?.data ?: emptyList()
+    private suspend fun consultarlogro(pasos: Int, email: String): Boolean {
+        return try {
+            val achievementsResponse = achievementsService.getAchievements()
+            if (achievementsResponse.isSuccessful && achievementsResponse.body()?.data != null) {
+                val achievements = achievementsResponse.body()!!.data ?: emptyList()
                 val userAchievements = getAchievementsByEmail(email)
                 addAchievementIfNotExists(pasos, email, achievements, userAchievements)
-            } catch (e: Exception) {
-                Log.e("FC consultarlogro", "Error al consultar logros", e)
+                true
+            } else {
+                false
             }
+        } catch (e: Exception) {
+            Log.e("FC consultarlogro", "Error al consultar logros", e)
+            //Aqui se guarda la petición pendiente
+            val datos = mapOf(
+                "pasos" to pasos,
+                "email" to email
+            )
+            manejadorAcciones.guardarAccionFallida(AccionFallida("consultarlogro", Gson().toJson(datos)))
+            false // Excepción lanzada, operación no exitosa
         }
     }
+
 
 
     private fun notificacion(pasosLogro: Int, tituloLogro: String, id: Int) {
@@ -228,7 +369,7 @@ class FinCarrera : AppCompatActivity() {
 
 
 
-    fun ReturnHome(view: View) {
+    fun ReturnHome() {
 
         val intent = Intent(this, HomeActivity::class.java)
         startActivity(intent)
@@ -260,7 +401,35 @@ class FinCarrera : AppCompatActivity() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.verificarAccionesFallidas(manejadorAcciones)
+    }
 
+
+    override fun onPause() {
+        super.onPause()
+        detenerTareaRepetitiva()
+    }
+
+    private fun iniciarTareaRepetitiva() {
+        contadorEjecuciones = 0 // Reiniciar contador
+        handler = Handler(Looper.getMainLooper())
+        runnable = object : Runnable {
+            override fun run() {
+                if (contadorEjecuciones < 1) { // Ejecutar solo 3 veces
+                    actualizarEstadoUI() // Tu función que quieres ejecutar
+                    contadorEjecuciones++ // Incrementar el contador
+                    handler.postDelayed(this, 4000) // Re-ejecutar cada 4 segundos
+                }
+            }
+        }
+        handler.post(runnable)
+    }
+
+    private fun detenerTareaRepetitiva() {
+        handler.removeCallbacks(runnable)
+    }
 
 
 }
