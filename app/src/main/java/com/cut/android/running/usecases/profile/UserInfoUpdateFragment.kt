@@ -1,5 +1,6 @@
 package com.cut.android.running.usecases.profile
 
+import android.app.AlertDialog
 import android.content.ContentValues
 import android.os.Bundle
 import android.text.Editable
@@ -20,6 +21,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.cut.android.running.R
+import com.cut.android.running.models.User
 import com.cut.android.running.provider.BDsqlite
 import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.RetrofitInstance
@@ -39,6 +41,8 @@ class UserInfoUpdateFragment : Fragment() {
     private lateinit var saveButton: Button
     private lateinit var backButton: Button
     private lateinit var SpecialityIDSpinner: Spinner
+    private lateinit var txtEstatusUpdate: TextView
+
     private val userService: UserService = RetrofitInstance.getRetrofit().create(
         UserService::class.java)
     override fun onCreateView(
@@ -57,6 +61,8 @@ class UserInfoUpdateFragment : Fragment() {
             view.findViewById(R.id.codigoEditTextUpdate),
             view.findViewById(R.id.distanciaPromedioPorPasoEditText)
         )
+
+        txtEstatusUpdate = view.findViewById(R.id.txtEstatusUpdate)
 
         SpecialityIDSpinner = view.findViewById(R.id.SpecialityIDSpinnerUpdate)
         setupCentroUniversitarioSpinner()
@@ -132,56 +138,130 @@ class UserInfoUpdateFragment : Fragment() {
 
 
     private fun GuardarDatosAPI() {
-        Log.d("UserInfoUpdateFragment","entramos a api")
-
         val email = DatosUsuario.getEmail(requireActivity()) ?: return
 
-        // Realiza la lógica en una coroutina
+        configurarUIAntesDeGuardar()
+
         lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val responseActual = userService.getUserByEmail(email)
-                val usuarioActual = responseActual.body()?.data
+            val isConnected = verificarConexion(email)
+            if (!isConnected) {
+                mostrarErrorYActualizarUI()
+                return@launch
+            }
 
-                // Construir objeto User con los nuevos datos
-                val userActualizado = usuarioActual?.copy(
-                    age = editTexts[0].text.toString().takeIf { it.isNotBlank() }?.toIntOrNull(),
-                    height = editTexts[1].text.toString().takeIf { it.isNotBlank() }?.toIntOrNull(),
-                    weight = editTexts[2].text.toString().takeIf { it.isNotBlank() }?.toIntOrNull(),
-                    specialtyId = when (SpecialityIDSpinner.selectedItem.toString()) {
-                        "Ingeniería en Ciencias Computacionales" -> 1
-                        "Ingeniería en Nanotecnología" -> 2
-                        else -> null
-                    },
-                    code = editTexts[3].text.toString().takeIf { it.isNotBlank() }?.toIntOrNull(),
-                    email = email,
-                    distanceperstep = editTexts[4].text.toString().takeIf { it.isNotBlank() }?.toIntOrNull()
-                )
+            val responseActual = userService.getUserByEmail(email)
+            val usuarioActual = responseActual.body()?.data ?: return@launch
 
-                // Verificar si hay cambios antes de llamar a la API
-                if (usuarioActual != userActualizado) {
-                    var updateResponse = userService.updateUser(userActualizado!!)
-
-                    withContext(Dispatchers.Main) {
-                        if (updateResponse.isSuccessful && updateResponse.body()?.isSuccess == true) {
-                            Toast.makeText(requireContext(), "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
-                            GuardarDatosSQLite()
-                        } else {
-                            Log.e("API Error", "Respuesta fallida: ${updateResponse.errorBody()?.string()}")
-                            Toast.makeText(requireContext(), "Error al actualizar datos en la API", Toast.LENGTH_SHORT).show()                        }
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(requireContext(), "No hay cambios para actualizar", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Error al guardar datos: ${e.message}", Toast.LENGTH_SHORT).show()
-                    Log.e("API Error", "Error al actualizar datos: ", e)
-                }
+            val userActualizado = construirUsuarioActualizado(usuarioActual)
+            if (userActualizado != null && usuarioActual != userActualizado) {
+                actualizarUsuarioEnAPI(userActualizado)
+            } else {
+                mostrarMensajeSinCambios()
             }
         }
     }
+    private fun configurarUIAntesDeGuardar() {
+        saveButton.isEnabled = false
+        txtEstatusUpdate.visibility = View.VISIBLE
+    }
+
+    private fun mostrarErrorYActualizarUI() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            mostrarErrorDeConexion()
+            txtEstatusUpdate.visibility = View.INVISIBLE
+            saveButton.isEnabled = true
+        }
+    }
+
+    private fun construirUsuarioActualizado(usuarioActual: User): User? {
+        // Extracción de los valores actuales de los campos de texto
+        val edadActualizada = editTexts[0].text.toString().toIntOrNull()
+        val estaturaActualizada = editTexts[1].text.toString().toIntOrNull()
+        val pesoActualizado = editTexts[2].text.toString().toIntOrNull()
+        val codigoActualizado = editTexts[3].text.toString().toIntOrNull()
+        val distanciaPorPasoActualizada = editTexts[4].text.toString().toIntOrNull()
+
+        // Determinar si el SpecialtyID ha cambiado
+        val specialtyIdActualizado = when (SpecialityIDSpinner.selectedItem.toString()) {
+            "Ingeniería en Ciencias Computacionales" -> 1
+            "Ingeniería en Nanotecnología" -> 2
+            else -> usuarioActual.specialtyId
+        }
+
+        // Verificar si hay cambios comparando los valores actuales con los nuevos
+        val hayCambios = edadActualizada != usuarioActual.age ||
+                estaturaActualizada != usuarioActual.height ||
+                pesoActualizado != usuarioActual.weight ||
+                codigoActualizado != usuarioActual.code ||
+                distanciaPorPasoActualizada != usuarioActual.distanceperstep ||
+                specialtyIdActualizado != usuarioActual.specialtyId
+
+        // Si hay cambios, construir y retornar un nuevo objeto User con los valores actualizados
+        if (hayCambios) {
+            return usuarioActual.copy(
+                age = edadActualizada ?: usuarioActual.age,
+                height = estaturaActualizada ?: usuarioActual.height,
+                weight = pesoActualizado ?: usuarioActual.weight,
+                code = codigoActualizado ?: usuarioActual.code,
+                distanceperstep = distanciaPorPasoActualizada ?: usuarioActual.distanceperstep,
+                specialtyId = specialtyIdActualizado
+            )
+        }
+
+        // Si no hay cambios, podrías optar por retornar null o el mismo objeto User
+        return null
+    }
+
+
+    private suspend fun actualizarUsuarioEnAPI(userActualizado: User) {
+        val updateResponse = userService.updateUser(userActualizado)
+        withContext(Dispatchers.Main) {
+            if (updateResponse.isSuccessful && updateResponse.body()?.isSuccess == true) {
+                Toast.makeText(requireContext(), "Datos actualizados correctamente", Toast.LENGTH_SHORT).show()
+                GuardarDatosSQLite()
+            } else {
+                Log.e("API Error", "Respuesta fallida: ${updateResponse.errorBody()?.string()}")
+                Toast.makeText(requireContext(), "Error al actualizar datos en la API", Toast.LENGTH_SHORT).show()
+            }
+            // Asegúrate de volver a activar el botón y ocultar el txtEstatusUpdate aquí también
+            txtEstatusUpdate.visibility = View.INVISIBLE
+            saveButton.isEnabled = true
+        }
+    }
+
+    private fun mostrarMensajeSinCambios() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            Toast.makeText(requireContext(), "No hay cambios para actualizar", Toast.LENGTH_SHORT).show()
+            // Asegúrate de volver a activar el botón y ocultar el txtEstatusUpdate aquí también
+            txtEstatusUpdate.visibility = View.INVISIBLE
+            saveButton.isEnabled = true
+        }
+    }
+
+
+    private fun mostrarErrorDeConexion() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
+                .setTitle("Error de Conexión")
+                .setMessage("No se conectó con la base de datos del CUT y no se pudo guardar los cambios.")
+                .setPositiveButton("Aceptar", null)
+                .show()
+            // Reactivar el botón y ocultar el TextView de estado
+            saveButton.isEnabled = true
+            requireView().findViewById<TextView>(R.id.txtEstatusUpdate).visibility = View.INVISIBLE
+        }
+    }
+
+    private suspend fun verificarConexion(email: String): Boolean {
+        return try {
+            val response = userService.getUserByEmail(email)
+            response.isSuccessful // Si la petición es exitosa, asumimos que hay conexión
+        } catch (e: Exception) {
+            false // Si hay una excepción, asumimos que no hay conexión
+        }
+    }
+
+
 
 
     private fun validarCampos(): Boolean {
@@ -327,9 +407,13 @@ class UserInfoUpdateFragment : Fragment() {
     }
 
     private fun checkFieldsForEmptyValues() {
-        saveButton.isEnabled = editTexts.any { it.text.isNotEmpty() }
-        saveButton.isEnabled = SpecialityIDSpinner.selectedItemPosition > 0
+        val camposLlenos = editTexts.any { it.text.isNotEmpty() } // Comprueba que todos los campos estén llenos
+        val spinnerSeleccionado = SpecialityIDSpinner.selectedItemPosition > 0 // Comprueba que se ha seleccionado un ítem del Spinner
+
+        // El botón se activa si todos los campos están llenos o un ítem del Spinner está seleccionado
+        saveButton.isEnabled = camposLlenos || spinnerSeleccionado
     }
+
 
     /** Navega al fragmento dado como parametro **/
     private fun navigateToFragment(fragment: Fragment) {

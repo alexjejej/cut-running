@@ -117,7 +117,7 @@ class ProfileFragment : Fragment() {
         val specialityID = bd.getIntData(email, BDsqlite.COLUMN_SPECIALITYID)
         txtcarrera.text = when (specialityID) {
             1 -> "Carrera: Ingeniería en Ciencias Computacionales"
-            2 -> "Carrera: Ingenieria en Nanotecnogogía"
+            2 -> "Carrera: Ingenieria en Nanotecnología"
             else -> "Carrera: Sin datos"
         }
 
