@@ -1,5 +1,6 @@
 package com.cut.android.running.usecases.login
 
+import android.app.AlertDialog
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -36,7 +37,10 @@ import com.cut.android.running.models.User
 import com.cut.android.running.models.dto.UserDto
 import com.cut.android.running.provider.BDsqlite
 import com.cut.android.running.provider.RetrofitInstance
+import com.cut.android.running.provider.resources.AccionFallida
+import com.cut.android.running.provider.resources.ManejadorAccionesFallidas
 import com.cut.android.running.provider.services.UserService
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -173,21 +177,9 @@ class LoginFragment : Fragment() {
         layout = binding.authLayout
 
         binding.btnGoogleSignIn.setOnClickListener {
-            oneTapClient.beginSignIn(signInRequest)
-                .addOnSuccessListener { result ->
-                    try {
-                        startIntentSenderForResult(
-                            result.pendingIntent.intentSender, REQUEST_ONE_TAP, null, 0, 0, 0, null
-                        )
-                    }
-                    catch ( e: IntentSender.SendIntentException ) {
-                        Log.e("FirebaseAuth", "Couldn't start One Tap UI: ${e.localizedMessage}")
-                    }
-                }
-                .addOnFailureListener {
-                    Log.d("FirebaseAuth", "${it.localizedMessage}")
-                }
+            verificarConexionAPI()
         }
+
     }
 
     /** Guarda los datos de usuario en el archivo de preferencias **/
@@ -237,7 +229,7 @@ class LoginFragment : Fragment() {
 
     }
 
-    private fun RegistrarUsuario(nombre: String, email: String) {
+    suspend fun RegistrarUsuario(nombre: String, email: String) {
         val nuevoUsuario = UserDto(firstname = nombre, email = email, roleId = 2)
         val nuevoUsuarioSQLite = User(firstname = nombre, email = email)
 
@@ -251,10 +243,14 @@ class LoginFragment : Fragment() {
                 } else {
                     // Manejo de errores
                     Log.d("LF Error Login","Error al registrar $email")
+                    // Para guardar una acción fallida
+                    val manejadorAcciones = ManejadorAccionesFallidas(requireContext())
+                    manejadorAcciones.guardarAccionFallida(AccionFallida("RegistroUsuario", Gson().toJson(nuevoUsuario)))
+
                 }
             } catch (e: Exception) {
                 // Manejo de excepciones
-                Log.d("LF Error Login","Se obtuvo la excepcion: $e")
+                Log.d("LF Error Login","Error de conexión: $e")
             }
         }
     }
@@ -289,7 +285,6 @@ class LoginFragment : Fragment() {
         }catch (e:Exception){
             Log.d("LF bd Error","bd creada sin exito, da la siguiente Exception: $e")
         }
-
 
     }
 
@@ -377,4 +372,57 @@ class LoginFragment : Fragment() {
             .setAutoSelectEnabled(true)
             .build()
     }
+    private fun verificarConexionAPI() {
+        binding.btnGoogleSignIn.isEnabled = false // Desactivar el botón
+        binding.txtEstatusLogin.visibility = View.VISIBLE
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val response = userService.getUsers()
+                if (response.isSuccessful) {
+                    // Conexión exitosa, proceder con el inicio de sesión
+                    lanzarInicioDeSesion()
+                } else {
+                    // Manejar el error de conexión
+                    mostrarErrorDeConexion()
+                }
+            } catch (e: Exception) {
+                // Error al realizar la petición, posiblemente no hay conexión
+                mostrarErrorDeConexion()
+            }
+        }
+    }
+
+    private fun mostrarErrorDeConexion() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            AlertDialog.Builder(context, R.style.AlertDialogCustom)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Error de Conexión")
+                .setMessage("No se conectó con la base de datos del CUT. La app solo funciona si estás conectado a la red del CUT.")
+                .setPositiveButton("Aceptar", null)
+                .show()
+            binding.btnGoogleSignIn.isEnabled = true // Reactivar el botón
+            binding.txtEstatusLogin.visibility = View.INVISIBLE
+        }
+    }
+    private fun lanzarInicioDeSesion() {
+        // Reactivar el botón en caso de éxito o fallo en el proceso de inicio de sesión
+        oneTapClient.beginSignIn(signInRequest)
+            .addOnSuccessListener { result ->
+                try {
+                    startIntentSenderForResult(
+                        result.pendingIntent.intentSender, REQUEST_ONE_TAP, null, 0, 0, 0, null
+                    )
+                } catch (e: IntentSender.SendIntentException) {
+                    Log.e("FirebaseAuth", "Couldn't start One Tap UI: ${e.localizedMessage}")
+                    binding.btnGoogleSignIn.isEnabled = true // Reactivar el botón
+                    binding.txtEstatusLogin.visibility = View.INVISIBLE
+                }
+            }
+            .addOnFailureListener {
+                Log.d("FirebaseAuth", "${it.localizedMessage}")
+                binding.btnGoogleSignIn.isEnabled = true // Reactivar el botón
+                binding.txtEstatusLogin.visibility = View.INVISIBLE
+            }
+    }
+
 }

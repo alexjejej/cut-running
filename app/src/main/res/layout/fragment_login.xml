@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-
     android:weightSum="11"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.cut.android.running.usecases.login.LoginFragment">
@@ -86,11 +85,21 @@
             android:weightSum="10"
             android:visibility="invisible"
             >
+            <TextView
+                android:id="@+id/txtEstatusLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/icon_update"
+                android:fontFamily="@font/kodemono_medium"
+                android:padding="8dp"
+                android:visibility="invisible"
+                android:layout_gravity="center"
+                android:text="Esperando conexión..."
+                android:textSize="15dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="25dp"
                 android:text="Para empezar, inicia sesión con Google"
                 android:textSize="20sp"
                 android:gravity="center"
