@@ -43,6 +43,7 @@ import com.cut.android.running.provider.services.UserService
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 /**
@@ -183,109 +184,104 @@ class LoginFragment : Fragment() {
     }
 
     /** Guarda los datos de usuario en el archivo de preferencias **/
-    private fun saveSharedPreferences(userData: FirebaseUser?) {
-        prefs = requireContext().getSharedPreferences( getString(R.string.prefs_file), Context.MODE_PRIVATE )
-        with( prefs!!.edit() ) {
-            putString( getString(R.string.prefs_user_name), userData!!.displayName )
-            putString( getString(R.string.prefs_email), userData!!.email )
-            putString( getString(R.string.prefs_user_photo), userData!!.photoUrl.toString() )
+    private fun saveSharedPreferences(userData: FirebaseUser?, onCompletion: () -> Unit) {
+        prefs = requireContext().getSharedPreferences(getString(R.string.prefs_file), Context.MODE_PRIVATE)
+        with(prefs!!.edit()) {
+            putString(getString(R.string.prefs_user_name), userData!!.displayName)
+            putString(getString(R.string.prefs_email), userData.email)
+            putString(getString(R.string.prefs_user_photo), userData.photoUrl.toString())
             apply()
-            Log.d("nombreuser",userData.displayName!!)
-            //llamar a consultarDB
-            userData.email?.let { ConsultarBD(userData.displayName.toString(), it) }
         }
-        session()
-    }
-
-    private fun ConsultarBD(nombre: String, email: String) {
-
-        email.let { userEmail ->
-            lifecycleScope.launch(Dispatchers.IO) {
-                try {
-                    val response = userService.getUserByEmail(userEmail)
-
-                    if (response.isSuccessful) {
-                        //Usuario viejo
-                        val user = response.body()?.data
-                        Log.d("LF Login Success","email encontrado en la bd $email")
-                        if (user != null) {
-                            GenerarSQLite(user)
-                        }
-                    } else {
-                        // Manejo de usuario nuevo
-                        Log.d("LF Login Error","No se encontró el email en la BD")
-                        RegistrarUsuario(nombre, email)
-
-                    }
-                } catch (e: Exception) {
-                    // Manejo de excepciones de red
-                    launch(Dispatchers.Main) {
-                        // Mostrar algún mensaje de error en la UI
-                        Log.d("LF Login Error","Error de red")
-                    }
+        // Continuar con la lógica de BD después de guardar en SharedPreferences
+        if (userData != null) {
+            userData.email?.let { email ->
+                ConsultarBD(userData.displayName.toString(), email) {
+                    // Callback que se ejecuta después de la lógica de BD
+                    onCompletion()
                 }
             }
         }
-
     }
 
-    suspend fun RegistrarUsuario(nombre: String, email: String) {
+
+    private fun ConsultarBD(nombre: String, email: String, onCompletion: () -> Unit) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val response = userService.getUserByEmail(email)
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful && response.body()?.data != null) {
+                        // Usuario existente, generamos SQLite y luego llamamos a onCompletion en el hilo principal
+                        GenerarSQLite(response.body()?.data!!) {
+                            onCompletion()
+                        }
+                    } else {
+                        // Usuario no encontrado, intentamos registrar un nuevo usuario
+                        RegistrarUsuario(nombre, email, onCompletion)
+                    }
+                }
+            } catch (e: Exception) {
+                // Manejo de excepciones de red, llamamos a onCompletion en el hilo principal
+                withContext(Dispatchers.Main) {
+                    Log.d("LF Login Error", "Error de red: ${e.message}")
+                    onCompletion()
+                }
+            }
+        }
+    }
+
+    suspend fun RegistrarUsuario(nombre: String, email: String, onCompletion: () -> Unit) {
         val nuevoUsuario = UserDto(firstname = nombre, email = email, roleId = 2)
         val nuevoUsuarioSQLite = User(firstname = nombre, email = email)
 
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                val response = userService.addUser(nuevoUsuario)
-                if (response.isSuccessful) {
-                    // Registro exitoso
-                    Log.d("LF Login Add","Registro de $email exitoso")
-                    GenerarSQLite(nuevoUsuarioSQLite)
-                } else {
-                    // Manejo de errores
-                    Log.d("LF Error Login","Error al registrar $email")
-                    // Para guardar una acción fallida
-                    val manejadorAcciones = ManejadorAccionesFallidas(requireContext())
-                    manejadorAcciones.guardarAccionFallida(AccionFallida("RegistroUsuario", Gson().toJson(nuevoUsuario)))
-
-                }
-            } catch (e: Exception) {
-                // Manejo de excepciones
-                Log.d("LF Error Login","Error de conexión: $e")
+        try {
+            val response = withContext(Dispatchers.IO) { userService.addUser(nuevoUsuario) }
+            if (response.isSuccessful) {
+                // Registro exitoso, ahora generamos SQLite
+                Log.d("LF Login Add", "Registro de $email exitoso")
+                GenerarSQLite(nuevoUsuarioSQLite, onCompletion)
+            } else {
+                // Manejo de errores, aún llamamos al onCompletion para continuar el flujo
+                Log.d("LF Error Login", "Error al registrar $email")
+                val manejadorAcciones = ManejadorAccionesFallidas(requireContext())
+                manejadorAcciones.guardarAccionFallida(AccionFallida("RegistroUsuario", Gson().toJson(nuevoUsuario)))
+                withContext(Dispatchers.Main) { onCompletion() }
             }
+        } catch (e: Exception) {
+            // Manejo de excepciones, aún llamamos al onCompletion para continuar el flujo
+            Log.d("LF Error Login", "Error de conexión: $e")
+            withContext(Dispatchers.Main) { onCompletion() }
         }
     }
 
-    private fun GenerarSQLite(user: User) {
-        val specialidad = user.specialty?.id
-        Log.d("LF data","datos: $user")
-
-        // Crear una instancia de la base de datos
-        val db = BDsqlite(requireContext())
-        // Preparar los valores por defecto
-
-        val values = ContentValues()
-        values.put(BDsqlite.COLUMN_CODE, user.code)
-        values.put(BDsqlite.COLUMN_FIRSTNAME, user.firstname)
-        values.put(BDsqlite.COLUMN_EMAIL, user.email)
-        values.put(BDsqlite.COLUMN_PASOS_HOY, 0)
-        values.put(BDsqlite.COLUMN_PASOS_TOTALES, user.totalsteps)
-        values.put(BDsqlite.COLUMN_DISTANCIA, user.totaldistance)
-        values.put(BDsqlite.COLUMN_EDAD, user.age)
-        values.put(BDsqlite.COLUMN_ESTATURA, user.height)
-        values.put(BDsqlite.COLUMN_DISTANCEPERSTEP, user.distanceperstep)
-        values.put(BDsqlite.COLUMN_PESO, user.weight)
-        values.put(BDsqlite.COLUMN_SPECIALITYID, specialidad)
-        values.put(BDsqlite.COLUMN_UPDATE_DATE, user.updateDate)
-
-        // crear datos base en SQLite
-        try {
-            db.newData(user.email, values)
-            Log.d("LF bd","bd creada con exito")
-
-        }catch (e:Exception){
-            Log.d("LF bd Error","bd creada sin exito, da la siguiente Exception: $e")
+    private fun GenerarSQLite(user: User, onCompletion: () -> Unit) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                // Logica para generar SQLite
+                val db = BDsqlite(requireContext())
+                val values = ContentValues().apply {
+                    put(BDsqlite.COLUMN_CODE, user.code)
+                    put(BDsqlite.COLUMN_FIRSTNAME, user.firstname)
+                    put(BDsqlite.COLUMN_EMAIL, user.email)
+                    put(BDsqlite.COLUMN_PASOS_HOY, 0)
+                    put(BDsqlite.COLUMN_PASOS_TOTALES, user.totalsteps)
+                    put(BDsqlite.COLUMN_DISTANCIA, user.totaldistance)
+                    put(BDsqlite.COLUMN_EDAD, user.age)
+                    put(BDsqlite.COLUMN_ESTATURA, user.height)
+                    put(BDsqlite.COLUMN_DISTANCEPERSTEP, user.distanceperstep)
+                    put(BDsqlite.COLUMN_PESO, user.weight)
+                    put(BDsqlite.COLUMN_SPECIALITYID, user.specialty?.id)
+                    put(BDsqlite.COLUMN_UPDATE_DATE, user.updateDate)
+                }
+                // Suponiendo que db.newData es la función para insertar los datos
+                db.newData(user.email, values)
+                Log.d("LF bd", "bd creada con éxito para: ${user.email}")
+            } catch (e: Exception) {
+                Log.e("LF bd Error", "Error al crear bd para: ${user.email}, Exception: $e")
+            } finally {
+                // Aseguramos que el onCompletion se ejecute en el hilo principal después de todas las operaciones
+                withContext(Dispatchers.Main) { onCompletion() }
+            }
         }
-
     }
 
     /** Comprobacion de si existe una sesion activa **/
@@ -316,32 +312,29 @@ class LoginFragment : Fragment() {
                 try {
                     val credential = oneTapClient.getSignInCredentialFromIntent(data)
                     val idToken = credential.googleIdToken
-                    when {
-                        idToken != null -> {
-                            // Got an ID token from Google. Use it to authenticate
-                            // with Firebase.
-                            val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-                            auth.signInWithCredential(firebaseCredential)
-                                .addOnCompleteListener { task ->
-                                    if (task.isSuccessful) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        // TODO: Set currente user un firebase aut property
-                                        saveSharedPreferences( auth.currentUser )
-                                        Log.d("FirebaseAuth", "Got ID token.")
-                                        Log.d("FirebaseAuth", "${auth.currentUser?.photoUrl}")
+                    if (idToken != null) {
+                        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+                        auth.signInWithCredential(firebaseCredential)
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    saveSharedPreferences(auth.currentUser) {
+                                        // Lógica a ejecutar después de completar ConsultarBD, por ejemplo:
+
+                                        showFragment(
+                                            NavBarFragment(),
+                                            getString(R.string.NavBarFragment)
+                                        )
                                     }
-                                    else {
-                                        Log.w("FirebaseAuth", "${task.exception.toString()}")
-                                    }
+                                    Log.d("FirebaseAuth", "Got ID token.")
+                                } else {
+                                    Log.w("FirebaseAuth", "${task.exception.toString()}")
                                 }
-                        }
-                        else -> {
-                            // Shouldn't happen.
-                            Log.d("FirebaseAuth", "No ID token!")
-                        }
+                            }
+                    } else {
+                        Log.d("FirebaseAuth", "No ID token!")
                     }
-                }
-                catch (e: ApiException) {
+                } catch (e: ApiException) {
                     Log.d("FirebaseAuth", "${e.message.toString()}")
                 }
             }
