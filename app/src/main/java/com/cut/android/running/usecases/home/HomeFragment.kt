@@ -2,6 +2,7 @@ package com.cut.android.running.usecases.home
 
 import MapsFragment
 import RacesManagement
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -76,10 +77,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun setupViewModel() {
+        val nombreuser = DatosUsuario.getUserName(requireContext())
+
+        updateWelcomeMessage(nombreuser!!)
+
         viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
-        viewModel.usuario.observe(viewLifecycleOwner) { nombre ->
-            updateWelcomeMessage(nombre)
-        }
+
         viewModel.roleId.observe(viewLifecycleOwner) { roleId ->
             updateAdminOptionsVisibility(roleId)
         }

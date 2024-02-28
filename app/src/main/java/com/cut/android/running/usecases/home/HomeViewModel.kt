@@ -1,10 +1,13 @@
 package com.cut.android.running.usecases.home
 
+import android.content.Context
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.RetrofitInstance
 import com.cut.android.running.provider.services.UserService
 import kotlinx.coroutines.launch
@@ -36,7 +39,6 @@ class HomeViewModel : ViewModel() {
                     if (response.isSuccessful) {
                         val user = response.body()?.data
                         _roleId.postValue(user?.Role?.id) // Actualiza el LiveData del roleId
-                        _usuario.postValue(user?.firstname)
                         _apiConnection.postValue(response.isSuccessful)
                         if (user != null) {
                             //Log.d("HVM DATA","DATA: ${user}")

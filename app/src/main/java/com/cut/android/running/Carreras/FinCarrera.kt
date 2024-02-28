@@ -102,7 +102,7 @@ class FinCarrera : AppCompatActivity() {
             val tieneAccionesEspecificasFallidas =
                 manejadorAcciones.obtenerAccionesFallidas().any { accion ->
                     accion.tipo in listOf(
-                        "CrearClasificacion",
+                        "CrearClas3ificacion",
                         "CrearClasificacionNueva",
                         "consultarlogro"
                     )
@@ -165,6 +165,7 @@ class FinCarrera : AppCompatActivity() {
                         }
                     }
                     "consultarlogro" -> {
+
                         val logroData = Gson().fromJson(accion.payload, Map::class.java)
                         val pasos = logroData["pasos"].toString().toDouble().roundToInt()
                         val email = logroData["email"].toString()
@@ -176,6 +177,8 @@ class FinCarrera : AppCompatActivity() {
                         }
                     }
                 }
+                Log.d("FINCARRERA","Tipo de error: $accion")
+
             }
 
             withContext(Dispatchers.Main) {
@@ -214,6 +217,7 @@ class FinCarrera : AppCompatActivity() {
 
         //Procesar clasificacion
         if (nombreUsuario != null) {
+            Log.d("FINCARRERA","SE LANZÓ clasificacion usuario")
             clasificacion(PasosTotales, email, nombreUsuario)
         }
 
@@ -263,12 +267,13 @@ class FinCarrera : AppCompatActivity() {
                     response.isSuccessful && response.body() != null && response.body()!!.isSuccess -> {
                         val clasificacionActual = response.body()!!.data
                         if (clasificacionActual != null) {
-                            val clasificacionActualizada = clasificacionActual.copy(pasos = pasosT + 1)
+                            Log.d("FinCarrera clasificacion","Se creo la clasificacion para $email")
+                            val clasificacionActualizada = clasificacionActual.copy(pasos = pasosT)
                             val updateResponse = classificationService.updateClassification(clasificacionActualizada)
                             updateResponse.isSuccessful
                         } else false
                     }
-                    response.code() == 404 -> {
+                    response.code() == 200 -> {
                         val nuevaClasificacion = Classification(id = email, nombre = nombreUsuario, pasos = pasosT)
                         val createResponse = classificationService.addClassification(nuevaClasificacion)
                         if (!createResponse.isSuccessful) {
