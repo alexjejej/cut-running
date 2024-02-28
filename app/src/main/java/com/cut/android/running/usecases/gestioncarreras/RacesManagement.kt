@@ -46,9 +46,11 @@ class RacesManagement : Fragment() {
         _binding = FragmentRacesManagementBinding.inflate(inflater, container, false)
         binding.rcvRaces.adapter = raceAdapter
         binding.rcvRaces.setHasFixedSize(true)
+        homeViewModel.checkUserRole(DatosUsuario.getEmail(requireActivity()))
 
         raceManagementViewModel.getRaceModel.observe(viewLifecycleOwner, Observer {
-            raceAdapter.races = it!!
+            if (!it.isNullOrEmpty())
+                raceAdapter.races = it!!
         })
         raceManagementViewModel.addRaceActionsModel.observe(viewLifecycleOwner, Observer {
             if (it) {
