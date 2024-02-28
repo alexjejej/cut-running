@@ -21,7 +21,7 @@ class MapsViewModel : ViewModel() {
     private val messageQueue: MutableList<String> = mutableListOf()
     // Lista para guardar los timestamps de cada paso dado
     private val pasosTimestamps = mutableListOf<Long>()
-    private val maxPasosPorIntervalo = 8 // Máximo de pasos permitidos en el intervalo de 3s ¿Dudas? Revisar al fondo
+    private val maxPasosPorIntervalo = 11 // Máximo de pasos permitidos en el intervalo de 3s ¿Dudas? Revisar al fondo
     private var intervaloTiempo = 4000L // Intervalo de tiempo en milisegundos
     private var ultimaVezToastMostrado = 0L
     private val tiempoEsperaToast = 4000L // 4 segundos entre cada Toast
