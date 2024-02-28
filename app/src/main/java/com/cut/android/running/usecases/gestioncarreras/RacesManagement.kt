@@ -12,10 +12,12 @@ import com.cut.android.running.databinding.RaceAddDialogFragmentBinding
 import com.cut.android.running.databinding.RaceInfoDialogFragmentBinding
 import com.cut.android.running.models.Race
 import com.cut.android.running.models.UniversityCenter
+import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.usecases.gestioncarreras.adapter.RaceAdapter
 
 import com.cut.android.running.usecases.gestioncarreras.addracedialog.AddRaceDialog
 import com.cut.android.running.usecases.gestionuc.UcManagementViewModel
+import com.cut.android.running.usecases.home.HomeViewModel
 
 /**
  * A simple [Fragment] subclass.
@@ -27,6 +29,7 @@ class RacesManagement : Fragment() {
     private val binding get() = _binding!!
     private val raceManagementViewModel: RaceManagementViewModel by viewModels()
     private val ucManagementViewModel: UcManagementViewModel by viewModels()
+    private val homeViewModel: HomeViewModel by viewModels()
 
     val raceAdapter: RaceAdapter = RaceAdapter { race -> onItemClick(race) }
     private val TAG: String = this::class.java.simpleName
@@ -55,8 +58,21 @@ class RacesManagement : Fragment() {
             else
                 Toast.makeText(requireContext(), "Ocurrio un error al agregar la carrera", Toast.LENGTH_SHORT).show()
         })
-        // raceManagementViewModel.getRaces()
-        tempGetRaces()
+        raceManagementViewModel.addUserRelationModel.observe(viewLifecycleOwner) {
+            if (it) {
+                raceManagementViewModel.getRaces()
+                Toast.makeText(requireContext(), "Se ha registrado a la carrera corractamente", Toast.LENGTH_SHORT).show()
+            }
+            else
+                Toast.makeText(requireContext(), "Ocurrio un error al registrarse a la carrera. Intente mas tarde", Toast.LENGTH_SHORT).show()
+        }
+        homeViewModel.roleId.observe(viewLifecycleOwner) { roleId ->
+            val isAdmin = roleId ==1
+            binding.btnShowCreateRace.visibility = if (isAdmin) View.VISIBLE else View.GONE
+        }
+
+        raceManagementViewModel.getRaces()
+        // tempGetRaces()
 
         binding.btnShowCreateRace.setOnClickListener {
             /**
@@ -84,7 +100,7 @@ class RacesManagement : Fragment() {
 
         val dialogBinding = RaceInfoDialogFragmentBinding.inflate(layoutInflater)
         val raceInforDialog = RaceInfoDialog(requireContext(), dialogBinding, raceManagementViewModel)
-        raceInforDialog.showDialog(race)
+        raceInforDialog.showDialog(DatosUsuario.getEmail(requireActivity()), race)
     }
 
     /**

@@ -52,6 +52,7 @@
                     android:id="@+id/lblRaceName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/kodemono_medium"
                     android:text="Race name" />
 
                 <Space
@@ -68,6 +69,7 @@
                         android:id="@+id/lblDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/kodemono_medium"
                         android:text="Date"/>
 
                     <Space
@@ -81,6 +83,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cede Acronym"
+                        android:fontFamily="@font/kodemono_medium"
                         android:layout_toEndOf="@id/space3"/>
                 </RelativeLayout>
 

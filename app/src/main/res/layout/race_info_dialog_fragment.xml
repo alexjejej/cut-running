@@ -25,6 +25,8 @@
                 android:id="@+id/lblRaceName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/kodemono_medium"
+                android:textSize="20sp"
                 android:textAppearance="?attr/textAppearanceTitleLarge"
                 android:text="Carrera"/>
 
@@ -42,6 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/kodemono_medium"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 android:text="Fecha: "/>
 
@@ -53,6 +56,7 @@
                 android:id="@+id/lblRaceDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/kodemono_medium"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 android:text="Fecha"/>
 
@@ -70,6 +74,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/kodemono_medium"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 android:text="Sede: "/>
 
@@ -81,6 +86,7 @@
                 android:id="@+id/lblRaceSede"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/kodemono_medium"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 android:text="Sede"/>
 
@@ -98,6 +104,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/kodemono_medium"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 android:text="Description: "/>
 
@@ -109,6 +116,7 @@
                 android:id="@+id/lblRaceDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/kodemono_medium"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
                 android:text="Description"/>
 

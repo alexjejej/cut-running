@@ -28,8 +28,8 @@ interface RaceService {
     @DELETE("race/{id}")
     suspend fun deleteRace(@Path("id") id: Int): Response<IResponse<Boolean>>
 
-    @POST("race/userrace/{userCode}/{raceId}")
-    suspend fun addUserRelation(@Path("userCode") userCode: Int, @Path("raceId") raceId: Int): Response<IResponse<Boolean>>
+    @POST("race/userrace/{email}/{raceId}")
+    suspend fun addUserRelation(@Path("email") email: String, @Path("raceId") raceId: Int): Response<IResponse<Boolean>>
 
     @GET("race/racebyuser/{userCode}")
     suspend fun getRaceByUser(@Path("userCode") userCode: Int): Response<IResponse<List<Race>>>

@@ -1,6 +1,7 @@
 package com.cut.android.running.common.navigation
 
 import MapsFragment
+import RacesManagement
 import android.app.Activity
 import android.os.Bundle
 import android.util.Log
@@ -109,6 +110,9 @@ class NavBarFragment : Fragment() {
             }
             R.id.btnAddTraining -> {
                 return navigateTo(MapsFragment(), getString(R.string.MapsFragment))
+            }
+            R.id.btnRaceManagement -> {
+                return navigateTo(RacesManagement(), getString(R.string.RaceManagement))
             }
             R.id.btnAchievements -> {
                 return navigateTo(LogrosFragment(), getString(R.string.AchievementFragment))

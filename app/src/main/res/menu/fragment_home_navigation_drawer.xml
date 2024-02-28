@@ -9,6 +9,7 @@
             android:id="@+id/btnProfile"
             android:enabled="true"
             android:icon="@drawable/icon_person_24"
+            android:fontFamily="@font/kodemono_medium"
             android:title="@string/item_profile"/>
     </group>
 
@@ -20,27 +21,38 @@
             android:id="@+id/btnHome"
             android:enabled="true"
             android:icon="@drawable/icon_home_24"
+            android:fontFamily="@font/kodemono_medium"
             android:title="@string/item_home" />
         <item
             android:id="@+id/btnAddTraining"
             android:enabled="true"
             android:icon="@drawable/icon_add_24"
+            android:fontFamily="@font/kodemono_medium"
             android:title="@string/item_add_training" />
+        <item
+            android:id="@+id/btnRaceManagement"
+            android:enabled="true"
+            android:icon="@drawable/icon_run_24"
+            android:fontFamily="@font/kodemono_medium"
+            android:title="@string/item_race_management" />
         <item
             android:id="@+id/btnAchievements"
             android:enabled="true"
             android:icon="@drawable/icon_military_tech_24"
+            android:fontFamily="@font/kodemono_medium"
             android:title="@string/item_achievements" />
         <item
             android:id="@+id/btnClasificacion"
             android:enabled="true"
             android:icon="@drawable/icon_drag_indicator_24"
+            android:fontFamily="@font/kodemono_medium"
             android:title="@string/item_clasificacion" />
 
         <item
             android:id="@+id/btnStatistics"
             android:enabled="true"
             android:icon="@drawable/icon_statistics"
+            android:fontFamily="@font/kodemono_medium"
             android:title="@string/item_statistics" />
     </group>
 
@@ -51,6 +63,7 @@
             android:id="@+id/btnLogout"
             android:enabled="true"
             android:icon="@drawable/icon_logout_24"
+            android:fontFamily="@font/kodemono_medium"
             android:title="@string/item_logout"/>
     </group>
 

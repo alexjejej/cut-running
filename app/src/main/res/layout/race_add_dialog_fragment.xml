@@ -31,6 +31,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/add_new_race"
                 android:textAlignment="center"
+                android:fontFamily="@font/kodemono_medium"
                 android:textSize="23sp"/>
 
         </LinearLayout>
@@ -49,6 +50,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/txtRaceName"
                     android:layout_width="match_parent"
+                    android:fontFamily="@font/kodemono_medium"
                     android:layout_height="wrap_content"/>
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -62,6 +64,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/txtRaceDescription"
                     android:layout_width="match_parent"
+                    android:fontFamily="@font/kodemono_medium"
                     android:layout_height="wrap_content"/>
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -92,6 +95,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:fontFamily="@font/kodemono_medium"
                     android:text="Fecha"
                     app:icon="@drawable/icon_calendar_month_fill0_wght400_grad0_opsz24"/>
 
@@ -105,6 +109,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:fontFamily="@font/kodemono_medium"
                     android:text="Hora"
                     app:icon="@drawable/icon_schedule_fill0_wght400_grad0_opsz24"/>
 

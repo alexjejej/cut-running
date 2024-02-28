@@ -100,10 +100,10 @@ class RaceManagementViewModel : ViewModel() {
     /**
      * Add realationship between user and race
      */
-    fun addUserRelation(userCode: Int, raceId: Int) {
+    fun addUserRelation(email: String, raceId: Int) {
         viewModelScope.launch {
             try {
-                val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).addUserRelation(userCode, raceId)
+                val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).addUserRelation(email, raceId)
                 val result = call.body()
                 if (result != null && result.isSuccess)
                     addUserRelationModel.postValue(true)

@@ -19,13 +19,13 @@ class RaceInfoDialog (
     /**
      * Build Mat Dialog
      */
-    public fun showDialog(race: Race) {
+    public fun showDialog(email: String, race: Race) {
         setViewValues(race)
 
         val builder = MaterialAlertDialogBuilder(_context)
             .setView(_binding.root)
             .setPositiveButton("Resgistrar") { dialog, which ->
-                _raceManagementViewModel.addUserRelation(999, 999)
+                _raceManagementViewModel.addUserRelation(email, race.id)
             }
             .setNegativeButton("Cancelar") { dialog, which ->
                 dialog.cancel()

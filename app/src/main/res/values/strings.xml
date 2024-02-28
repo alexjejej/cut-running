@@ -31,6 +31,7 @@
     <!-- Bottom navbar -->
     <string name="item_home">Inicio</string>
     <string name="item_add_training">Carrera</string>
+    <string name="item_race_management">Gestion de carreras</string>
     <string name="item_achievements">Logros</string>
     <string name="item_clasificacion">Clasificacion</string>
 

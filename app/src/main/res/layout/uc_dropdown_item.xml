@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:ellipsize="end"
+    android:fontFamily="@font/kodemono_medium"
     android:textAppearance="?attr/textAppearanceSubtitle1"
     android:text="University Center">
 

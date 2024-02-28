@@ -3,12 +3,15 @@
 
     <item
         android:id="@+id/btnProfile"
+        android:fontFamily="@font/kodemono_medium"
         android:title="@string/item_profile"/>
     <item
         android:id="@+id/btnAppInfo"
+        android:fontFamily="@font/kodemono_medium"
         android:title="@string/item_app_info"/>
     <item
         android:id="@+id/btnLogout"
+        android:fontFamily="@font/kodemono_medium"
         android:title="@string/item_logout"/>
 
 </menu>
