@@ -20,6 +20,7 @@
             android:textAlignment="center"
             android:textColor="@color/cut1"
             android:textSize="25dp"
+            style="@style/txtTituloGrande"
             android:textStyle="bold"
             android:drawableLeft="@drawable/icon_military_tech_24"
             android:layout_gravity="center"
@@ -30,7 +31,6 @@
             android:layout_width="match_parent"
             android:layout_marginTop="10dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="5dp"
             />
     </LinearLayout>
 

@@ -61,7 +61,7 @@ class EstadisticasFragment : Fragment() {
         val pasosTotales = bdSqlite.getIntData(emailUsuario, BDsqlite.COLUMN_PASOS_TOTALES)
         animarValorTextView(txtPasosTotalesEstadisticas, pasosTotales)
 
-        mostrarDistancia() // Actualiza la vista con la distancia
+        mostrarDistancia(pasosTotales) // Actualiza la vista con la distancia
         calcularYMostrarCalorias() // Calcula y muestra las calorías quemadas
 
         // Configurando el botón para volver al inicio
@@ -105,11 +105,30 @@ class EstadisticasFragment : Fragment() {
         return calorias
     }
 
-    private fun mostrarDistancia() {
+    private fun mostrarDistancia(pasosTotales: Int) {
         val emailUsuario = DatosUsuario.getEmail(requireActivity())
-        val distancia = BDsqlite(requireContext()).getIntData(emailUsuario, BDsqlite.COLUMN_DISTANCIA)
-        animarValorTextView(txtDistanciaEstadisticas, distancia)
+        val db = BDsqlite(requireContext())
+
+        // Obtener la estatura del usuario de la base de datos y convertirla a metros
+        val userEstatura = db.getFloatData(emailUsuario, BDsqlite.COLUMN_ESTATURA)?.let { it / 100 } ?: 0.0f // Asegúrate de manejar el caso de null
+
+        // Calcular la distancia promedio por paso
+        val distanciaPromedioPorPaso = if (userEstatura > 0) {
+            userEstatura.toDouble() * .415
+        } else {
+            .75 // Valor predeterminado si no se conoce la estatura
+        }
+
+        // Obtener el valor de distanciaPorPaso de la BD o usar el calculado
+        val distancePerStep = db.getFloatData(emailUsuario, BDsqlite.COLUMN_DISTANCEPERSTEP)?.let { it / 100 } ?: distanciaPromedioPorPaso.toFloat()
+
+        // Calcula la distancia total basada en pasos totales y distancia promedio por paso
+        val distanciaTotal = pasosTotales * distancePerStep
+
+        // Anima el valor de la distancia total en el TextView
+        animarValorTextView(txtDistanciaEstadisticas, distanciaTotal.toInt())
     }
+
 
     private fun animarValorTextView(textView: TextView, valorFinal: Int) {
         val animator = ValueAnimator.ofInt(0, valorFinal)
