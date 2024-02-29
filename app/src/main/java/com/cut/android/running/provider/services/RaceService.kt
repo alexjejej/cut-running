@@ -31,12 +31,12 @@ interface RaceService {
     @POST("race/userrace/{email}/{raceId}")
     suspend fun addUserRelation(@Path("email") email: String, @Path("raceId") raceId: Int): Response<IResponse<Boolean>>
 
-    @GET("race/racebyuser/{userCode}")
-    suspend fun getRaceByUser(@Path("userCode") userCode: Int): Response<IResponse<List<Race>>>
+    @GET("race/racebyuser/{email}")
+    suspend fun getRaceByUser(@Path("email") userCode: Int): Response<IResponse<List<Race>>>
 
     @GET("race/userbyrace/{raceId}")
     suspend fun getUserByRace(@Path("raceId") raceId: Int): Response<IResponse<List<User>>>
 
-    @DELETE("race/userrace/{userCode}/{raceId}")
-    suspend fun deleteUserRelation(@Path("userCode") userCode: Int, @Path("raceId") raceId: Int): Response<IResponse<Boolean>>
+    @DELETE("race/userrace/{email}/{raceId}")
+    suspend fun deleteUserRelation(@Path("email") userCode: Int, @Path("raceId") raceId: Int): Response<IResponse<Boolean>>
 }

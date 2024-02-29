@@ -25,6 +25,6 @@ interface UserService {
     @PUT("user")
     suspend fun updateUser(@Body user: User): Response<IResponse<Boolean>>
 
-    @DELETE("user/{id}")
-    suspend fun deleteUser(@Path("id") id: String): Response<IResponse<Boolean>>
+    @DELETE("user/{email}")
+    suspend fun deleteUser(@Path("email") id: String): Response<IResponse<Boolean>>
 }
