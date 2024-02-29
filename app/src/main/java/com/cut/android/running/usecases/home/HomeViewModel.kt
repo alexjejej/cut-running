@@ -61,8 +61,12 @@ class HomeViewModel : ViewModel() {
             try {
                 val response = userService.getUserByEmail(email)
                 _apiConnection.postValue(response.isSuccessful)
+                Log.d("HOMEFRAGMENT viewmodel","ESTAS CONECTADO")
+
             } catch (e: Exception) {
                 _apiConnection.postValue(false)
+                Log.d("HOMEFRAGMENT viewmodel","NO ESTAS CONECTADO")
+
             }
         }
     }

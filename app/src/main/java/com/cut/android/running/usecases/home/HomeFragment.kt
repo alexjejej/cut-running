@@ -21,6 +21,7 @@ import com.cut.android.running.usecases.logros.LogrosFragment
 import com.cut.android.running.usecases.logros.admin.AdminLogrosFragment
 import com.cut.android.running.usecases.profile.ProfileFragment
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -50,7 +51,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnAdminLogros = view.findViewById(R.id.btnAdminLogros)
         btnAdminCarreras = view.findViewById(R.id.btnAdminCarreras)
         btnPerfil = view.findViewById(R.id.btnProfile)
-        btnReintentarEstatus = view.findViewById(R.id.btnReintentarEstatus)
         btnEstadisticas = view.findViewById(R.id.btnEstadisticas)
         btnCarrera.setOnClickListener { navigateToFragment(MapsFragment()) }
         btnLogros.setOnClickListener { navigateToFragment(LogrosFragment()) }
@@ -62,17 +62,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         // Instanciar ManejadorAccionesFallidas
         manejadorAcciones = ManejadorAccionesFallidas(requireContext())
 
+        btnReintentarEstatus = view.findViewById(R.id.btnReintentarEstatus)
         btnReintentarEstatus.setOnClickListener {
-            viewModel.apiConnection.value?.let { isConnected ->
-                if (isConnected) {
-
-                    lifecycleScope.launch {
-                        manejadorAcciones.reintentarAccionesFallidas(lifecycleScope)
-                    }
-                } else {
-                    viewModel.checkApiConnection(DatosUsuario.getEmail(requireActivity()))
-                }
-            }
+            Log.d("HOMEFRAGMENT", "btnReintentarEstatus presionado")
+            viewModel.checkApiConnection(DatosUsuario.getEmail(requireActivity()))
         }
     }
 
@@ -102,16 +95,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             txtApiConnectionStatus?.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_connected, 0, 0, 0)
             btnReintentarEstatus.visibility = View.GONE
             /*
-            if (hayPendiente) {
-                // Hay tareas pendientes, mostrar botón y mensaje adecuado
-                btnReintentarEstatus.visibility = View.VISIBLE
-                btnReintentarEstatus.text = "Tarea pendiente de enviar $tipoAccion"
-                // Considera cambiar el color del botón a uno que indique acción requerida
-                btnReintentarEstatus.setBackgroundColor(Color.parseColor("#FFA500")) // Color naranja, por ejemplo
+               if (hayPendiente) {
+                    Hay tareas pendientes, mostrar botón y mensaje adecuado
+                   btnReintentarEstatus.visibility = View.VISIBLE
+                   btnReintentarEstatus.text = "Tarea pendiente de enviar $tipoAccion"
+                   // Considera cambiar el color del botón a uno que indique acción requerida
+                   btnReintentarEstatus.setBackgroundColor(Color.parseColor("#FFA500"))  Color naranja, por ejemplo
+
+                Log.d("HomeFragment","Tarea pendiente $hayPendiente")
             } else {
                 // No hay tareas pendientes, esconder botón de reintentar
                 btnReintentarEstatus.visibility = View.GONE
-            }*/
+            } */
         } else {
             txtApiConnectionStatus?.text = "Desconectado"
             txtApiConnectionStatus?.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_desconnected, 0, 0, 0)
@@ -120,6 +115,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             btnReintentarEstatus.setBackgroundColor(Color.parseColor("#FF8D8D")) // Color rojo, por ejemplo
         }
     }
+
 
     private fun EstadoDesconectado() {
         val txtApiConnectionStatus = view?.findViewById<TextView>(R.id.txtApiConnectionStatus)
