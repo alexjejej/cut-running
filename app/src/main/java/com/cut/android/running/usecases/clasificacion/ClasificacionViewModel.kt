@@ -27,7 +27,7 @@ class ClasificacionViewModel : ViewModel() {
             try {
                 val response = classificationService.getClassifications()
                 if (response.isSuccessful && response.body() != null) {
-                    val responseData = response.body()!!.data // Asume que IResponse tiene un campo 'data'
+                    val responseData = response.body()!!.data
                     if (responseData != null) {
                         _listaClasificacion.postValue(ArrayList(responseData))
                     }

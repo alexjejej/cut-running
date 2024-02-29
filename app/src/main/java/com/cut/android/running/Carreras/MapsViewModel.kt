@@ -21,7 +21,7 @@ class MapsViewModel : ViewModel() {
     private val messageQueue: MutableList<String> = mutableListOf()
     // Lista para guardar los timestamps de cada paso dado
     private val pasosTimestamps = mutableListOf<Long>()
-    private val maxPasosPorIntervalo = 11 // Máximo de pasos permitidos en el intervalo de 3s ¿Dudas? Revisar al fondo
+    private val maxPasosPorIntervalo = 10 // Máximo de pasos permitidos en el intervalo de 3s ¿Dudas? Revisar al fondo
     private var intervaloTiempo = 4000L // Intervalo de tiempo en milisegundos
     private var ultimaVezToastMostrado = 0L
     private val tiempoEsperaToast = 4000L // 4 segundos entre cada Toast
@@ -123,7 +123,7 @@ class MapsViewModel : ViewModel() {
                 intervaloTiempo *= 2
                 tiempoPenalizacion = currentTime + intervaloTiempo
                 var tiempo = intervaloTiempo / 1000
-                postMessage("Muchos pasos registrados en poco tiempo ¿Eres Flash?")
+                postMessage("Muchos pasos registrados en poco tiempo, se pausará el conteo de pasos")
                 postMessage("No se contarán pasos por los próximos $tiempo segundos")
             }
         }
