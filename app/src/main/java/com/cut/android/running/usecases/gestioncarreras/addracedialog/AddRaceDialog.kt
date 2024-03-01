@@ -4,6 +4,7 @@ import RaceManagementViewModel
 import android.content.Context
 import android.content.res.Resources
 import android.util.Log
+import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.FragmentManager
@@ -11,6 +12,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.cut.android.running.R
 import com.cut.android.running.databinding.RaceAddDialogFragmentBinding
+import com.cut.android.running.models.UniversityCenter
 import com.cut.android.running.models.dto.RaceDto
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -128,15 +130,43 @@ class AddRaceDialog constructor(
             if (it?.isNotEmpty() == true) {
                 val items = it.map { uc -> uc.acronym }
                 val adapter = ArrayAdapter(_context, R.layout.uc_dropdown_item, items)
-                _binding.txtRaceSede.setAdapter(adapter)
-                _binding.txtRaceSede.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, i, l ->
-                    // val itemSelected = adapterView.getItemAtPosition(i)
-                    val ucSelected = it[i]
-                    ucIdSelected = ucSelected.id
-                    Log.d(TAG, "$ucSelected")
+                _binding.dropdown.adapter = adapter
+                _binding.dropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                        val ucSelected = it.get(position)
+                        ucIdSelected = ucSelected.id
+                        Log.d(TAG, "$ucIdSelected")
+                    }
+
+                    override fun onNothingSelected(p0: AdapterView<*>?) {
+                        TODO("Not yet implemented")
+                    }
                 }
             }
         })
         _ucManagementViewModel.getUc()
     }
+
+//    private fun getUc() {
+//        val it: List<UniversityCenter> = listOf(
+//            UniversityCenter(1, "Cut", "CUT", 1, ""),
+//            UniversityCenter(2, "Cucei", "CUCEI", 1, ""),
+//            UniversityCenter(3, "Cuad", "CUAD", 1, ""),
+//        )
+//
+//        val items = it.map { uc -> uc.acronym }
+//        val adapter = ArrayAdapter(_context, R.layout.uc_dropdown_item, items)
+//        _binding.dropdown.adapter = adapter
+//        _binding.dropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+//                val ucSelected = it.get(position)
+//                ucIdSelected = ucSelected.id
+//                Log.d(TAG, "$ucIdSelected")
+//            }
+//
+//            override fun onNothingSelected(p0: AdapterView<*>?) {
+//                TODO("Not yet implemented")
+//            }
+//        }
+//    }
 }

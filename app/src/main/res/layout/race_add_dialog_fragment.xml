@@ -69,20 +69,26 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-                android:id="@+id/layRaceSede"
+<!--            <com.google.android.material.textfield.TextInputLayout-->
+<!--                style="@style/TestMyTextInputStyle"-->
+<!--                android:id="@+id/layRaceSede"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:hint="@string/txt_race_sede">-->
+
+<!--                <AutoCompleteTextView-->
+<!--                    android:id="@+id/txtRaceSede"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:inputType="none"/>-->
+
+<!--            </com.google.android.material.textfield.TextInputLayout>-->
+
+            <Spinner
+                android:id="@+id/dropdown"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/txt_race_sede">
-
-                <AutoCompleteTextView
-                    android:id="@+id/txtRaceSede"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"/>
-
-            </com.google.android.material.textfield.TextInputLayout>
+                android:spinnerMode="dropdown"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -49,6 +49,12 @@
 
   </style>
 
+  <style name="TestMyTextInputStyle" parent="Widget.Material3.TextInputLayout.FilledBox.ExposedDropdownMenu">
+    <item name="android:textSize">12sp</item>
+    <!-- Personaliza el color de la línea inferior y el color del texto flotante (hint) cuando el campo está enfocado -->
+
+  </style>
+
 
   <style name="AppTheme.DrawerArrowStyle" parent="Widget.AppCompat.DrawerArrowToggle">
     <item name="color">@android:color/white</item>
