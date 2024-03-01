@@ -39,6 +39,7 @@ import com.cut.android.running.provider.BDsqlite
 import com.cut.android.running.provider.RetrofitInstance
 import com.cut.android.running.provider.resources.AccionFallida
 import com.cut.android.running.provider.resources.ManejadorAccionesFallidas
+import com.cut.android.running.provider.services.ClassificationService
 import com.cut.android.running.provider.services.UserService
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -64,6 +65,9 @@ class LoginFragment : Fragment() {
     //instancia de UserService
     private val userService: UserService = RetrofitInstance.getRetrofit().create(
         UserService::class.java)
+    //instancia de Classification
+    private val classificationService: ClassificationService = RetrofitInstance.getRetrofit().create(
+        ClassificationService::class.java)
 
     private val REQUEST_ONE_TAP = 2 // Puede ser cualquier valor entero unico para el Fragment
 
@@ -208,26 +212,50 @@ class LoginFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val response = userService.getUserByEmail(email)
-                withContext(Dispatchers.Main) {
-                    if (response.isSuccessful && response.body()?.data != null) {
-                        // Usuario existente, generamos SQLite y luego llamamos a onCompletion en el hilo principal
-                        GenerarSQLite(response.body()?.data!!) {
+                if (response.isSuccessful && response.body()?.data != null) {
+                    // Usuario existente
+                    val user = response.body()?.data!!
+
+                    // Obtenemos los pasos del usuario
+                    val pasos = obtenerPasosUsuario(email)
+                    if (pasos != null) {
+                        user.totalsteps = pasos
+                    } else {
+                        // Manejar el caso de no obtener los pasos
+                        user.totalsteps = 0
+                    }
+
+                    // Continuar con la generación de SQLite y la ejecución del callback en el hilo principal
+                    withContext(Dispatchers.Main) {
+                        GenerarSQLite(user) {
                             onCompletion()
                         }
-                    } else {
-                        // Usuario no encontrado, intentamos registrar un nuevo usuario
-                        RegistrarUsuario(nombre, email, onCompletion)
                     }
+                } else {
+                    // Usuario no encontrado, intentamos registrar un nuevo usuario
+                    RegistrarUsuario(nombre, email, onCompletion)
                 }
             } catch (e: Exception) {
-                // Manejo de excepciones de red, llamamos a onCompletion en el hilo principal
+                // Manejo de excepciones de red
+                Log.d("ConsultarBD", "Error de red: ${e.message}")
                 withContext(Dispatchers.Main) {
-                    Log.d("LF Login Error", "Error de red: ${e.message}")
                     onCompletion()
                 }
             }
         }
     }
+    private suspend fun obtenerPasosUsuario(email: String): Int? {
+        try {
+            val response = classificationService.getClassificationById(email)
+            if (response.isSuccessful && response.body()?.data != null) {
+                return response.body()?.data?.pasos
+            }
+        } catch (e: Exception) {
+            Log.d("ConsultarBD", "Error al obtener los pasos del usuario: ${e.message}")
+        }
+        return null // Retorna null si hay un error o si no se pueden obtener los pasos
+    }
+
 
     suspend fun RegistrarUsuario(nombre: String, email: String, onCompletion: () -> Unit) {
         val nuevoUsuario = UserDto(firstname = nombre, email = email, roleId = 2)

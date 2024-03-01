@@ -11,11 +11,14 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cut.android.running.R
 import com.cut.android.running.databinding.FragmentClasificacionBinding
+import com.cut.android.running.provider.resources.Presets
 import com.cut.android.running.usecases.clasificacion.adapter.ListaClasificacionAdapter
+import nl.dionsegijn.konfetti.xml.KonfettiView
 
 class ClasificacionFragment : Fragment() {
     private val clasificacionViewModel = ClasificacionViewModel()
     private lateinit var binding: FragmentClasificacionBinding
+    private lateinit var viewKonfetti: KonfettiView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +30,7 @@ class ClasificacionFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.fragment_clasificacion, container, false)
+        viewKonfetti = rootView.findViewById(R.id.konfettiViewPodio)
         binding = FragmentClasificacionBinding.bind(rootView)
 
         this.setup()
@@ -38,13 +42,46 @@ class ClasificacionFragment : Fragment() {
         this.initRecycleView()
 
         // Observer de LiveData del ViewModel
-        clasificacionViewModel.listaClasificacion.observe(viewLifecycleOwner, Observer { posicion ->
-            Log.d("ClasFragment", "Actualizacion de datos de LiveData")
-            binding.rvClassification.adapter = ListaClasificacionAdapter(posicion.sortedByDescending { it.pasos },
-                context?.applicationContext!!)
-        })
-    }
+        clasificacionViewModel.listaClasificacion.observe(viewLifecycleOwner, Observer { clasificaciones ->
+            val listaOrdenada = clasificaciones.sortedByDescending { it.pasos }
 
+            // Asegúrate de que hay al menos 3 elementos para el podio
+            if (listaOrdenada.size >= 3) {
+                // Actualiza los TextViews del podio aquí
+                val primerLugar = listaOrdenada[0]
+                val segundoLugar = listaOrdenada[1]
+                val tercerLugar = listaOrdenada[2]
+
+                binding.txt1NombrePodio.text = primerLugar.nombre
+                binding.txt2NombrePodio.text = segundoLugar.nombre
+                binding.txt3NombrePodio.text = tercerLugar.nombre
+
+                // Asegúrate de hacer visible el layout del podio si estaba oculto
+                binding.podioLayout.visibility = View.VISIBLE
+            }
+
+            // Configura el RecyclerView para el resto de la lista
+            if (listaOrdenada.size > 3) {
+                val restoDeClasificaciones = listaOrdenada.drop(0)
+                binding.rvClassification.adapter = ListaClasificacionAdapter(restoDeClasificaciones, requireContext())
+            } else {
+                // Manejar el caso donde hay menos de 3 elementos para evitar errores
+                binding.rvClassification.adapter = ListaClasificacionAdapter(emptyList(), requireContext())
+            }
+        })
+        startRandomConfettiAnimation()
+
+    }
+    private fun startRandomConfettiAnimation() {
+        val randomParty = when ((1..4).random()) {
+            1 -> Presets.festive()
+            3 -> Presets.parade()
+            4 -> Presets.rain()
+            else -> emptyList()
+        }
+
+        viewKonfetti.start(randomParty)
+    }
     /** Inicializacion de Recycleview **/
     private fun initRecycleView() {
         val manager = LinearLayoutManager(context)

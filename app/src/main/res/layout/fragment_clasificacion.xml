@@ -1,36 +1,217 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.cut.android.running.usecases.clasificacion.ClasificacionFragment">
+    android:weightSum="100"
+    android:orientation="vertical"
+    android:padding="15dp"
+    >
+
+    <!-- Contenedor del Podio y Confeti -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="35"
+        android:weightSum="30"
+        >
+
+        <nl.dionsegijn.konfetti.xml.KonfettiView
+            android:id="@+id/konfettiViewPodio"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+        <LinearLayout
+            android:id="@+id/contenedorpodioLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="30"
+            android:weightSum="5"
+            android:orientation="vertical">
+
+            <!-- Título "Clasificación" -->
+            <com.google.android.material.textview.MaterialTextView
+                style="@style/txtTituloGrande"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:text="Clasificación"
+                android:textAlignment="center"
+                android:textColor="@color/cut1"
+                android:textSize="25dp"
+                android:textStyle="bold" />
+
+
+            <LinearLayout
+                android:id="@+id/podioLayout"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="4"
+                android:orientation="horizontal"
+                android:padding="10dp"
+                android:weightSum="3">
+
+                <!-- SEGUNDO LUGAR -->
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:weightSum="3">
+
+                    <ImageView
+                        android:id="@+id/img2LugarPodio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="2"
+                        android:src="@drawable/medalla_2" />
+
+
+                    <TextView
+                        android:id="@+id/txt2NombrePodio"
+                        style="@style/txtTituloGrande"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/kodemono_bold"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textColor="@color/SECOND_PLACE"
+                        android:textSize="17dp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+                <!-- PRIMER LUGAR -->
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:weightSum="3">
+
+                    <ImageView
+                        android:id="@+id/img1LugarPodio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="2"
+                        android:src="@drawable/medalla_1" />
+
+
+                    <TextView
+                        android:id="@+id/txt1NombrePodio"
+                        style="@style/txtTituloGrande"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/kodemono_bold"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textColor="@color/FIRST_PLACE"
+                        android:textSize="18dp"
+                        android:textStyle="bold" />
+
+
+                </LinearLayout>
+
+                <!-- TERCER LUGAR -->
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:padding="5dp"
+                    android:weightSum="3">
+
+                    <ImageView
+                        android:id="@+id/img3LugarPodio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="0dp"
+                        android:layout_gravity="center"
+                        android:layout_weight="2"
+                        android:src="@drawable/medalla_3" />
+
+
+                    <TextView
+                        android:id="@+id/txt3NombrePodio"
+                        style="@style/txtTituloGrande"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/kodemono_bold"
+                        android:text=""
+                        android:textAlignment="center"
+                        android:textColor="@color/THIRD_PLACE"
+                        android:textSize="16dp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        </RelativeLayout>
+    <!-- View con linea divisora -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/gradient_line_clasificacion"
+        android:padding="5dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginVertical="10dp"
-        android:layout_marginHorizontal="10dp"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal"
+        android:weightSum="10">
 
-        >
-
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/txtClasificacion"
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/clasificacionnumero"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Clasificación"
-            android:textAlignment="center"
-            android:textColor="@color/cut1"
-            android:layout_gravity="center"
-            android:textSize="25dp"
-            android:layout_marginBottom="15dp"
-            android:textStyle="bold" />
+            android:layout_weight="1"
+            android:fontFamily="@font/kodemono_bold"
+            android:text="#"
+            android:textSize="16sp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvClassification"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="10dp"/>
+        <TextView
+            android:id="@+id/clasificacionname"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="6"
+            android:fontFamily="@font/kodemono_regular"
+            android:text="Nombre"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/clasificacionpasos"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_weight="3"
+            android:fontFamily="@font/kodemono_regular"
+            android:text="Pasos"
+            android:textAlignment="textEnd"
+            android:textSize="16sp" />
     </LinearLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvClassification"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="100"
+        android:layout_marginTop="10dp" />
+
 </LinearLayout>
+

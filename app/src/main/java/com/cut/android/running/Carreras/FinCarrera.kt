@@ -196,7 +196,7 @@ class FinCarrera : AppCompatActivity() {
 
         val txtPasos = findViewById<TextView>(R.id.txtPasos)
         val txtDistancia = findViewById<TextView>(R.id.txtDistancia)
-        val txtPasosT = findViewById<TextView>(R.id.txtpasosT)
+        //val txtPasosT = findViewById<TextView>(R.id.txtpasosT)
 
         // Obtener nombre de usuario
         val email = DatosUsuario.getEmail(this)
@@ -211,9 +211,9 @@ class FinCarrera : AppCompatActivity() {
 
         //mostrar los datos de cada consulta
         txtPasos.text = (PasosHoy.toString()+" pasos")
-        txtPasosT.text = (PasosTotales.toString()+" pasos")
+        //txtPasosT.text = (PasosTotales.toString()+" pasos")
         txtDistancia.text = (Distancia.toString()+ " metros")
-        calcularYMostrarCalorias(peso, PasosTotales)
+        calcularYMostrarCalorias(peso, PasosHoy)
 
         //Procesar clasificacion
         if (nombreUsuario != null) {
@@ -411,8 +411,8 @@ class FinCarrera : AppCompatActivity() {
             findViewById<TextView>(R.id.txtPasos),
             findViewById<TextView>(R.id.textView3),
             findViewById<TextView>(R.id.txtDistancia),
-            findViewById<TextView>(R.id.textview10),
-            findViewById<TextView>(R.id.txtpasosT),
+            //findViewById<TextView>(R.id.textview10),
+            //findViewById<TextView>(R.id.txtpasosT),
             findViewById<Button>(R.id.btnMenu),
             findViewById(R.id.textview11),
             txtcaloriasT

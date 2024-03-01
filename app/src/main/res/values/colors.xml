@@ -35,6 +35,11 @@
   <color name="info_color">#33b5e5</color>
   <color name="info_color_dark">#0099cc</color>
 
+  <!-- PODIUM COLORS -->
+  <color name="FIRST_PLACE">#ffbf00</color>
+  <color name="SECOND_PLACE">#C0C0C0</color>
+  <color name="THIRD_PLACE">#CD7F32</color>
+
 
 
 </resources>
