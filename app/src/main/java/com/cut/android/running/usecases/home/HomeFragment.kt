@@ -2,16 +2,17 @@ package com.cut.android.running.usecases.home
 
 import MapsFragment
 import RacesManagement
-import android.content.Context
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.cut.android.running.R
 import com.cut.android.running.usecases.clasificacion.ClasificacionFragment
 import com.cut.android.running.provider.DatosUsuario
@@ -20,8 +21,7 @@ import com.cut.android.running.usecases.estadisticas.EstadisticasFragment
 import com.cut.android.running.usecases.logros.LogrosFragment
 import com.cut.android.running.usecases.logros.admin.AdminLogrosFragment
 import com.cut.android.running.usecases.profile.ProfileFragment
-import kotlinx.coroutines.launch
-import kotlin.math.log
+
 
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -32,12 +32,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private lateinit var btnClasificacion: Button
     private lateinit var btnAdminLogros: Button
     private lateinit var btnAdminCarreras: Button
+    private lateinit var btnCarreras: Button
     private lateinit var btnReintentarEstatus : Button
     private lateinit var btnPerfil: Button
     private lateinit var btnEstadisticas : Button
-
+    private lateinit var layoutBienvenida: LinearLayout
+    private lateinit var layoutCarrera: LinearLayout
     private lateinit var manejadorAcciones: ManejadorAccionesFallidas
-
+    private lateinit var txtAvisoFecha: TextView
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeUI(view)
@@ -45,6 +48,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun initializeUI(view: View) {
+        //Rerefenciar botones
         btnCarrera = view.findViewById(R.id.btnCarrera)
         btnLogros = view.findViewById(R.id.btnLogros)
         btnClasificacion = view.findViewById(R.id.btnClasificacion)
@@ -52,6 +56,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnAdminCarreras = view.findViewById(R.id.btnAdminCarreras)
         btnPerfil = view.findViewById(R.id.btnProfile)
         btnEstadisticas = view.findViewById(R.id.btnEstadisticas)
+        btnCarreras = view.findViewById(R.id.btnCarreras)
+        //Dar clic a los botones
         btnCarrera.setOnClickListener { navigateToFragment(MapsFragment()) }
         btnLogros.setOnClickListener { navigateToFragment(LogrosFragment()) }
         btnClasificacion.setOnClickListener { navigateToFragment(ClasificacionFragment()) }
@@ -59,6 +65,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnAdminCarreras.setOnClickListener{ navigateToFragment(RacesManagement()) }
         btnPerfil.setOnClickListener{ navigateToFragment(ProfileFragment()) }
         btnEstadisticas.setOnClickListener{ navigateToFragment(EstadisticasFragment())}
+        btnCarreras.setOnClickListener{ navigateToFragment(RacesManagement())}
         // Instanciar ManejadorAccionesFallidas
         manejadorAcciones = ManejadorAccionesFallidas(requireContext())
 
@@ -67,8 +74,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             Log.d("HOMEFRAGMENT", "btnReintentarEstatus presionado")
             viewModel.checkApiConnection(DatosUsuario.getEmail(requireActivity()))
         }
+        //Rerefenciar txt
+        txtAvisoFecha = view.findViewById(R.id.txtAvisoFecha)
+        //Rerefenciar Layouts
+        layoutBienvenida = view.findViewById(R.id.LayoutBienvenida)
+        layoutCarrera = view.findViewById(R.id.LayoutCarrera)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setupViewModel() {
         val nombreuser = DatosUsuario.getUserName(requireContext())
 
@@ -84,6 +97,23 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             updateApiConnectionStatus(isConnected)
         }
         viewModel.checkUserRole(DatosUsuario.getEmail(requireActivity()))
+
+        // Llama a checkNextRace() para verificar las carreras próximas
+        viewModel.checkNextRace()
+
+        viewModel.nextRace.observe(viewLifecycleOwner) { (hasNextRace, daysUntilNextRace) ->
+            if (hasNextRace) {
+                layoutBienvenida.visibility = View.GONE
+                layoutCarrera.visibility = View.VISIBLE
+                txtAvisoFecha.text = "Hay un evento que empieza en $daysUntilNextRace días. Para registrarte, da clic en el siguiente botón:"
+
+
+            } else {
+                layoutBienvenida.visibility = View.VISIBLE
+                layoutCarrera.visibility = View.GONE
+            }
+        }
+
 
     }
     private fun updateApiConnectionStatus(isConnected: Boolean) {
