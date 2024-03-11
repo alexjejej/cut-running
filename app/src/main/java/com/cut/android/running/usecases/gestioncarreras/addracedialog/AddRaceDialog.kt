@@ -146,27 +146,4 @@ class AddRaceDialog constructor(
         })
         _ucManagementViewModel.getUc()
     }
-
-//    private fun getUc() {
-//        val it: List<UniversityCenter> = listOf(
-//            UniversityCenter(1, "Cut", "CUT", 1, ""),
-//            UniversityCenter(2, "Cucei", "CUCEI", 1, ""),
-//            UniversityCenter(3, "Cuad", "CUAD", 1, ""),
-//        )
-//
-//        val items = it.map { uc -> uc.acronym }
-//        val adapter = ArrayAdapter(_context, R.layout.uc_dropdown_item, items)
-//        _binding.dropdown.adapter = adapter
-//        _binding.dropdown.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-//                val ucSelected = it.get(position)
-//                ucIdSelected = ucSelected.id
-//                Log.d(TAG, "$ucIdSelected")
-//            }
-//
-//            override fun onNothingSelected(p0: AdapterView<*>?) {
-//                TODO("Not yet implemented")
-//            }
-//        }
-//    }
 }

@@ -1,7 +1,5 @@
 
-import android.app.AlertDialog
 import android.content.Context
-import android.graphics.Color
 import com.cut.android.running.databinding.RaceInfoDialogFragmentBinding
 import com.cut.android.running.models.Race
 import com.google.android.material.dialog.MaterialAlertDialogBuilder

@@ -30,6 +30,7 @@ class RacesManagement : Fragment() {
     private val raceManagementViewModel: RaceManagementViewModel by viewModels()
     private val ucManagementViewModel: UcManagementViewModel by viewModels()
     private val homeViewModel: HomeViewModel by viewModels()
+    private var ISADMIN: Boolean = false;
 
     val raceAdapter: RaceAdapter = RaceAdapter { race -> onItemClick(race) }
     private val TAG: String = this::class.java.simpleName
@@ -69,8 +70,8 @@ class RacesManagement : Fragment() {
                 Toast.makeText(requireContext(), "Ocurrio un error al registrarse a la carrera. Intente mas tarde", Toast.LENGTH_SHORT).show()
         }
         homeViewModel.roleId.observe(viewLifecycleOwner) { roleId ->
-            val isAdmin = roleId ==1
-            binding.btnShowCreateRace.visibility = if (isAdmin) View.VISIBLE else View.GONE
+            ISADMIN = roleId ==1
+            binding.btnShowCreateRace.visibility = if (ISADMIN) View.VISIBLE else View.GONE
         }
 
         raceManagementViewModel.getRaces()
@@ -103,32 +104,5 @@ class RacesManagement : Fragment() {
         val dialogBinding = RaceInfoDialogFragmentBinding.inflate(layoutInflater)
         val raceInforDialog = RaceInfoDialog(requireContext(), dialogBinding, raceManagementViewModel)
         raceInforDialog.showDialog(DatosUsuario.getEmail(requireActivity()), race)
-    }
-
-    /**
-     * Get temporal races list to test
-     * @suppress
-     */
-    private fun tempGetRaces() {
-        val tempRaces: List<Race> = listOf(
-            Race(
-            1,
-            "Race 1",
-            "2024-01-31",
-            "Description 1",
-            UniversityCenter(1, "CUT", "CUT", 1, "2020-02-22"),
-            1,
-            "2023-12-22"),
-            Race(
-                2,
-                "Race 2",
-                "2024-01-31",
-                "Description 2",
-                UniversityCenter(1, "CUT", "CUT", 1, "2020-02-22"),
-                1,
-                "2023-12-22")
-            )
-        raceAdapter.races = tempRaces
-
     }
 }
