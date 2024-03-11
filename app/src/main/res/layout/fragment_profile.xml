@@ -13,15 +13,15 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="33"
-        android:weightSum="40"
+        android:layout_weight="30"
+        android:weightSum="33"
         >
         <!-- Contenedor Principal para Proporciones -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:weightSum="40"
+            android:weightSum="33"
             >
             <!-- 1 Layout vertical gris -->
             <LinearLayout
@@ -30,7 +30,7 @@
                 android:layout_height="0dp"
                 android:orientation="vertical"
                 android:background="@color/backgroundgris"
-                android:layout_weight="15">
+                android:layout_weight="9">
 
                 <View
                     android:layout_width="match_parent"
@@ -45,7 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="horizontal"
-                android:layout_weight="25"
+                android:layout_weight="22"
                 android:weightSum="25"
                 >
                 <!-- Layout lado izquierdo -->
@@ -108,7 +108,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        android:layout_weight="3.2"
+        android:layout_weight="3.5"
         >
 
         <TextView
@@ -126,12 +126,13 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:layout_weight="17"
+        android:layout_weight="20"
         android:layout_marginTop="8dp"
         >
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewLogros"
             android:layout_width="match_parent"
+            android:layout_gravity="center"
             android:layout_height="wrap_content"
             />
 
@@ -196,7 +197,7 @@
                 android:id="@+id/txtCodigoProfile"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:textSize="15dp"
                 android:fontFamily="sans-serif-medium"
                 android:text="Código: 219912434"
@@ -278,7 +279,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="10"
+        android:layout_weight="8"
         android:orientation="horizontal"
         android:background="@color/backgroundgris"
 

@@ -7,7 +7,10 @@
     android:padding="16dp"
     android:weightSum="10">
 
+    <!-- LinearLayout vertical para mensaje bienvenida -->
+
     <LinearLayout
+        android:id="@+id/LayoutBienvenida"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
@@ -33,6 +36,51 @@
             android:src="@drawable/sport_image"
             android:scaleType="centerInside"
             android:layout_weight="3"/>
+
+    </LinearLayout>
+
+    <!-- LinearLayout vertical para en caso de evento -->
+
+    <LinearLayout
+        android:id="@+id/LayoutCarrera"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:background="#A6F3FF78"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Importante"
+            android:fontFamily="@font/kodemono_medium"
+            android:textSize="30sp"
+            android:paddingBottom="8dp"
+            android:drawableLeft="@drawable/icon_important_announcement"
+            android:drawableRight="@drawable/icon_important_announcement"
+            android:layout_gravity="center"
+            android:textColor="@color/cut1"
+            />
+
+        <TextView
+            android:id="@+id/txtAvisoFecha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="@font/kodemono_medium"
+            style="@style/txtSubtitulo"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/btnCarreras"
+            android:fontFamily="@font/kodemono_medium"
+            android:text="Ver carreras"
+            android:drawableLeft="@drawable/icon_add_24"
+            />
 
     </LinearLayout>
 
