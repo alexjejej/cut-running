@@ -1,5 +1,6 @@
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,8 @@ import com.cut.android.running.databinding.RaceInfoDialogFragmentBinding
 import com.cut.android.running.models.Race
 import com.cut.android.running.models.UniversityCenter
 import com.cut.android.running.provider.DatosUsuario
+import com.cut.android.running.provider.services.navigation.NavigationObj
+import com.cut.android.running.usecases.gestioncarreras.AdminUserByRace
 import com.cut.android.running.usecases.gestioncarreras.adapter.RaceAdapter
 
 import com.cut.android.running.usecases.gestioncarreras.addracedialog.AddRaceDialog
@@ -100,9 +103,12 @@ class RacesManagement : Fragment() {
      */
     private fun onItemClick(race: Race) {
         // Toast.makeText(requireContext(), "${race.id} - ${race.name}", Toast.LENGTH_LONG).show()
-
-        val dialogBinding = RaceInfoDialogFragmentBinding.inflate(layoutInflater)
-        val raceInforDialog = RaceInfoDialog(requireContext(), dialogBinding, raceManagementViewModel)
-        raceInforDialog.showDialog(DatosUsuario.getEmail(requireActivity()), race)
+        if (ISADMIN)
+            NavigationObj.navigateTo(parentFragmentManager, AdminUserByRace.newInstance(race.id), "AdminUserByRace")
+        else {
+            val dialogBinding = RaceInfoDialogFragmentBinding.inflate(layoutInflater)
+            val raceInforDialog = RaceInfoDialog(requireContext(), dialogBinding, raceManagementViewModel)
+            raceInforDialog.showDialog(DatosUsuario.getEmail(requireActivity()), race)
+        }
     }
 }

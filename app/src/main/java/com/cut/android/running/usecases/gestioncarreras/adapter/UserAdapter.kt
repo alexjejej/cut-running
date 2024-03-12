@@ -32,9 +32,11 @@ class UserAdapter: RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
     class UserViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val lblUserName: TextView = view.findViewById(R.id.lblUserName)
+        val lblUserEmail: TextView = view.findViewById(R.id.lblUserEmail)
 
         fun bind(user: User) {
             lblUserName.text = "${user.firstname} ${user.lastname}"
+            lblUserEmail.text = user.email
         }
     }
 }
