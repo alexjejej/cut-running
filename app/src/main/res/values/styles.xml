@@ -20,12 +20,12 @@
   <style name="MyMaterialButton" parent="Widget.MaterialComponents.Button">
     <item name="android:textSize">12sp</item>
     <item name="android:textColor">@color/black</item>
-    <item name="iconEndPadding">5dp</item>
-    <item name="android:padding">2dp</item>
+    <item name="iconEndPadding">5sp</item>
+    <item name="android:padding">2sp</item>
     <!-- Utiliza el selector de color para el fondo -->
     <item name="backgroundTint">@color/button_background_selector</item>
     <!-- Aumentar la elevación para manejar la sombra -->
-    <item name="elevation">4dp</item>
+    <item name="elevation">4sp</item>
     <item name="android:stateListAnimator">@animator/button_elevation</item>
 
   </style>

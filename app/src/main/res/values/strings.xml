@@ -18,7 +18,7 @@
     <string name="txt_semester_hint">Semester</string>
     <string name="txt_career_hint">Career</string>
     <string name="txt_cu_hint">C.U.</string>
-    <string name="btn_logout_text">Cerrar sesion</string>
+    <string name="btn_logout_text">Cerrar sesión</string>
     <string name="btn_save_text">Guardar</string>
     <string name="btn_skip_text">Saltar</string>
 
@@ -30,10 +30,10 @@
 
     <!-- Bottom navbar -->
     <string name="item_home">Inicio</string>
-    <string name="item_add_training">Carrera</string>
-    <string name="item_race_management">Gestion de carreras</string>
+    <string name="item_add_training">Contar pasos</string>
+    <string name="item_race_management">Gestión de carreras</string>
     <string name="item_achievements">Logros</string>
-    <string name="item_clasificacion">Clasificacion</string>
+    <string name="item_clasificacion">Clasificación</string>
 
     <!-- Navigation Drawer -->
     <string name="item_user">Usuario</string>
