@@ -27,6 +27,8 @@ class MapsViewModel : ViewModel() {
     private val tiempoEsperaToast = 4000L // 4 segundos entre cada Toast
     private val intervaloTiempoOriginal = 4000L
     private var tiempoPenalizacion = 0L // Tiempo hasta que la penalización se restablece
+
+    //Contador de tiempo
     private var timerHandler = Handler(Looper.getMainLooper())
     private var startTime = 0L
     private var timeUpdateTask = object : Runnable {
@@ -59,9 +61,6 @@ class MapsViewModel : ViewModel() {
     fun stopTimer() {
         timerHandler.removeCallbacks(timeUpdateTask)
     }
-
-
-
 
     fun addPathPoint(newPoint: LatLng) {
         val lastPoint = pathPoints.value?.lastOrNull()
@@ -177,6 +176,7 @@ class MapsViewModel : ViewModel() {
         with(sharedPref.edit()) {
             putInt("steps", totalSteps.value ?: 0)
             putFloat("distance", totalDistance.value ?: 0f)
+            putString("timeElapsed", _timeElapsed.value ?: "00:00")
             apply()
         }
     }
@@ -185,6 +185,7 @@ class MapsViewModel : ViewModel() {
         val sharedPref = context.getSharedPreferences("MyTrackingPref", Context.MODE_PRIVATE)
         totalSteps.postValue(sharedPref.getInt("steps", 0))
         totalDistance.postValue(sharedPref.getFloat("distance", 0f))
+        _timeElapsed.postValue(sharedPref.getString("timeElapsed", "00:00"))
     }
 
 
