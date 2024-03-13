@@ -48,6 +48,7 @@ class FinCarrera : AppCompatActivity() {
     private lateinit var manejadorAcciones: ManejadorAccionesFallidas
     private lateinit var btnReintentarEstatus: Button
     private lateinit var txtEstatusPasos: TextView
+    private lateinit var txtRecordatorio: TextView
     private lateinit var txtAlert: TextView
     private lateinit var txtcaloriasT: TextView
     private lateinit var btnHome: Button
@@ -102,7 +103,7 @@ class FinCarrera : AppCompatActivity() {
             val tieneAccionesEspecificasFallidas =
                 manejadorAcciones.obtenerAccionesFallidas().any { accion ->
                     accion.tipo in listOf(
-                        "CrearClas3ificacion",
+                        "CrearClasificacion",
                         "CrearClasificacionNueva",
                         "consultarlogro"
                     )
@@ -119,6 +120,7 @@ class FinCarrera : AppCompatActivity() {
                 )
                 btnReintentarEstatus.visibility = View.VISIBLE
                 txtAlert.visibility = View.VISIBLE
+                txtRecordatorio.visibility = View.VISIBLE
                 btnHome.isEnabled = false
             } else {
                 // Caso: Datos guardados con éxito

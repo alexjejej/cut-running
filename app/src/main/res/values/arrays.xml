@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="centros_universitarios_array">
-        <item>Selecciona..</item>
+        <item>Seleccionar carrera..</item>
         <item>Ingeniería en Ciencias Computacionales</item>
         <item>Ingeniería en Nanotecnología</item>
     </string-array>

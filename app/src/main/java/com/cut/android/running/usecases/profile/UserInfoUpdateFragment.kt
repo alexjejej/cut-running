@@ -112,29 +112,26 @@ class UserInfoUpdateFragment : Fragment() {
 
 
     private fun setupCentroUniversitarioSpinner() {
-        // Crea un ArrayAdapter usando un array de strings y un layout por defecto para el spinner
-        ArrayAdapter.createFromResource(
-            requireContext(),
-            R.array.centros_universitarios_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            // Especifica el layout a usar cuando aparece la lista de opciones
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            // Aplica el adaptador al spinner
-            SpecialityIDSpinner.adapter = adapter
-        }
+        val centros = resources.getStringArray(R.array.centros_universitarios_array)
+        val adapter = MyCustomAdapter(requireContext(), R.layout.spinner_item, centros.toList())
+
+        // Aplica el adaptador al spinner
+        SpecialityIDSpinner.adapter = adapter
 
         // Añadir el listener
         SpecialityIDSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                checkFieldsForEmptyValues() // Verifica los campos cada vez que cambia la selección
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                // Aquí, 'view' puede ser null, pero no lo usamos directamente, así que está bien.
+                checkFieldsForEmptyValues()
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-                // Opcionalmente puedes manejar el caso de "nada seleccionado" si es necesario
+                // Manejo opcional del caso de "nada seleccionado"
             }
         }
     }
+
+
 
 
     private fun GuardarDatosAPI() {

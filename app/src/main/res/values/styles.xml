@@ -41,6 +41,14 @@
     <item name="android:fontFamily">@font/kodemono_medium</item>
   </style>
 
+  <!-- TextViews del perfil -->
+  <style name="EstiloTextViewsProfile">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginTop">10dp</item>
+    <item name="android:textSize">15dp</item>
+    <item name="android:fontFamily">@font/kodemono_medium</item>
+  </style>
 
   <!-- Estilo para TextInputLayout -->
   <style name="MyTextInputStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">

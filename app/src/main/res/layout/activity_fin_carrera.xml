@@ -170,6 +170,17 @@
 
 
 
+    <TextView
+        android:id="@+id/txtRecordatorio"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/kodemono_regular"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/btnMenu"
+        android:visibility="gone"
+        android:text="Nota: Esta aplicación sólo funciona si estás conectado a la red del CUT"
+        />
     <Button
         android:id="@+id/btnMenu"
         android:alpha="1"

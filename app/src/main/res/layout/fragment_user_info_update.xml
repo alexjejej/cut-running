@@ -15,21 +15,16 @@
         android:padding="10dp"
         android:weightSum="108">
 
-        <LinearLayout
+
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="10">
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:fontFamily="@font/kodemono_medium"
+            android:text="Información disponible a editar"
+            android:textSize="20sp" />
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:fontFamily="sans-serif-medium"
-                android:text="Información disponible a editar"
-                android:textSize="24sp" />
-
-        </LinearLayout>
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -47,6 +42,7 @@
                 android:layout_height="wrap_content"
                 android:maxLength="9"
                 android:hint="Código"
+                android:fontFamily="@font/kodemono_medium"
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -61,6 +57,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Edad"
+                android:fontFamily="@font/kodemono_medium"
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -75,6 +72,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Estatura (cm)"
+                android:fontFamily="@font/kodemono_medium"
                 android:inputType="number"/>
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,6 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Peso (kg)"
+                android:fontFamily="@font/kodemono_medium"
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -97,6 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="10"
+            android:fontFamily="@font/kodemono_medium"
             android:prompt="@string/Speciality_ID_prompt" />
 
         <LinearLayout
@@ -118,6 +118,7 @@
                 android:textStyle="bold"
                 android:paddingTop="16dp"
                 android:paddingBottom="8dp"
+                android:fontFamily="@font/kodemono_medium"
                 android:background="?attr/selectableItemBackground" />
 
             <!-- Contenedor de Configuración Avanzada (Inicialmente Oculto) -->
@@ -138,6 +139,7 @@
                         android:id="@+id/distanciaPromedioPorPasoEditText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/kodemono_medium"
                         android:hint="Distancia promedio por paso (cm)"
                         android:inputType="numberDecimal"/>
                 </com.google.android.material.textfield.TextInputLayout>
@@ -173,6 +175,7 @@
                 android:background="#FFFFFF"
                 android:gravity="center"
                 android:layout_marginLeft="10dp"
+                android:fontFamily="@font/kodemono_medium"
                 android:textSize="18sp"
                  />
 
@@ -189,6 +192,7 @@
                 android:text="Guardar"
                 android:background="#FFFFFF"
                 android:gravity="center"
+                android:fontFamily="@font/kodemono_medium"
                 android:layout_marginEnd="10dp"
                 android:textSize="18sp"
                 android:enabled="false"

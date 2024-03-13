@@ -13,7 +13,7 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="30"
+        android:layout_weight="25"
         android:weightSum="33"
         >
         <!-- Contenedor Principal para Proporciones -->
@@ -69,7 +69,7 @@
                         android:id="@+id/textView1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
+                        android:fontFamily="@font/kodemono_medium"
                         android:layout_centerHorizontal="true"
                         android:layout_marginTop="50dp"
                         android:text="Pasos totales"
@@ -83,7 +83,8 @@
                         android:text="50"
                         android:textSize="25sp"
                         android:layout_below="@+id/textView1"
-                        android:fontFamily="sans-serif-medium" />
+                        android:fontFamily="@font/kodemono_medium"
+                        />
                 </RelativeLayout>
             </LinearLayout>
 
@@ -109,13 +110,14 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         android:layout_weight="3.5"
+        android:layout_marginTop="10dp"
         >
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:fontFamily="sans-serif-medium"
+            android:fontFamily="@font/kodemono_medium"
             android:text="Logros obtenidos:"
 
             android:textSize="18sp" />
@@ -127,7 +129,6 @@
         android:layout_height="0dp"
         android:orientation="horizontal"
         android:layout_weight="20"
-        android:layout_marginTop="8dp"
         >
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewLogros"
@@ -152,12 +153,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="15dp"
             android:textSize="15sp"
             android:background="@color/backgroundgris"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:fontFamily="sans-serif-medium"
+            android:paddingStart="20dp"
+            android:fontFamily="@font/kodemono_medium"
+            android:paddingEnd="20dp"
             android:text="Información" />
 
     </LinearLayout>
@@ -166,7 +167,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:layout_weight="35"
+        android:layout_weight="40"
         android:weightSum="40"
         android:background="@color/backgroundgris"
 
@@ -195,78 +196,47 @@
 
             <TextView
                 android:id="@+id/txtCodigoProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:textSize="15dp"
-                android:fontFamily="sans-serif-medium"
+                style="@style/EstiloTextViewsProfile"
                 android:text="Código: 219912434"
                 />
 
             <TextView
                 android:id="@+id/txtNombreUsuarioProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="15dp"
-                android:fontFamily="sans-serif-medium"
+                style="@style/EstiloTextViewsProfile"
                 android:text="Nombre: Alejandro Garcia"
                 />
 
             <TextView
                 android:id="@+id/txtEdadUsuarioProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
-                android:layout_marginTop="10dp"
-                android:textSize="15dp"
+                style="@style/EstiloTextViewsProfile"
                 android:text="Edad: 23 años"
                 />
             <TextView
                 android:id="@+id/txtEstaturaUsuarioProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="15dp"
-                android:fontFamily="sans-serif-medium"
+                style="@style/EstiloTextViewsProfile"
                 android:text="Estatura: 175 cm"
                 />
             <TextView
                 android:id="@+id/txtPesoUsuarioProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="15dp"
-                android:fontFamily="sans-serif-medium"
+                style="@style/EstiloTextViewsProfile"
                 android:text="Peso: 65kg"
                 />
             <TextView
                 android:id="@+id/txtCorreoUsuarioProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:textSize="15dp"
-                android:fontFamily="sans-serif-medium"
+                style="@style/EstiloTextViewsProfile"
                 android:text="Correo: alex.grc.18@gmail.com"
                 />
 
             <TextView
                 android:id="@+id/txtCarreraUsuarioProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="sans-serif-medium"
-                android:textSize="15dp"
-                android:text="Carrera: Ingenieria en Nanotecnologia"
+                style="@style/EstiloTextViewsProfile"
+                android:text="Carrera: Ingenieria en Ciencias Computacionales"
                 />
 
             <TextView
                 android:id="@+id/txtDistanciaxPasoUsuarioProfile"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:fontFamily="sans-serif-medium"
-                android:textSize="15dp"
+                style="@style/EstiloTextViewsProfile"
                 android:text="Distancia por paso: Predeterminado"
                 />
 
@@ -298,6 +268,7 @@
             android:background="#FFFFFF"
             android:padding="10dp"
             android:text="Editar"
+            android:fontFamily="@font/kodemono_medium"
             android:layout_margin="10dp"
             />
     </LinearLayout>
