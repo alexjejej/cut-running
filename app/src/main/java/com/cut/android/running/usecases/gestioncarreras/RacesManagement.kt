@@ -21,6 +21,7 @@ import com.cut.android.running.usecases.gestioncarreras.adapter.RaceAdapter
 import com.cut.android.running.usecases.gestioncarreras.addracedialog.AddRaceDialog
 import com.cut.android.running.usecases.gestionuc.UcManagementViewModel
 import com.cut.android.running.usecases.home.HomeViewModel
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 /**
  * A simple [Fragment] subclass.
@@ -106,9 +107,31 @@ class RacesManagement : Fragment() {
         if (ISADMIN)
             NavigationObj.navigateTo(parentFragmentManager, AdminUserByRace.newInstance(race.id), "AdminUserByRace")
         else {
-            val dialogBinding = RaceInfoDialogFragmentBinding.inflate(layoutInflater)
-            val raceInforDialog = RaceInfoDialog(requireContext(), dialogBinding, raceManagementViewModel)
-            raceInforDialog.showDialog(DatosUsuario.getEmail(requireActivity()), race)
+            raceManagementViewModel.getRaceByUserModel.observe(viewLifecycleOwner) {
+                if (!it.isNullOrEmpty()) {
+                    val result = it.any {r -> r.id == race.id}
+                    if (result) {
+                        MaterialAlertDialogBuilder(requireContext())
+                            .setTitle("Registro existente")
+                            .setMessage("Usted ya se encuetra registrado en la carrera seleccionada")
+                            .setPositiveButton("Cerrar") { dialog, which ->
+                                dialog.cancel()
+                            }
+                            .show()
+                    }
+                    else {
+                        val dialogBinding = RaceInfoDialogFragmentBinding.inflate(layoutInflater)
+                        val raceInforDialog = RaceInfoDialog(requireContext(), dialogBinding, raceManagementViewModel)
+                        raceInforDialog.showDialog(DatosUsuario.getEmail(requireActivity()), race)
+                    }
+                }
+                else {
+                    val dialogBinding = RaceInfoDialogFragmentBinding.inflate(layoutInflater)
+                    val raceInforDialog = RaceInfoDialog(requireContext(), dialogBinding, raceManagementViewModel)
+                    raceInforDialog.showDialog(DatosUsuario.getEmail(requireActivity()), race)
+                }
+            }
+            raceManagementViewModel.getRaceByUser(DatosUsuario.getEmail(requireActivity()))
         }
     }
 }

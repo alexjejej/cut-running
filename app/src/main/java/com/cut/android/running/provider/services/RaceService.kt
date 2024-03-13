@@ -32,7 +32,7 @@ interface RaceService {
     suspend fun addUserRelation(@Path("email") email: String, @Path("raceId") raceId: Int): Response<IResponse<Boolean>>
 
     @GET("race/racebyuser/{email}")
-    suspend fun getRaceByUser(@Path("email") userCode: Int): Response<IResponse<List<Race>>>
+    suspend fun getRaceByUser(@Path("email") email: String): Response<IResponse<List<Race>>>
 
     @GET("race/userbyrace/{raceId}")
     suspend fun getUserByRace(@Path("raceId") raceId: Int): Response<IResponse<List<User>>>

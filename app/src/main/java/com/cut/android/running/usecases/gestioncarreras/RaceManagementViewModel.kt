@@ -131,4 +131,21 @@ class RaceManagementViewModel : ViewModel() {
             }
         }
     }
+
+    fun getRaceByUser(email: String) {
+        viewModelScope.launch {
+            try {
+                val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).getRaceByUser(email)
+                val result = call.body()
+                if (result != null && result.isSuccess) {
+                    getRaceByUserModel.postValue(result.data)
+                }
+                else
+                    getRaceByUserModel.postValue(null)
+            }
+            catch (e: Exception) {
+                Log.e(TAG, "Error al obtener carreras por usuario")
+            }
+        }
+    }
 }
