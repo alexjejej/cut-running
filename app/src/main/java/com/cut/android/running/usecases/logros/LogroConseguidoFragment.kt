@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.cut.android.running.R
+import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.resources.Presets
 import com.cut.android.running.usecases.home.HomeActivity
 import com.cut.android.running.usecases.home.HomeFragment
@@ -26,6 +27,7 @@ class LogroConseguidoFragment : Fragment() {
     private var pasosLogro: Int? = null
     private lateinit var imageButton: ImageButton
     private lateinit var layoutImagen: LinearLayout
+    private lateinit var txtNombreFelicidades: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +47,10 @@ class LogroConseguidoFragment : Fragment() {
     }
 
     private fun initializeUI(view: View) {
+        val nombreuser = DatosUsuario.getUserName(requireContext())
         // Configuración del mensaje de felicitación
+        txtNombreFelicidades = view.findViewById(R.id.txtNombreFelicidades)
+        txtNombreFelicidades.text = "¡Felicidades $nombreuser!"
         val tvFelicidades = view.findViewById<TextView>(R.id.tvFelicidades)
         val textoCompleto = "Conseguiste el logro $nombreLogro por haber caminado más de $pasosLogro pasos. ¡Sigue así!"
 
