@@ -21,11 +21,13 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.cut.android.running.Carreras.FinCarrera
+import com.cut.android.running.Carreras.FinEvento
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
@@ -34,6 +36,7 @@ import com.cut.android.running.R
 import com.cut.android.running.provider.BDsqlite
 import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.services.TrackingService
+import java.time.ZonedDateTime
 
 class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
 
@@ -43,9 +46,16 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     private lateinit var locationCallback: LocationCallback
     private lateinit var viewModel: MapsViewModel
     private lateinit var sensorManager: SensorManager
+    private lateinit var txtEstatusMaps: TextView
     private lateinit var btnCentrar: ImageButton
     private lateinit var btnCentrarCut: ImageButton
+    private lateinit var btnIniciar: Button
+    private var HayEvento: Boolean? = null
     private var stepSensor: Sensor? = null
+    private var isFirstTrackingStart = true
+    private var isFirstVerificarEvento = true
+
+
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 999
@@ -67,6 +77,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     }
 
     // Initializes components and sets up observers and event listeners
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(MapsViewModel::class.java)
@@ -76,7 +87,9 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
 
-        view.findViewById<Button>(R.id.btnIniciar).setOnClickListener { toggleTracking() }
+        //Boton iniciar
+        btnIniciar = view.findViewById(R.id.btnIniciar)
+        btnIniciar.setOnClickListener { toggleTracking() }
 
         viewModel.totalDistance.observe(viewLifecycleOwner) { distance ->
             view.findViewById<TextView>(R.id.tvDistancia).text = getString(R.string.distance_template, distance)
@@ -112,6 +125,22 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
             ReanudarDatos()
         }
 
+        //cargar txt de estado
+        txtEstatusMaps = view.findViewById(R.id.txtEstatusMaps)
+
+        //Estado de la peticion
+        viewModel.isButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
+            btnIniciar.isEnabled = isEnabled
+            // Si el botón está habilitado o es la primera vez que se verifica el evento, oculta el texto de estatus.
+            // De lo contrario, muéstralo.
+            txtEstatusMaps.visibility = if (isEnabled || isFirstVerificarEvento) View.GONE else View.VISIBLE
+
+            // Actualiza la bandera sólo si se está deshabilitando el botón, indicando que no es la primera verificación.
+            if (!isEnabled && isFirstVerificarEvento) {
+                isFirstVerificarEvento = false
+            }
+        }
+
     }
 
     // Sets up the map once it's ready
@@ -127,64 +156,104 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     }
 
     // Toggles tracking, updates UI and starts/stops location and step counting
-        private fun toggleTracking() {
-            val serviceIntent = Intent(context, TrackingService::class.java)
-            if (!checkPermissions()) {
-                requestPermissions()
-                return
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun toggleTracking() {
+        if (isFirstTrackingStart) {
+            // Solo inicia el seguimiento la primera vez que se presiona el botón y si no se está siguiendo actualmente.
+            startTracking()
+            isFirstTrackingStart = false // Asegura que este bloque solo se ejecute una vez.
+            verificarEvento()
+        } else if (!isFirstTrackingStart) {
+            // En subsiguientes clics, evalúa el estado de HayEvento.
+            when (HayEvento) {
+                null -> verificarEvento() // Posiblemente esta condición podría gestionarse de manera diferente.
+                false -> stopTrackingAndLaunchActivity(FinCarrera::class.java)
+                true -> stopTrackingAndLaunchActivity(FinEvento::class.java)
             }
-            if (!checkActivityRecognitionPermission()) {
-                requestActivityRecognitionPermission()
-                return
-            }
+        } else if (isTracking) {
+            // Si ya se está siguiendo, detiene el seguimiento.
+            stopTracking()
+        }
+        animateButton()
+    }
 
-            isTracking = !isTracking // Cambia el estado de seguimiento
-            val btnIniciar = view?.findViewById<Button>(R.id.btnIniciar)
-
-            if (isTracking) {
-                // Si el seguimiento se ha iniciado
-                viewModel.startTimer()
-                btnIniciar?.text = getString(R.string.detener) // Actualiza el texto del botón a "Detener"
-                btnIniciar?.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.button_started))
-
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    context?.startForegroundService(serviceIntent)
-                } else {
-                    context?.startService(serviceIntent)
-                }
-
-                startLocationUpdates()
-                startStepCounting()
-                startAnimation()
-                mandarDatosAViewModel()
-                btnCentrar.visibility = View.VISIBLE
-                btnCentrarCut.visibility = View.VISIBLE
-
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun verificarEvento() {
+        viewModel.updateNextRaceDateTime()
+        viewModel.nextRaceDateTime.observe(viewLifecycleOwner) { raceDateTime ->
+            Log.d("MapsFragment","$raceDateTime")
+            if (raceDateTime != null) {
+                val now = ZonedDateTime.now()
+                // Verifica si hoy es el día de la carrera y si la hora actual es posterior a la hora de inicio de la carrera
+                HayEvento = now.toLocalDate().isEqual(raceDateTime.toLocalDate()) && now.isAfter(raceDateTime)
             } else {
-                // Detener el seguimiento
-                viewModel.stopTimer()
-                // Si el seguimiento se ha detenido
-                Log.d("MapsFragment","Se ha detenido")
-                GuardarEnSQLite()
-                btnIniciar?.text = getString(R.string.iniciar) // Actualiza el texto del botón a "Iniciar"
-                btnIniciar?.setBackgroundColor(resources.getColor(R.color.button_stopped))
-
-                context?.stopService(serviceIntent)
-                stopLocationUpdates()
-                drawPolyline()
-                stopStepCounting()
-
-                //lanzar FinCarrera
-                val intent = Intent(context, FinCarrera::class.java)
-                startActivity(intent)
-
-            }
-
-            btnIniciar?.animate()?.scaleX(1.1f)?.scaleY(1.1f)?.setDuration(150)?.withEndAction {
-                btnIniciar?.animate()?.scaleX(1f)?.scaleY(1f)?.duration = 150
+                // No hay carreras próximas o la información no está disponible
+                Toast.makeText(requireContext(),"Error al contectarse al servidor del CUT",Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun stopTrackingAndLaunchActivity(activityClass: Class<*>) {
+        stopTracking()
+        val intent = Intent(context, activityClass)
+        startActivity(intent)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun startTracking() {
+        val serviceIntent = Intent(context, TrackingService::class.java)
+        if (!checkPermissions()) {
+            requestPermissions()
+            return
+        }
+        if (!checkActivityRecognitionPermission()) {
+            requestActivityRecognitionPermission()
+            return
+        }
+        viewModel.startTimer()
+        updateStartUI()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            context?.startForegroundService(serviceIntent)
+        } else {
+            context?.startService(serviceIntent)
+        }
+
+        startLocationUpdates()
+        startStepCounting()
+        startAnimation()
+        mandarDatosAViewModel()
+    }
+
+    private fun stopTracking() {
+        viewModel.stopTimer()
+        GuardarEnSQLite()
+        updateStopUI()
+
+        context?.stopService(Intent(context, TrackingService::class.java))
+        stopLocationUpdates()
+        drawPolyline()
+        stopStepCounting()
+    }
+    private fun updateStartUI() {
+        val btnIniciar = view?.findViewById<Button>(R.id.btnIniciar)
+        btnIniciar?.text = getString(R.string.detener)
+        btnIniciar?.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.button_started))
+        btnCentrar.visibility = View.VISIBLE
+        btnCentrarCut.visibility = View.VISIBLE
+    }
+
+    private fun updateStopUI() {
+        val btnIniciar = view?.findViewById<Button>(R.id.btnIniciar)
+        btnIniciar?.text = getString(R.string.iniciar)
+        btnIniciar?.setBackgroundColor(resources.getColor(R.color.button_stopped))
+    }
+    private fun animateButton() {
+        val btnIniciar = view?.findViewById<Button>(R.id.btnIniciar)
+        btnIniciar?.animate()?.scaleX(1.1f)?.scaleY(1.1f)?.setDuration(150)?.withEndAction {
+            btnIniciar?.animate()?.scaleX(1f)?.scaleY(1f)?.duration = 150
+        }
+    }
 
     private fun mandarDatosAViewModel() {
         // Obtener nombre de usuario y estatura
@@ -206,7 +275,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         val layoutMaps = view?.findViewById<LinearLayout>(R.id.LayoutMaps)
         val params = layoutMaps?.layoutParams as? LinearLayout.LayoutParams
         val startWeight = params?.weight ?: 90f // Asume 90f como peso inicial si es nulo
-        val endWeight = 80f // El peso objetivo
+        val endWeight = 78f // El peso objetivo
 
         // Crea un ValueAnimator que va desde el peso inicial al final
         val valueAnimator = ValueAnimator.ofFloat(startWeight, endWeight)
@@ -382,6 +451,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
             }
         }
     }
+    @RequiresApi(Build.VERSION_CODES.O)
     fun ReanudarDatos() {
         Log.d("MapsFragment","Se inició onResumé")
         viewModel.loadTrackingData(requireContext())

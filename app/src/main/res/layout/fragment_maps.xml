@@ -84,9 +84,23 @@
                 android:text="Iniciar"
                 android:layout_gravity="center"
                 />
-        </LinearLayout>
-            <!-- Opcional: Muestra de información como pasos y distancia -->
 
+        </LinearLayout>
+
+
+
+        <TextView
+            android:id="@+id/txtEstatusMaps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/icon_update"
+            android:fontFamily="@font/kodemono_medium"
+            android:padding="8dp"
+            android:visibility="gone"
+            android:text="Cargando datos..."
+            android:layout_gravity="center"
+            android:textSize="15dp" />
+            <!-- Opcional: Muestra de información como pasos y distancia -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
