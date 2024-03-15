@@ -83,6 +83,7 @@ class FinCarrera : AppCompatActivity() {
         txtAlert = findViewById(R.id.txtAlert)
         txtEstatusPasos = findViewById(R.id.txtEstatusPasos)
         txtcaloriasT = findViewById(R.id.txtcaloriasT)
+        txtRecordatorio = findViewById(R.id.txtRecordatorio)
         btnReintentarEstatus.setOnClickListener {
             txtEstatusPasos.text = "Cargando datos..."
             txtEstatusPasos.setCompoundDrawablesWithIntrinsicBounds(R.drawable.icon_update, 0, 0, 0)

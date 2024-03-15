@@ -101,18 +101,41 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         // Llama a checkNextRace() para verificar las carreras próximas
         viewModel.checkNextRace()
 
-        viewModel.nextRace.observe(viewLifecycleOwner) { (hasNextRace, daysUntilNextRace) ->
+        viewModel.nextRace.observe(viewLifecycleOwner) { (hasNextRace, daysUntilNextRace, eventTime) ->
             if (hasNextRace) {
-                layoutBienvenida.visibility = View.GONE
-                layoutCarrera.visibility = View.VISIBLE
-                txtAvisoFecha.text = "Hay un evento que empieza en $daysUntilNextRace días. Para registrarte, da clic en el siguiente botón:"
+                if (daysUntilNextRace in 0..7) {
+                    // Evento próximo dentro de 7 días o es hoy
+                    layoutBienvenida.visibility = View.GONE
+                    layoutCarrera.visibility = View.VISIBLE
 
-
+                    txtAvisoFecha.text = when {
+                        daysUntilNextRace == 0 && eventTime != null -> {
+                            // El evento es hoy y no ha pasado la hora del evento
+                            "La carrera es hoy a las $eventTime. Para registrarte, da clic en el siguiente botón:"
+                        }
+                        daysUntilNextRace > 0 -> {
+                            // Hay un evento próximo en 1 a 7 días
+                            "Hay una carrera que empieza en $daysUntilNextRace días. Para registrarte, da clic en el siguiente botón:"
+                        }
+                        else -> {
+                            // Para manejar cualquier otro caso inesperado, puedes decidir qué mostrar,
+                            "La carrerá ya comenzó"
+                        }
+                    }
+                } else {
+                    // Evento es en 8 días o más, mostrar solo layout de bienvenida
+                    layoutBienvenida.visibility = View.VISIBLE
+                    layoutCarrera.visibility = View.GONE
+                }
             } else {
+                // No hay eventos próximos, mostrar solo layout de bienvenida
                 layoutBienvenida.visibility = View.VISIBLE
                 layoutCarrera.visibility = View.GONE
             }
         }
+
+
+
 
 
     }

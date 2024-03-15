@@ -1,15 +1,30 @@
 import android.content.Context
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.cut.android.running.provider.RetrofitInstance
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
+import kotlinx.coroutines.launch
+import java.time.Duration
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 class MapsViewModel : ViewModel() {
+    //proxima carrera
+    val nextRaceDateTime = MutableLiveData<ZonedDateTime?>()
+    private val raceService = RetrofitInstance.getRetrofit().create(RaceService::class.java)
+    val isButtonEnabled = MutableLiveData<Boolean>(true)
+
     val pathPoints = MutableLiveData<MutableList<LatLng>>(mutableListOf())
     val totalDistance = MutableLiveData<Float>(0f)
     val totalSteps = MutableLiveData<Int>(0)
@@ -29,8 +44,14 @@ class MapsViewModel : ViewModel() {
     private var tiempoPenalizacion = 0L // Tiempo hasta que la penalización se restablece
 
     //Contador de tiempo
+    private var isTimerRunning = false
     private var timerHandler = Handler(Looper.getMainLooper())
     private var startTime = 0L
+
+    private val _timeElapsed = MutableLiveData<String>()
+    val timeElapsed: LiveData<String> = _timeElapsed
+
+
     private var timeUpdateTask = object : Runnable {
         override fun run() {
             val totalSeconds = (SystemClock.uptimeMillis() - startTime) / 1000
@@ -49,17 +70,36 @@ class MapsViewModel : ViewModel() {
             timerHandler.postDelayed(this, 1000)
         }
     }
-
-    private val _timeElapsed = MutableLiveData<String>()
-    val timeElapsed: LiveData<String> = _timeElapsed
-
     fun startTimer() {
-        startTime = SystemClock.uptimeMillis()
-        timerHandler.postDelayed(timeUpdateTask, 0)
+        Log.d("MapsViewModel", "Cargando tiempo transcurrido: ${_timeElapsed.value}")
+        if (!isTimerRunning) {
+
+            val elapsedTimeMillis = parseElapsedTime(_timeElapsed.value ?: "00:00")
+            startTime = SystemClock.uptimeMillis() - elapsedTimeMillis
+
+            timerHandler.postDelayed(timeUpdateTask, 0)
+            isTimerRunning = true
+        }
     }
+
+    /**
+     * Convierte el tiempo transcurrido en formato String (HH:mm:ss o mm:ss) a milisegundos.
+     */
+    private fun parseElapsedTime(timeString: String): Long {
+        val parts = timeString.split(":").map { it.toIntOrNull() ?: 0 }
+        val seconds = when (parts.size) {
+            3 -> parts[0] * 3600 + parts[1] * 60 + parts[2] // HH:mm:ss
+            2 -> parts[0] * 60 + parts[1] // mm:ss
+            else -> 0
+        }
+        return seconds * 1000L
+    }
+
+
 
     fun stopTimer() {
         timerHandler.removeCallbacks(timeUpdateTask)
+        isTimerRunning = false
     }
 
     fun addPathPoint(newPoint: LatLng) {
@@ -176,7 +216,7 @@ class MapsViewModel : ViewModel() {
         with(sharedPref.edit()) {
             putInt("steps", totalSteps.value ?: 0)
             putFloat("distance", totalDistance.value ?: 0f)
-            putString("timeElapsed", _timeElapsed.value ?: "00:00")
+            putString("timeElapsed", timeElapsed.value ?: "00:00")
             apply()
         }
     }
@@ -185,9 +225,55 @@ class MapsViewModel : ViewModel() {
         val sharedPref = context.getSharedPreferences("MyTrackingPref", Context.MODE_PRIVATE)
         totalSteps.postValue(sharedPref.getInt("steps", 0))
         totalDistance.postValue(sharedPref.getFloat("distance", 0f))
-        _timeElapsed.postValue(sharedPref.getString("timeElapsed", "00:00"))
+        val time = (sharedPref.getString("timeElapsed", "00:00"))
+        _timeElapsed.value = time!!
+        Log.d("MapsView","$time")
     }
 
+    //Función para verificar si hay una carrera en curso
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun updateNextRaceDateTime() {
+        isButtonEnabled.postValue(false) // Deshabilita el botón antes de iniciar la operación asincrónica
+        viewModelScope.launch {
+            try {
+                val response = raceService.getRaces()
+                if (response.isSuccessful) {
+                    // Filtrar carreras que están dentro de los próximos 7 días
+                    val races = response.body()?.data?.filter { race ->
+                        val raceDate = ZonedDateTime.parse(race.date, DateTimeFormatter.ISO_ZONED_DATE_TIME)
+                        val now = ZonedDateTime.now()
+                        val daysUntilRace = Duration.between(now, raceDate).toDays()
+                        daysUntilRace in 0..7
+                    }
+                    // Encontrar la carrera más próxima si existe
+                    if (!races.isNullOrEmpty()) {
+                        val nearestRace = races.minByOrNull { race ->
+                            ZonedDateTime.parse(race.date, DateTimeFormatter.ISO_ZONED_DATE_TIME)
+                        }
+                        // Actualizar la fecha/hora de la próxima carrera
+                        nearestRace?.date?.let {
+                            // Convertir a la zona horaria específica
+                            val zonedRaceDateTime = ZonedDateTime.parse(it, DateTimeFormatter.ISO_ZONED_DATE_TIME)
+                            val raceDateTimeInLocal = zonedRaceDateTime.withZoneSameInstant(ZoneId.of("America/Mexico_City"))
+                            nextRaceDateTime.postValue(raceDateTimeInLocal)
+                        }
+                    } else {
+                        // No hay carreras próximas, limpiar el valor
+                        val predefinedRaceDateTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.of("America/Mexico_City"))
+                        nextRaceDateTime.postValue(predefinedRaceDateTime)
+                    }
+                } else {
+                    Log.d("ViewModel", "Error al obtener carreras")
+                    nextRaceDateTime.postValue(null)
+                }
+            } catch (e: Exception) {
+                Log.e("ViewModel", "Error: ${e.message}")
+                nextRaceDateTime.postValue(null)
+            }finally {
+                isButtonEnabled.postValue(true) // Vuelve a habilitar el botón una vez completada la operación
+            }
+        }
+    }
 
 }
 
