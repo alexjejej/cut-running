@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.app.AlertDialog
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -91,17 +92,20 @@ class EstadisticasFragment : Fragment() {
             }
         } else {
             val totalPasos = bdSqlite.getIntData(emailUsuario, BDsqlite.COLUMN_PASOS_TOTALES)
-            val caloriasQuemadas = calcularCaloriasQuemadas(peso.toDouble(), totalPasos)
+            val caloriasQuemadas = calcularCaloriasQuemadas(peso, totalPasos)
             animarValorTextView(txtCaloriasEstadisticas,caloriasQuemadas.toInt())
         }
     }
 
 
-    fun calcularCaloriasQuemadas(peso: Double, totalPasos: Int): Double {
-        val pasosPorMinuto = 90
-        val tiempoEnHoras = ((totalPasos) / pasosPorMinuto) / 60.0
+    fun calcularCaloriasQuemadas(peso: Int, totalPasos: Int): Double {
+        Log.d("EstadisticasFragment","$peso  $totalPasos")
+        val pasosPorMinuto = 90.0
+        val tiempoEnHoras = (totalPasos / pasosPorMinuto) / 60.0
         val MET = 3.5 // Valor promedio para caminata moderada
         val calorias = MET * peso * tiempoEnHoras
+        Log.d("EstadisticasFragment","$tiempoEnHoras  $calorias")
+
         return calorias
     }
 
@@ -109,25 +113,33 @@ class EstadisticasFragment : Fragment() {
         val emailUsuario = DatosUsuario.getEmail(requireActivity())
         val db = BDsqlite(requireContext())
 
-        // Obtener la estatura del usuario de la base de datos y convertirla a metros
-        val userEstatura = db.getFloatData(emailUsuario, BDsqlite.COLUMN_ESTATURA)?.let { it / 100 } ?: 0.0f // Asegúrate de manejar el caso de null
+        // Intentar obtener la distancia por paso de la base de datos
+        val distancePerStep = db.getFloatData(emailUsuario, BDsqlite.COLUMN_DISTANCEPERSTEP)?.let { it / 100 }
+        var distanciaUsada = 0.0
 
-        // Calcular la distancia promedio por paso
-        val distanciaPromedioPorPaso = if (userEstatura > 0) {
-            userEstatura.toDouble() * .415
-        } else {
-            .75 // Valor predeterminado si no se conoce la estatura
+        // Si distancePerStep es 0, calcular la distancia promedio por paso
+        if (distancePerStep?.toDouble() == 0.0){
+            // Obtener la estatura del usuario de la base de datos y convertirla a metros
+            val userEstatura = db.getFloatData(emailUsuario, BDsqlite.COLUMN_ESTATURA)?.let { it / 100 } ?: 0.0f // Asegúrate de manejar el caso de null
+
+            // Calcular la distancia promedio por paso
+            val distanciaPromedioPorPaso = if (userEstatura > 0) {
+                distanciaUsada = userEstatura.toDouble() * .415
+            } else {
+                distanciaUsada = .75 // Valor predeterminado si no se conoce la estatura
+            }
+
+        }else{
+            distanciaUsada = distancePerStep!!.toDouble()
         }
 
-        // Obtener el valor de distanciaPorPaso de la BD o usar el calculado
-        val distancePerStep = db.getFloatData(emailUsuario, BDsqlite.COLUMN_DISTANCEPERSTEP)?.let { it / 100 } ?: distanciaPromedioPorPaso.toFloat()
-
-        // Calcula la distancia total basada en pasos totales y distancia promedio por paso
-        val distanciaTotal = pasosTotales * distancePerStep
+        // Calcula la distancia total basada en pasos totales y la distancia usada
+        val distanciaTotal = pasosTotales * distanciaUsada
 
         // Anima el valor de la distancia total en el TextView
         animarValorTextView(txtDistanciaEstadisticas, distanciaTotal.toInt())
     }
+
 
 
     private fun animarValorTextView(textView: TextView, valorFinal: Int) {

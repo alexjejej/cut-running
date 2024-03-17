@@ -255,7 +255,7 @@ class FinCarrera : AppCompatActivity() {
         }
     }
     fun calcularCaloriasQuemadas(peso: Double, totalPasos: Int): Double {
-        val pasosPorMinuto = 90
+        val pasosPorMinuto = 90.0
         val tiempoEnHoras = ((totalPasos) / pasosPorMinuto) / 60.0
         val MET = 3.5 // Valor promedio para caminata moderada
         val calorias = MET * peso * tiempoEnHoras
