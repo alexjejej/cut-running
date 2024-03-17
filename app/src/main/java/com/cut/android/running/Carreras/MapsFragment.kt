@@ -195,8 +195,19 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
 
     private fun stopTrackingAndLaunchActivity(activityClass: Class<*>) {
         stopTracking()
+        if (activityClass == FinEvento::class.java){
+            GuardarDatosSharedPreferencess()
+        }
         val intent = Intent(context, activityClass)
         startActivity(intent)
+    }
+
+    private fun GuardarDatosSharedPreferencess() {
+        val sharedPref = requireContext().getSharedPreferences("MyTrackingPref", Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            putInt("idCarrera", viewModel.raceId)
+            apply()
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

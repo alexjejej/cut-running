@@ -28,6 +28,7 @@ class MapsViewModel : ViewModel() {
     val pathPoints = MutableLiveData<MutableList<LatLng>>(mutableListOf())
     val totalDistance = MutableLiveData<Float>(0f)
     val totalSteps = MutableLiveData<Int>(0)
+    var raceId = 0
     var distancie = 0.0
     var EstaturaUser = 0.0
     var distancePerStep = 0.0
@@ -256,6 +257,8 @@ class MapsViewModel : ViewModel() {
                             val zonedRaceDateTime = ZonedDateTime.parse(it, DateTimeFormatter.ISO_ZONED_DATE_TIME)
                             val raceDateTimeInLocal = zonedRaceDateTime.withZoneSameInstant(ZoneId.of("America/Mexico_City"))
                             nextRaceDateTime.postValue(raceDateTimeInLocal)
+                            //ID carrera
+                            raceId = nearestRace.id
                         }
                     } else {
                         // No hay carreras próximas, limpiar el valor
