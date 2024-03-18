@@ -184,7 +184,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun updateWelcomeMessage(userName: String) {
         //var userName2 = DatosUsuario.getUserName(requireContext())
         Log.d("username","$userName")
-        view?.findViewById<TextView>(R.id.bienvenidaTextView)?.text = "Bienvenido, $userName"
+        view?.findViewById<TextView>(R.id.bienvenidaTextView)?.text = "Bienvenidx, $userName"
     }
 
     private fun updateAdminOptionsVisibility(roleId: Int?) {
