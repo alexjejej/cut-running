@@ -20,6 +20,7 @@ class RaceManagementViewModel : ViewModel() {
     val getRaceByUserModel = MutableLiveData<List<Race>?>()
     val getUserByRaceModel = MutableLiveData<List<User>?>()
     val deleteUserRelationModel = MutableLiveData<Boolean>()
+    val verifyRelationship = MutableLiveData<Boolean?>()
 
 
     /**
@@ -150,5 +151,19 @@ class RaceManagementViewModel : ViewModel() {
         }
     }
 
-
+    fun verifyUserRaceRelationship(email: String, raceId: Int) {
+        viewModelScope.launch {
+            try {
+                val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).verifyUserRaceRelationship(email, raceId)
+                val result = call.body()
+                if (result != null && result.isSuccess)
+                    verifyRelationship.postValue(result.data)
+                else
+                    getUserByRaceModel.postValue(null)
+            }
+            catch(e: Exception) {
+                Log.e(TAG, "Error al obtener realcion entre usuario y carrera")
+            }
+        }
+    }
 }

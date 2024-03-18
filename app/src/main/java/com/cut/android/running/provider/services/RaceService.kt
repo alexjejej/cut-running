@@ -37,6 +37,9 @@ interface RaceService {
     @GET("race/userbyrace/{raceId}")
     suspend fun getUserByRace(@Path("raceId") raceId: Int): Response<IResponse<List<User>>>
 
+    @GET("race/userracerelationship/{email}/{raceId}")
+    suspend fun verifyUserRaceRelationship(@Path("email") email: String, @Path("raceId") raceId: Int): Response<IResponse<Boolean>>
+
     @DELETE("race/userrace/{email}/{raceId}")
     suspend fun deleteUserRelation(@Path("email") userCode: Int, @Path("raceId") raceId: Int): Response<IResponse<Boolean>>
 }

@@ -23,7 +23,7 @@ class UserRaceAdapter(private val onClick: (Race) -> Unit): RecyclerView.Adapter
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RaceViewHolder {
         val view = LayoutInflater
             .from(parent.context)
-            .inflate(R.layout.race_list_item2, parent, false)
+            .inflate(R.layout.race_list_item, parent, false)
         return RaceViewHolder(view, onClick)
     }
 
@@ -46,7 +46,6 @@ class UserRaceAdapter(private val onClick: (Race) -> Unit): RecyclerView.Adapter
             }
         }
 
-        private val imgRace: ImageView = view.findViewById(R.id.imgRace)
         private val lblRaceName: TextView = view.findViewById(R.id.lblRaceName)
         private val lblDate: TextView = view.findViewById(R.id.lblDate)
         private val lblCedeAcronym: TextView = view.findViewById(R.id.lblCedeAcronym)

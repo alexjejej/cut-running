@@ -7,9 +7,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.Navigation.findNavController
 import com.cut.android.running.R
+import com.cut.android.running.databinding.AdminRaceActionsDialogFragmentBinding
 import com.cut.android.running.databinding.FragmentRacesManagementBinding
 import com.cut.android.running.databinding.RaceAddDialogFragmentBinding
 import com.cut.android.running.databinding.RaceInfoDialogFragmentBinding
@@ -21,6 +24,7 @@ import com.cut.android.running.usecases.gestioncarreras.RaceDone
 import com.cut.android.running.usecases.gestioncarreras.adapter.RaceAdapter
 import com.cut.android.running.usecases.gestioncarreras.adapter.UserRaceAdapter
 import com.cut.android.running.usecases.gestioncarreras.addracedialog.AddRaceDialog
+import com.cut.android.running.usecases.gestioncarreras.adminraceactions.AdminRaceActionsDialog
 import com.cut.android.running.usecases.gestionuc.UcManagementViewModel
 import com.cut.android.running.usecases.home.HomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -62,6 +66,7 @@ class RacesManagement : Fragment() {
             if (!it.isNullOrEmpty())
                 raceAdapter.races = it!!
         })
+
         raceManagementViewModel.addRaceActionsModel.observe(viewLifecycleOwner, Observer {
             if (it) {
                 raceManagementViewModel.getRaces()
@@ -70,6 +75,7 @@ class RacesManagement : Fragment() {
             else
                 Toast.makeText(requireContext(), "Ocurrio un error al agregar la carrera", Toast.LENGTH_SHORT).show()
         })
+
         raceManagementViewModel.addUserRelationModel.observe(viewLifecycleOwner) {
             if (it) {
                 raceManagementViewModel.getRaces()
@@ -78,6 +84,7 @@ class RacesManagement : Fragment() {
             else
                 Toast.makeText(requireContext(), "Ocurrio un error al registrarse a la carrera. Intente mas tarde", Toast.LENGTH_SHORT).show()
         }
+
         homeViewModel.roleId.observe(viewLifecycleOwner) { roleId ->
             ISADMIN = roleId ==1
             binding.btnShowCreateRace.visibility = if (ISADMIN) View.VISIBLE else View.GONE
@@ -122,8 +129,6 @@ class RacesManagement : Fragment() {
         navigateToFragment(raceDoneFragment)
     }
 
-
-
     private fun navigateToFragment(fragment: Fragment) {
         parentFragmentManager.beginTransaction()
             .replace(R.id.home_container_fragment, fragment)
@@ -141,33 +146,46 @@ class RacesManagement : Fragment() {
     private fun onItemClick(race: Race) {
         // Toast.makeText(requireContext(), "${race.id} - ${race.name}", Toast.LENGTH_LONG).show()
         if (ISADMIN)
-            NavigationObj.navigateTo(parentFragmentManager, AdminUserByRace.newInstance(race.id), "AdminUserByRace")
-        else {
-            raceManagementViewModel.getRaceByUserModel.observe(viewLifecycleOwner) {
-                if (!it.isNullOrEmpty()) {
-                    val result = it.any {r -> r.id == race.id}
-                    if (result) {
-                        MaterialAlertDialogBuilder(requireContext())
-                            .setTitle("Registro existente")
-                            .setMessage("Usted ya se encuetra registrado en la carrera seleccionada")
-                            .setPositiveButton("Cerrar") { dialog, which ->
-                                dialog.cancel()
-                            }
-                            .show()
+            AdminRaceClick(race)
+        else
+            UserRaceClick(race)
+    }
+
+    private fun UserRaceClick(race: Race) {
+        raceManagementViewModel.verifyRelationship.observeOnce(viewLifecycleOwner) {
+            if (it != null && it) {
+                MaterialAlertDialogBuilder(requireContext())
+                    .setTitle("Registro existente")
+                    .setMessage("Usted ya se encuetra registrado en la carrera seleccionada")
+                    .setPositiveButton("Cerrar") { dialog, which ->
+                        dialog.cancel()
                     }
-                    else {
-                        val dialogBinding = RaceInfoDialogFragmentBinding.inflate(layoutInflater)
-                        val raceInforDialog = RaceInfoDialog(requireContext(), dialogBinding, raceManagementViewModel)
-                        raceInforDialog.showDialog(DatosUsuario.getEmail(requireActivity()), race)
-                    }
-                }
-                else {
-                    val dialogBinding = RaceInfoDialogFragmentBinding.inflate(layoutInflater)
-                    val raceInforDialog = RaceInfoDialog(requireContext(), dialogBinding, raceManagementViewModel)
-                    raceInforDialog.showDialog(DatosUsuario.getEmail(requireActivity()), race)
-                }
+                    .show()
             }
-            raceManagementViewModel.getRaceByUser(DatosUsuario.getEmail(requireActivity()))
+            else {
+                val dialogBinding = RaceInfoDialogFragmentBinding.inflate(layoutInflater)
+                val raceInforDialog = RaceInfoDialog(requireContext(), dialogBinding, raceManagementViewModel)
+                raceInforDialog.showDialog(DatosUsuario.getEmail(requireActivity()), race)
+            }
         }
+        raceManagementViewModel.verifyUserRaceRelationship(DatosUsuario.getEmail(requireActivity()), race.id)
+    }
+
+    private fun AdminRaceClick(race: Race) {
+        val adminRaceActionDialogBinding = AdminRaceActionsDialogFragmentBinding.inflate(layoutInflater)
+        val adminRaceActionsDialog = AdminRaceActionsDialog(requireContext(), adminRaceActionDialogBinding, parentFragmentManager, raceManagementViewModel, viewLifecycleOwner, DatosUsuario.getEmail(requireActivity()), race.id)
+        adminRaceActionsDialog.showDialog()
+    }
+
+    /**
+     * Permite desvilcular el observer del live data despues del primer callback
+     */
+    fun <T> LiveData<T>.observeOnce(owner: LifecycleOwner, observer: (T) -> Unit) {
+        observe(owner, object : Observer<T> {
+            override fun onChanged(t: T) {
+                observer(t)
+                removeObserver(this)
+            }
+        })
     }
 }

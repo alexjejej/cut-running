@@ -42,7 +42,6 @@ class RaceAdapter(private val onClick: (Race) -> Unit): RecyclerView.Adapter<Rac
             }
         }
 
-        val imgRace: ImageView = view.findViewById(R.id.imgRace)
         val lblRaceName: TextView = view.findViewById(R.id.lblRaceName)
         val lblDate: TextView = view.findViewById(R.id.lblDate)
         val lblCedeAcronym: TextView = view.findViewById(R.id.lblCedeAcronym)
