@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:weightSum="10">
+
+    <!-- LinearLayout vertical para mensaje bienvenida -->
+
+    <LinearLayout
+        android:id="@+id/LayoutBienvenida"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:orientation="vertical"
+        android:weightSum="2"
+        >
+        <!-- TextView "Bienvenido" en la parte superior -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Administrar usuarios"
+            android:fontFamily="@font/kodemono_medium"
+            android:gravity="center"
+            style="@style/txtTituloGrande"
+            android:textColor="@color/cut1"
+            />
+
+        <!-- ImageView debajo del TextView -->
+        <ImageView
+            android:id="@+id/sportImageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:src="@drawable/sport_image"
+            android:scaleType="centerInside"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+
+
+    <!-- LinearLayout vertical para el botón Carrera y división -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="3"
+        android:weightSum="3"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Buscar usuario por correo electrónico"
+            android:layout_gravity="center"
+            android:fontFamily="@font/kodemono_medium"
+            style="@style/txtSubtitulo"
+            > </TextView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
+            android:weightSum="10"
+            android:orientation="horizontal"
+            >
+
+            <EditText
+                android:id="@+id/codigoEditTextUpdate"
+                android:layout_width="0dp"
+                android:layout_weight="7"
+                android:layout_height="match_parent"
+                android:hint="Correo"
+                android:textSize="12sp"
+                android:fontFamily="@font/kodemono_medium"
+                 />
+
+            <Button
+                android:id="@+id/btnBuscar"
+                android:layout_width="0dp"
+                android:layout_weight="3"
+                android:layout_height="match_parent"
+                android:text="buscar"
+                android:textSize="12sp"
+                android:fontFamily="@font/kodemono_medium"
+                android:drawableLeft="@drawable/icon_run_24"
+                android:background="#FFFFFF"
+                android:layout_marginBottom="8dp" />
+
+        </LinearLayout>
+
+        <!-- TextView como divisor -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#D3D3D3"
+            android:layout_marginVertical="8dp"/>
+    </LinearLayout>
+
+    <!-- Layout vertical con información -->
+    <LinearLayout
+        android:id="@+id/LinearLayoutInformacion"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:layout_weight="3"
+        android:background="@color/backgroundgris"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/txtSubtitulo"
+            android:text="Información encontrada"
+            />
+
+        <TextView
+            android:id="@+id/txtNombreUsuarioAdmin"
+            style="@style/EstiloTextViewsProfile"
+            android:text="Nombre: Alejandro Garcia"
+            />
+
+        <TextView
+            android:id="@+id/txtEdadUsuarioAdmin"
+            style="@style/EstiloTextViewsProfile"
+            android:text="Edad: 23 años"
+            />
+
+        <TextView
+            android:id="@+id/txtCorreoUsuarioAdmin"
+            style="@style/EstiloTextViewsProfile"
+            android:text="Correo: alex.grc.18@gmail.com"
+            />
+
+        <Switch
+            android:id="@+id/switchAdmin"
+            style="@style/EstiloTextViewsProfile"
+            android:text="Es administrador"
+            />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        ></View>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:weightSum="3"
+        android:orientation="horizontal">
+
+        <!-- Botón para volver al inicio -->
+
+        <Button
+            android:id="@+id/btnAdminHome"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Inicio"
+            android:background="#FFFFFF"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            ></View>
+
+        <!-- Botón para cerrar -->
+        <Button
+            android:id="@+id/btnAdminCerrar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Cerrar"
+            android:background="#FFFFFF"
+             />
+
+    </LinearLayout>
+
+</LinearLayout>

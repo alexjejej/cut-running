@@ -92,6 +92,13 @@
   <style name="txtSubtitulo">
     <item name="android:gravity">center</item>
     <item name="android:fontFamily">@font/kodemono_bold</item>
+    <item name="android:textSize">20sp</item>
+  </style>
+
+  <!-- Texto txt -->
+  <style name="txtTexto">
+    <item name="android:gravity">center</item>
+    <item name="android:fontFamily">@font/kodemono_regular</item>
     <item name="android:textSize">18sp</item>
   </style>
 
@@ -105,7 +112,7 @@
   <!-- Titulo grande txt -->
   <style name="txtTituloGrande">
     <item name="android:gravity">center</item>
-    <item name="android:fontFamily">@font/kodemono_regular</item>
+    <item name="android:fontFamily">@font/kodemono_bold</item>
     <item name="android:textSize">28sp</item>
   </style>
 

@@ -244,32 +244,48 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal"
-        android:weightSum="2"
+        android:weightSum="3"
         android:gravity="center">
 
         <!-- Botón admin Logros -->
         <Button
             android:id="@+id/btnAdminLogros"
             android:layout_width="0dp"
-            android:layout_height="80sp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Administrar logros"
+            android:text="Logros"
             android:backgroundTint="#B7950B"
             android:visibility="gone"
             android:textColor="#FFFFFF"
+            android:layout_margin="5sp"
             android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
-            android:layout_marginEnd="8dp"/>
+            />
 
         <!-- Botón admin carreras -->
         <Button
             android:id="@+id/btnAdminCarreras"
             android:layout_width="0dp"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="#FFFFFF"
             android:visibility="gone"
             android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
-            android:text="Administrar carreras"
+            android:text="Carreras"
+            android:layout_margin="5sp"
+            android:backgroundTint="#B7950B"/>
+
+        <!-- Botón admin usuarios -->
+        <Button
+            android:id="@+id/btnAdminUsuarios"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#FFFFFF"
+            android:visibility="gone"
+            android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
+            android:text="Usuarios"
+            android:layout_margin="5sp"
+
             android:backgroundTint="#B7950B"/>
 
     </LinearLayout>

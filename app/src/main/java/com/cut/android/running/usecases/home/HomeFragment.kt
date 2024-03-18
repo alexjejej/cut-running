@@ -17,6 +17,7 @@ import com.cut.android.running.R
 import com.cut.android.running.usecases.clasificacion.ClasificacionFragment
 import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.resources.ManejadorAccionesFallidas
+import com.cut.android.running.usecases.admin.AdminUsers
 import com.cut.android.running.usecases.estadisticas.EstadisticasFragment
 import com.cut.android.running.usecases.logros.LogrosFragment
 import com.cut.android.running.usecases.logros.admin.AdminLogrosFragment
@@ -34,6 +35,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private lateinit var btnAdminCarreras: Button
     private lateinit var btnCarreras: Button
     private lateinit var btnReintentarEstatus : Button
+    private lateinit var btnAdminUsuarios: Button
     private lateinit var btnPerfil: Button
     private lateinit var btnEstadisticas : Button
     private lateinit var layoutBienvenida: LinearLayout
@@ -57,6 +59,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnPerfil = view.findViewById(R.id.btnProfile)
         btnEstadisticas = view.findViewById(R.id.btnEstadisticas)
         btnCarreras = view.findViewById(R.id.btnCarreras)
+        btnAdminUsuarios = view.findViewById(R.id.btnAdminUsuarios)
         //Dar clic a los botones
         btnCarrera.setOnClickListener { navigateToFragment(MapsFragment()) }
         btnLogros.setOnClickListener { navigateToFragment(LogrosFragment()) }
@@ -66,6 +69,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnPerfil.setOnClickListener{ navigateToFragment(ProfileFragment()) }
         btnEstadisticas.setOnClickListener{ navigateToFragment(EstadisticasFragment())}
         btnCarreras.setOnClickListener{ navigateToFragment(RacesManagement())}
+        btnAdminUsuarios.setOnClickListener{ navigateToFragment(AdminUsers())}
         // Instanciar ManejadorAccionesFallidas
         manejadorAcciones = ManejadorAccionesFallidas(requireContext())
 
@@ -188,6 +192,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val isAdmin = roleId == 1
         btnAdminCarreras.visibility = if (isAdmin) View.VISIBLE else View.GONE
         btnAdminLogros.visibility = if (isAdmin) View.VISIBLE else View.GONE
+        btnAdminUsuarios.visibility = if (isAdmin) View.VISIBLE else View.GONE
     }
 
     private fun navigateToFragment(fragment: Fragment) {

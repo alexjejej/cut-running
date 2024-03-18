@@ -54,7 +54,7 @@ class HomeViewModel : ViewModel() {
                         _roleId.postValue(user?.Role?.id) // Actualiza el LiveData del roleId
                         _apiConnection.postValue(response.isSuccessful)
                         if (user != null) {
-                            //Log.d("HVM DATA","DATA: ${user}")
+                            Log.d("HVM DATA","DATA: ${user}")
                         }
                     } else {
                         // Manejo de errores
@@ -63,6 +63,7 @@ class HomeViewModel : ViewModel() {
                 } catch (e: Exception) {
                     // Manejo de excepciones
                     Log.d("HVM Exception","$e")
+
                 }
             }
         }

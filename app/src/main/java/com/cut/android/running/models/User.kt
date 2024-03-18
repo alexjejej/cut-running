@@ -14,7 +14,7 @@ data class User(
     val specialtyId: Int? = null,
     @SerializedName("Specialty") // Mapea el campo JSON "Specialty" a "specialty" en Kotlin
     val specialty: Specialty? = null,
-    val Role: Role? = null,
+    var Role: Role? = null,
     val enabled: Int? = null,
     val updateDate: String? = null,
     val distanceperstep: Int? = null,

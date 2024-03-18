@@ -4,5 +4,5 @@ data class Role (
     val id: Int,
     val name: String,
     val enabled: Int,
-    val updateDate: String
+    val updateDate: String?
 )
