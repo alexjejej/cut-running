@@ -1,5 +1,7 @@
 package com.cut.android.running.models
 
+import java.io.Serializable
+
 data class Race (
     val id: Int,
     val name: String,
@@ -8,4 +10,4 @@ data class Race (
     val UC: UniversityCenter,
     val enabled: Int,
     val updateDate: String
-)
+): Serializable

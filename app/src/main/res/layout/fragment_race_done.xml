@@ -1,0 +1,234 @@
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="100"
+    android:padding="15dp"
+    >
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="100"
+        >
+
+        <nl.dionsegijn.konfetti.xml.KonfettiView
+            android:id="@+id/konfettiView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+
+        <LinearLayout
+            android:id="@+id/LayoutSuccess"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="100"
+            android:visibility="visible"
+            android:orientation="vertical"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="8"
+                android:orientation="vertical"
+                android:weightSum="8"
+                >
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="8"
+                    android:src="@drawable/sport_image"
+                    >
+
+                </ImageView>
+
+            </LinearLayout>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="30"
+                android:orientation="vertical"
+                android:weightSum="20"
+                >
+
+                <TextView
+                    android:id="@+id/txtEventoNombre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Resultados de la carrera "
+                    android:textSize="26sp"
+                    android:layout_weight="10"
+                    android:textStyle="bold"
+                    android:layout_margin="10dp"
+                    android:textAlignment="center"
+                    android:layout_gravity="center" />
+
+                <TextView
+                    android:id="@+id/txtEventoFelicidades"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:textAlignment="center"
+                    android:text="Felicidades, conseguiste el lugar X en tiempo X"
+                    android:textSize="20sp"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:textAlignment="center"
+                    android:text="Tabla de posiciones"
+                    android:layout_gravity="center"
+                    android:textSize="18sp"
+                    />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5"
+                android:orientation="vertical"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:id="@+id/txtPosicion"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/kodemono_bold"
+                        android:text="#"
+                        android:textSize="17sp" />
+
+                    <TextView
+                        android:id="@+id/txtNombre"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="6"
+                        android:text="NOMBRE"
+                        android:fontFamily="@font/kodemono_bold"
+                        android:textSize="15sp" />
+
+                    <TextView
+                        android:id="@+id/txtTiempo"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:text="tiempo"
+                        android:fontFamily="@font/kodemono_bold"
+                        android:textAlignment="textEnd"
+                        android:textSize="16sp"
+                        android:layout_marginEnd="16dp" />
+                </LinearLayout>
+
+            </LinearLayout>
+            <ScrollView
+                android:id="@+id/LinearLayoutRanking"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="45"
+                android:orientation="vertical"
+                >
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvRankingCarrera"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </ScrollView>
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="10"
+                android:weightSum="3"
+                android:orientation="horizontal">
+
+                <!-- Botón para volver al inicio -->
+
+                <Button
+                    android:id="@+id/btnFinEventoHome"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="Inicio"
+                    android:background="#FFFFFF"
+                    app:cornerRadius="4dp" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    ></View>
+                <!-- Botón para cerrar -->
+                <Button
+                    android:id="@+id/btnFinEventoCerrar"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:text="Cerrar"
+                    android:background="#FFFFFF"
+                    app:cornerRadius="4dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LayoutError"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="100"
+            android:gravity="center"
+            android:visibility="gone"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/txtEstatusEvento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/icon_update"
+                android:fontFamily="@font/kodemono_medium"
+                android:padding="8dp"
+                android:layout_gravity="center"
+                android:text="Cargando datos..."
+                android:textSize="15dp" />
+
+
+            <Button
+                android:id="@+id/btnReintentar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:layout_gravity="center"
+                android:backgroundTint="#FF8D8D"
+                android:visibility="gone"
+                android:fontFamily="@font/kodemono_medium"
+                android:text="Reintentar" />
+
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
