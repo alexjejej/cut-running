@@ -135,17 +135,20 @@ class RaceManagementViewModel : ViewModel() {
     fun getRaceByUser(email: String) {
         viewModelScope.launch {
             try {
-                val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).getRaceByUser(email)
-                val result = call.body()
-                if (result != null && result.isSuccess) {
-                    getRaceByUserModel.postValue(result.data)
-                }
-                else
+                val response = RetrofitInstance.getRetrofit().create(RaceService::class.java).getRaceByUser(email)
+                if (response.isSuccessful && response.body() != null) {
+                    val data = response.body()!!.data
+                    Log.d(TAG, "getRaceByUser - datos obtenidos: $data")
+                    getRaceByUserModel.postValue(data)
+                } else {
+                    Log.e(TAG, "getRaceByUser - respuesta fallida: ${response.errorBody()?.string()}")
                     getRaceByUserModel.postValue(null)
-            }
-            catch (e: Exception) {
-                Log.e(TAG, "Error al obtener carreras por usuario")
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "getRaceByUser - excepción al obtener carreras por usuario", e)
             }
         }
     }
+
+
 }

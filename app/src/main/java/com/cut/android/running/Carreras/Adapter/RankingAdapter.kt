@@ -28,7 +28,7 @@ class RankingAdapter(private val items: List<RankingItem>) : RecyclerView.Adapte
         private val txtTiempo: TextView = itemView.findViewById(R.id.txtTiempo)
 
         fun bind(item: RankingItem) {
-            txtPosicion.text = item.id.toString()
+            txtPosicion.text = item.position.toString()
             txtNombre.text = item.nombre
             txtTiempo.text = item.tiempo
         }

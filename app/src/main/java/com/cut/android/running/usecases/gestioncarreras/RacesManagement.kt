@@ -8,16 +8,18 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation.findNavController
+import com.cut.android.running.R
 import com.cut.android.running.databinding.FragmentRacesManagementBinding
 import com.cut.android.running.databinding.RaceAddDialogFragmentBinding
 import com.cut.android.running.databinding.RaceInfoDialogFragmentBinding
 import com.cut.android.running.models.Race
-import com.cut.android.running.models.UniversityCenter
 import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.services.navigation.NavigationObj
 import com.cut.android.running.usecases.gestioncarreras.AdminUserByRace
+import com.cut.android.running.usecases.gestioncarreras.RaceDone
 import com.cut.android.running.usecases.gestioncarreras.adapter.RaceAdapter
-
+import com.cut.android.running.usecases.gestioncarreras.adapter.UserRaceAdapter
 import com.cut.android.running.usecases.gestioncarreras.addracedialog.AddRaceDialog
 import com.cut.android.running.usecases.gestionuc.UcManagementViewModel
 import com.cut.android.running.usecases.home.HomeViewModel
@@ -49,8 +51,11 @@ class RacesManagement : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentRacesManagementBinding.inflate(inflater, container, false)
+
+        // Configuración del primer RecyclerView
         binding.rcvRaces.adapter = raceAdapter
         binding.rcvRaces.setHasFixedSize(true)
+
         homeViewModel.checkUserRole(DatosUsuario.getEmail(requireActivity()))
 
         raceManagementViewModel.getRaceModel.observe(viewLifecycleOwner, Observer {
@@ -80,7 +85,6 @@ class RacesManagement : Fragment() {
 
         raceManagementViewModel.getRaces()
         // tempGetRaces()
-
         binding.btnShowCreateRace.setOnClickListener {
             /**
              * Shows a dialog to add race
@@ -91,9 +95,41 @@ class RacesManagement : Fragment() {
             addRaceDialog.showDialog()
         }
 
+        // Configuración del segundo RecyclerView para carreras de usuario
+        val userRaceAdapter = UserRaceAdapter { race -> navigateToRaceDone(race) }
+        binding.rvCarrerasUser.adapter = userRaceAdapter
+
+        raceManagementViewModel.getRaceByUserModel.observe(viewLifecycleOwner) { races ->
+            Log.d(TAG, "Observando races - datos: $races")
+            userRaceAdapter.races = races ?: listOf()
+            userRaceAdapter.notifyDataSetChanged()
+        }
+
+
+        val userEmail = DatosUsuario.getEmail(requireActivity())
+        raceManagementViewModel.getRaceByUser(userEmail)
+
         return binding.root
+
     }
 
+    private fun navigateToRaceDone(race: Race) {
+        val raceDoneFragment = RaceDone().apply {
+            arguments = Bundle().apply {
+                putSerializable("race", race)
+            }
+        }
+        navigateToFragment(raceDoneFragment)
+    }
+
+
+
+    private fun navigateToFragment(fragment: Fragment) {
+        parentFragmentManager.beginTransaction()
+            .replace(R.id.home_container_fragment, fragment)
+            .addToBackStack(null)
+            .commit()
+    }
     companion object {
         @JvmStatic
         fun newInstance(param1: String, param2: String) = RacesManagement()

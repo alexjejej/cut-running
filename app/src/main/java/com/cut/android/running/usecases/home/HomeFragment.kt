@@ -135,9 +135,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
 
-
-
-
     }
     private fun updateApiConnectionStatus(isConnected: Boolean) {
         val txtApiConnectionStatus = view?.findViewById<TextView>(R.id.txtApiConnectionStatus)
