@@ -46,6 +46,7 @@ class UserRaceAdapter(private val onClick: (Race) -> Unit): RecyclerView.Adapter
             }
         }
 
+        private val imgRace: ImageView = view.findViewById(R.id.imgRace)
         private val lblRaceName: TextView = view.findViewById(R.id.lblRaceName)
         private val lblDate: TextView = view.findViewById(R.id.lblDate)
         private val lblCedeAcronym: TextView = view.findViewById(R.id.lblCedeAcronym)
@@ -54,6 +55,7 @@ class UserRaceAdapter(private val onClick: (Race) -> Unit): RecyclerView.Adapter
             currentRace = race
             lblRaceName.text = race.name
             lblDate.text = race.date
+            imgRace.setImageResource(R.drawable.flag)
 
             // Verificar si 'UC' es nulo antes de intentar acceder a 'acronym'
             if (race.UC != null) {
