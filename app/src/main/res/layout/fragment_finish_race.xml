@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:weightSum="10">
+
+    <!-- LinearLayout vertical para mensaje bienvenida -->
+
+    <LinearLayout
+        android:id="@+id/LayoutBienvenida"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.5"
+        android:orientation="vertical"
+        android:weightSum="2"
+        >
+        <!-- TextView "Bienvenido" en la parte superior -->
+        <TextView
+            android:id="@+id/txtTituloCarrera"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Administrar carrera"
+            android:fontFamily="@font/kodemono_medium"
+            android:gravity="center"
+            style="@style/txtTituloGrande"
+            android:textColor="@color/cut1"
+            />
+
+        <!-- ImageView debajo del TextView -->
+        <ImageView
+            android:id="@+id/sportImageView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:src="@drawable/sport_image"
+            android:scaleType="centerInside"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+
+
+    <!-- LinearLayout vertical para el botón Carrera y división -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="3"
+        android:weightSum="3"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/txtstatusCarrera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="En este momento, no se puede terminar la carrera"
+            android:layout_gravity="center"
+            android:fontFamily="@font/kodemono_medium"
+            style="@style/txtSubtitulo"
+            > </TextView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
+            android:weightSum="10"
+            android:orientation="horizontal"
+            >
+
+
+        </LinearLayout>
+
+        <!-- TextView como divisor -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#D3D3D3"
+            android:layout_marginVertical="8dp"/>
+    </LinearLayout>
+
+    <!-- Layout vertical con información -->
+    <LinearLayout
+        android:id="@+id/LinearLayoutInformacion"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="2"
+        android:background="@color/button_started"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/txtSubtitulo"
+            android:text="Estado de la carrera:"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/txtlabelstatusAdmin"
+            style="@style/txtSubtitulo"
+            android:text="Cargando.."
+            />
+
+        <Switch
+            android:id="@+id/switchAdmin"
+            style="@style/EstiloTextViewsProfile"
+            android:layout_gravity="center"
+            android:text="Activar/Desactivar"
+            />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="2.5"
+        ></View>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:weightSum="3"
+        android:orientation="horizontal">
+
+        <!-- Botón para volver al inicio -->
+
+        <Button
+            android:id="@+id/btnAdminHome"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Inicio"
+            android:background="#FFFFFF"
+            />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            ></View>
+
+        <!-- Botón para cerrar -->
+        <Button
+            android:id="@+id/btnAdminCerrar"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Cerrar"
+            android:background="#FFFFFF"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>

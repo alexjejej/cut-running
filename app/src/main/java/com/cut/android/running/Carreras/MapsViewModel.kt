@@ -22,6 +22,8 @@ import java.time.format.DateTimeFormatter
 class MapsViewModel : ViewModel() {
     //proxima carrera
     val nextRaceDateTime = MutableLiveData<ZonedDateTime?>()
+    var isRaceEnabled = 0
+
     private val raceService = RetrofitInstance.getRetrofit().create(RaceService::class.java)
     val isButtonEnabled = MutableLiveData<Boolean>(true)
 
@@ -231,51 +233,71 @@ class MapsViewModel : ViewModel() {
         Log.d("MapsView","$time")
     }
 
-    //Función para verificar si hay una carrera en curso
     @RequiresApi(Build.VERSION_CODES.O)
-    fun updateNextRaceDateTime() {
+    suspend fun updateNextRaceDateTime(): Boolean {
         isButtonEnabled.postValue(false) // Deshabilita el botón antes de iniciar la operación asincrónica
-        viewModelScope.launch {
-            try {
-                val response = raceService.getRaces()
-                if (response.isSuccessful) {
-                    // Filtrar carreras que están dentro de los próximos 7 días
-                    val races = response.body()?.data?.filter { race ->
-                        val raceDate = ZonedDateTime.parse(race.date, DateTimeFormatter.ISO_ZONED_DATE_TIME)
-                        val now = ZonedDateTime.now()
-                        val daysUntilRace = Duration.between(now, raceDate).toDays()
+        try {
+            val response = raceService.getRaces()
+            if (response.isSuccessful) {
+                val races = response.body()?.data?.filter { race ->
+                    val raceDateTimeInLocal = parseDate(race.date)
+                    raceDateTimeInLocal?.let {
+                        val now = ZonedDateTime.now(ZoneId.of("America/Mexico_City"))
+                        val daysUntilRace = Duration.between(now.toLocalDate().atStartOfDay(), it.toLocalDate().atStartOfDay()).toDays()
                         daysUntilRace in 0..7
+                    } ?: false
+                }
+                val nearestRace = races?.minByOrNull { race ->
+                    parseDate(race.date)?.let {
+                        Duration.between(ZonedDateTime.now(ZoneId.of("America/Mexico_City")), it).toDays()
+                    } ?: Long.MAX_VALUE
+                }
+
+                nearestRace?.let { race ->
+                    parseDate(race.date)?.let { raceDateTimeInLocal ->
+                        nextRaceDateTime.postValue(raceDateTimeInLocal)
+                        raceId = race.id
+                        isRaceEnabled = race.enabled
+                    } ?: run {
+                        nextRaceDateTime.postValue(ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.of("America/Mexico_City")))
                     }
-                    // Encontrar la carrera más próxima si existe
-                    if (!races.isNullOrEmpty()) {
-                        val nearestRace = races.minByOrNull { race ->
-                            ZonedDateTime.parse(race.date, DateTimeFormatter.ISO_ZONED_DATE_TIME)
-                        }
-                        // Actualizar la fecha/hora de la próxima carrera
-                        nearestRace?.date?.let {
-                            // Convertir a la zona horaria específica
-                            val zonedRaceDateTime = ZonedDateTime.parse(it, DateTimeFormatter.ISO_ZONED_DATE_TIME)
-                            val raceDateTimeInLocal = zonedRaceDateTime.withZoneSameInstant(ZoneId.of("America/Mexico_City"))
-                            nextRaceDateTime.postValue(raceDateTimeInLocal)
-                            //ID carrera
-                            raceId = nearestRace.id
-                        }
-                    } else {
-                        // No hay carreras próximas, limpiar el valor
-                        val predefinedRaceDateTime = ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.of("America/Mexico_City"))
-                        nextRaceDateTime.postValue(predefinedRaceDateTime)
-                    }
+                    return true // Operación exitosa
+                } ?: run {
+                    nextRaceDateTime.postValue(ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.of("America/Mexico_City")))
+                }
+            } else {
+                Log.d("ViewModel", "Error al obtener carreras")
+                nextRaceDateTime.postValue(null)
+            }
+        } catch (e: Exception) {
+            Log.e("ViewModel", "Error: ${e.message}")
+            nextRaceDateTime.postValue(null)
+        } finally {
+            isButtonEnabled.postValue(true) // Vuelve a habilitar el botón una vez completada la operación
+        }
+        return false // Operación fallida
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun parseDate(dateStr: String): ZonedDateTime? {
+        val formatters = listOf(
+            DateTimeFormatter.ISO_ZONED_DATE_TIME,
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        )
+
+        for (formatter in formatters) {
+            try {
+                return if (formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME) {
+                    ZonedDateTime.parse(dateStr, formatter)
                 } else {
-                    Log.d("ViewModel", "Error al obtener carreras")
-                    nextRaceDateTime.postValue(null)
+                    LocalDateTime.parse(dateStr, formatter).atZone(ZoneId.of("America/Mexico_City"))
                 }
             } catch (e: Exception) {
-                Log.e("ViewModel", "Error: ${e.message}")
-                nextRaceDateTime.postValue(null)
-            }finally {
-                isButtonEnabled.postValue(true) // Vuelve a habilitar el botón una vez completada la operación
+                // Ignorar y probar con el siguiente formateador
             }
         }
+
+        return null
     }
 
 }

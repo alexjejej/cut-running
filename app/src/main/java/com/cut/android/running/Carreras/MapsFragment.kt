@@ -1,5 +1,6 @@
 import android.Manifest
 import android.animation.ValueAnimator
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -26,6 +27,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.cut.android.running.Carreras.FinCarrera
 import com.cut.android.running.Carreras.FinEvento
 import com.google.android.gms.location.*
@@ -36,6 +38,9 @@ import com.cut.android.running.R
 import com.cut.android.running.provider.BDsqlite
 import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.services.TrackingService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 
 class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
@@ -81,28 +86,44 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this).get(MapsViewModel::class.java)
+
+        //Sensores
         sensorManager = activity?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
 
+        setupObservers()
+        setupMapFragment()
+        setupButtons(view)
+        checkNotificationArgument()
+
+        // cargar txt de estado
+        txtEstatusMaps = view.findViewById(R.id.txtEstatusMaps)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setupObservers() {
+        observeNextRaceDateTime()
+        observeTotalDistance()
+        observeTotalSteps()
+        observeTimeElapsed()
+        observeToastEvent()
+        observeButtonEnabled()
+    }
+
+    private fun setupMapFragment() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
         mapFragment?.getMapAsync(this)
+    }
 
-        //Boton iniciar
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setupButtons(view: View) {
         btnIniciar = view.findViewById(R.id.btnIniciar)
-        btnIniciar.setOnClickListener { toggleTracking() }
-
-        viewModel.totalDistance.observe(viewLifecycleOwner) { distance ->
-            view.findViewById<TextView>(R.id.tvDistancia).text = getString(R.string.distance_template, distance)
+        btnIniciar.setOnClickListener {
+            lifecycleScope.launch {
+                toggleTracking()
+            }
         }
 
-        viewModel.totalSteps.observe(viewLifecycleOwner) { steps ->
-            view.findViewById<TextView>(R.id.tvPasos).text = getString(R.string.steps_template, steps)
-        }
-
-        viewModel.timeElapsed.observe(viewLifecycleOwner) { time ->
-            view.findViewById<TextView>(R.id.tvTiempo).text = time
-        }
-        //botón para centrar el mapa
         btnCentrar = view.findViewById(R.id.btnCentrar)
         btnCentrar.setOnClickListener {
             centrarMapaEnUbicacion()
@@ -111,37 +132,71 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         btnCentrarCut.setOnClickListener {
             centrarMapaEnCut()
         }
+    }
 
-        //observar el viewmodel para mostrar toast
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun checkNotificationArgument() {
+        val lanzadoDesdeNotificacion = arguments?.getBoolean("lanzadoDesdeNotificacion", false) ?: false
+        if (lanzadoDesdeNotificacion) {
+            lifecycleScope.launch {
+                ReanudarDatos()
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun observeNextRaceDateTime() {
+        viewModel.nextRaceDateTime.observe(viewLifecycleOwner) { raceDateTime ->
+            Log.d("MapsFragment", "$raceDateTime")
+            if (raceDateTime != null) {
+                val now = ZonedDateTime.now()
+                HayEvento = now.toLocalDate().isEqual(raceDateTime.toLocalDate()) && now.isAfter(raceDateTime)
+            } else {
+                Toast.makeText(requireContext(), "Error al conectarse al servidor del CUT", Toast.LENGTH_SHORT).show()
+            }
+        }
+        lifecycleScope.launch {
+            verificarEvento()
+        }
+    }
+
+    private fun observeTotalDistance() {
+        viewModel.totalDistance.observe(viewLifecycleOwner) { distance ->
+            requireView().findViewById<TextView>(R.id.tvDistancia).text = getString(R.string.distance_template, distance)
+        }
+    }
+
+    private fun observeTotalSteps() {
+        viewModel.totalSteps.observe(viewLifecycleOwner) { steps ->
+            requireView().findViewById<TextView>(R.id.tvPasos).text = getString(R.string.steps_template, steps)
+        }
+    }
+
+    private fun observeTimeElapsed() {
+        viewModel.timeElapsed.observe(viewLifecycleOwner) { time ->
+            requireView().findViewById<TextView>(R.id.tvTiempo).text = time
+        }
+    }
+
+    private fun observeToastEvent() {
         viewModel.showToastEvent.observe(viewLifecycleOwner) { messages ->
             if (messages.isNotEmpty()) {
                 Toast.makeText(context, messages.first(), Toast.LENGTH_LONG).show()
-                viewModel.messageShown() // Indica al ViewModel que el mensaje se ha mostrado
+                viewModel.messageShown()
             }
         }
-        val lanzadoDesdeNotificacion = arguments?.getBoolean("lanzadoDesdeNotificacion", false) ?: false
+    }
 
-        if (lanzadoDesdeNotificacion) {
-            ReanudarDatos()
-        }
-
-        //cargar txt de estado
-        txtEstatusMaps = view.findViewById(R.id.txtEstatusMaps)
-
-        //Estado de la peticion
+    private fun observeButtonEnabled() {
         viewModel.isButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
             btnIniciar.isEnabled = isEnabled
-            // Si el botón está habilitado o es la primera vez que se verifica el evento, oculta el texto de estatus.
-            // De lo contrario, muéstralo.
             txtEstatusMaps.visibility = if (isEnabled || isFirstVerificarEvento) View.GONE else View.VISIBLE
-
-            // Actualiza la bandera sólo si se está deshabilitando el botón, indicando que no es la primera verificación.
             if (!isEnabled && isFirstVerificarEvento) {
                 isFirstVerificarEvento = false
             }
         }
-
     }
+
 
     // Sets up the map once it's ready
     override fun onMapReady(googleMap: GoogleMap) {
@@ -162,13 +217,15 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
             // Solo inicia el seguimiento la primera vez que se presiona el botón y si no se está siguiendo actualmente.
             startTracking()
             isFirstTrackingStart = false // Asegura que este bloque solo se ejecute una vez.
-            verificarEvento()
+
         } else if (!isFirstTrackingStart) {
             // En subsiguientes clics, evalúa el estado de HayEvento.
             when (HayEvento) {
-                null -> verificarEvento() // Posiblemente esta condición podría gestionarse de manera diferente.
+                null -> lifecycleScope.launch {
+                    ReanudarDatos()
+                }
                 false -> stopTrackingAndLaunchActivity(FinCarrera::class.java)
-                true -> stopTrackingAndLaunchActivity(FinEvento::class.java)
+                true -> verificarStatusCarrera()
             }
         } else if (isTracking) {
             // Si ya se está siguiendo, detiene el seguimiento.
@@ -178,20 +235,34 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun verificarEvento() {
-        viewModel.updateNextRaceDateTime()
-        viewModel.nextRaceDateTime.observe(viewLifecycleOwner) { raceDateTime ->
-            Log.d("MapsFragment","$raceDateTime")
-            if (raceDateTime != null) {
-                val now = ZonedDateTime.now()
-                // Verifica si hoy es el día de la carrera y si la hora actual es posterior a la hora de inicio de la carrera
-                HayEvento = now.toLocalDate().isEqual(raceDateTime.toLocalDate()) && now.isAfter(raceDateTime)
+    private fun verificarStatusCarrera() {
+        lifecycleScope.launch {
+            viewModel.updateNextRaceDateTime() // Espera hasta que esta función se complete
+
+            if (viewModel.isRaceEnabled == 1) {
+                stopTrackingAndLaunchActivity(FinEvento::class.java)
             } else {
-                // No hay carreras próximas o la información no está disponible
-                Toast.makeText(requireContext(),"Error al contectarse al servidor del CUT",Toast.LENGTH_SHORT).show()
+                withContext(Dispatchers.Main) {
+                    AlertDialog.Builder(requireContext())
+                        .setTitle("Alerta")
+                        .setMessage("Aún no puedes terminar la carrera")
+                        .setPositiveButton("OK") { dialog, which ->
+                            // Acción al presionar el botón OK
+                        }
+                        .show()
+                }
             }
         }
     }
+
+
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private suspend fun verificarEvento() {
+        viewModel.updateNextRaceDateTime() // Espera hasta que esta función se complete
+    }
+
 
     private fun stopTrackingAndLaunchActivity(activityClass: Class<*>) {
         stopTracking()
@@ -327,8 +398,11 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
 
     // Stops counting steps by unregistering the sensor event listener
     private fun stopStepCounting() {
-        sensorManager.unregisterListener(this)
+        if (::sensorManager.isInitialized) {
+            sensorManager.unregisterListener(this)
+        }
     }
+
 
     // Checks if location permissions are granted
     private fun checkPermissions(): Boolean {
