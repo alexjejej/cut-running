@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/kodemono_medium"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
-                android:text="Description: "/>
+                android:text="Descripción: "/>
 
             <Space
                 android:layout_width="0dp"
@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/kodemono_medium"
                 android:textAppearance="?attr/textAppearanceSubtitle1"
-                android:text="Description"/>
+                android:text="Descripción"/>
 
         </LinearLayout>
 

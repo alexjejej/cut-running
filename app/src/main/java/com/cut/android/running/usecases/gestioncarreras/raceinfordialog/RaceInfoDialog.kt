@@ -22,7 +22,7 @@ class RaceInfoDialog (
 
         val builder = MaterialAlertDialogBuilder(_context)
             .setView(_binding.root)
-            .setPositiveButton("Resgistrar") { dialog, which ->
+            .setPositiveButton("Registrar") { dialog, which ->
                 _raceManagementViewModel.addUserRelation(email, race.id)
             }
             .setNegativeButton("Cancelar") { dialog, which ->
