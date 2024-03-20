@@ -169,6 +169,10 @@
                     android:layout_margin="16dp"
                     android:text="Inicio"
                     android:background="#FFFFFF"
+                    style="@style/txtEtiqueta"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeMaxTextSize="12sp"
+                    app:autoSizeStepGranularity="1sp"
                     app:cornerRadius="4dp" />
 
                 <View
@@ -184,6 +188,10 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="16dp"
                     android:text="Cerrar"
+                    style="@style/txtEtiqueta"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeMaxTextSize="12sp"
+                    app:autoSizeStepGranularity="1sp"
                     android:background="#FFFFFF"
                     app:cornerRadius="4dp" />
 

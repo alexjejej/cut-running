@@ -184,7 +184,7 @@
     <Button
         android:id="@+id/btnMenu"
         android:alpha="1"
-        style="@style/txtSubtitulo"
+        style="@style/txtEtiqueta"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="Regresar al menú principal"
@@ -192,6 +192,9 @@
         android:enabled="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeMaxTextSize="12sp"
+        app:autoSizeStepGranularity="1sp"
         android:layout_marginBottom="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="100"
-    android:padding="10dp"
+    android:padding="5dp"
     >
 
     <RelativeLayout
@@ -73,7 +73,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:textAlignment="center"
-                    android:text="Felicidades, conseguiste el lugar X en tiempo X"
+                    android:layout_gravity="center"
+                    android:text="Sin datos"
                     style="@style/txtSubtitulo"
                     />
 
@@ -174,6 +175,9 @@
                     android:text="Inicio"
                     android:background="#FFFFFF"
                     style="@style/EstiloBotonHome"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeMaxTextSize="12sp"
+                    app:autoSizeStepGranularity="1sp"
                     app:cornerRadius="4dp" />
 
                 <View
@@ -190,8 +194,10 @@
                     android:layout_margin="16dp"
                     android:text="Cerrar"
                     android:background="#FFFFFF"
-                    style="@style/EstiloBotonHome"
-
+                    android:fontFamily="@font/kodemono_medium"
+                    app:autoSizeMinTextSize="8sp"
+                    app:autoSizeMaxTextSize="12sp"
+                    app:autoSizeStepGranularity="1sp"
                     app:cornerRadius="4dp" />
 
             </LinearLayout>

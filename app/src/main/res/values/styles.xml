@@ -36,9 +36,12 @@
     <item name="android:layout_width">0dp</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_weight">1</item>
-    <item name="android:layout_margin">10dp</item>
-    <item name="android:background">#FFFFFF</item>
+    <item name="android:layout_margin">5sp</item>
+    <item name="android:background">@color/white</item>
     <item name="android:fontFamily">@font/kodemono_medium</item>
+    android:autoSizeTextType="uniform"
+    android:autoSizeMinTextSize="12sp"
+    android:autoSizeMaxTextSize="18sp"
   </style>
 
   <!-- TextViews del perfil -->

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp"
     android:weightSum="10">
@@ -72,15 +72,34 @@
             android:fontFamily="@font/kodemono_medium"
             style="@style/txtSubtitulo"/>
 
-        <Button
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_gravity="center"
-            android:id="@+id/btnCarreras"
-            android:fontFamily="@font/kodemono_medium"
-            android:text="Ver carreras"
-            android:drawableLeft="@drawable/icon_add_24"
-            />
+            >
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/btnCarreras"
+                android:fontFamily="@font/kodemono_medium"
+                android:layout_margin="5dp"
+                android:text="Ver carreras"
+                android:drawableLeft="@drawable/icon_add_24"
+                />
+            <Button
+                android:id="@+id/btnAdminEvento"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FFFFFF"
+                android:fontFamily="@font/kodemono_medium"
+                android:layout_margin="5dp"
+                android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
+                android:text="Evento"
+                android:backgroundTint="#B7950B"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -159,7 +178,12 @@
                 android:id="@+id/btnLogros"
                 style="@style/EstiloBotonHome"
                 android:text="Logros"
-                android:drawableLeft="@drawable/icon_military_tech_24" />
+                android:drawableLeft="@drawable/icon_military_tech_24"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeMaxTextSize="12sp"
+                app:autoSizeStepGranularity="1sp"
+                />
 
 
             <Button
@@ -167,6 +191,10 @@
                 style="@style/EstiloBotonHome"
                 android:text="Ranking"
                 android:drawableLeft="@drawable/baseline_format_list_numbered_24"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeMaxTextSize="12sp"
+                app:autoSizeStepGranularity="1sp"
                 />
 
             <Button
@@ -174,6 +202,10 @@
                 style="@style/EstiloBotonHome"
                 android:text="Perfil"
                 android:drawableLeft="@drawable/baseline_account_box_24"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeMaxTextSize="12sp"
+                app:autoSizeStepGranularity="1sp"
                 />
 
 
@@ -195,7 +227,23 @@
                 style="@style/EstiloBotonHome"
                 android:layout_weight="1.5"
                 android:drawableLeft="@drawable/icon_statistics"
-                android:text="Estadisticas" />
+                android:text="Estadisticas"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeMaxTextSize="12sp"
+                app:autoSizeStepGranularity="1sp"
+                />
+
+            <Button
+                android:id="@+id/btnEventos"
+                style="@style/EstiloBotonHome"
+                android:text="Carreras"
+                android:drawableLeft="@drawable/icon_run"
+                app:autoSizeTextType="uniform"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeMaxTextSize="12sp"
+                app:autoSizeStepGranularity="1sp"
+                />
 
 
         </LinearLayout>
@@ -235,6 +283,10 @@
             android:text="Reintentar"
             android:fontFamily="@font/kodemono_medium"
             android:backgroundTint="#FF8D8D"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="8sp"
+            app:autoSizeMaxTextSize="12sp"
+            app:autoSizeStepGranularity="1sp"
             />
 
     </LinearLayout>
@@ -255,10 +307,14 @@
             android:layout_weight="1"
             android:text="Logros"
             android:backgroundTint="#B7950B"
-            android:visibility="gone"
+            android:visibility="visible"
             android:textColor="#FFFFFF"
-            android:layout_margin="5sp"
+            android:layout_margin="2sp"
             android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="8sp"
+            app:autoSizeMaxTextSize="12sp"
+            app:autoSizeStepGranularity="1sp"
             />
 
         <!-- Botón admin carreras -->
@@ -268,11 +324,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="#FFFFFF"
-            android:visibility="gone"
+            android:visibility="visible"
             android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
             android:text="Carreras"
-            android:layout_margin="5sp"
-            android:backgroundTint="#B7950B"/>
+            android:layout_margin="2sp"
+            android:backgroundTint="#B7950B"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="8sp"
+            app:autoSizeMaxTextSize="12sp"
+            app:autoSizeStepGranularity="1sp"/>
 
         <!-- Botón admin usuarios -->
         <Button
@@ -281,11 +341,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="#FFFFFF"
-            android:visibility="gone"
+            android:visibility="visible"
             android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
             android:text="Usuarios"
-            android:layout_margin="5sp"
-
+            android:layout_margin="2sp"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="8sp"
+            app:autoSizeMaxTextSize="12sp"
+            app:autoSizeStepGranularity="1sp"
             android:backgroundTint="#B7950B"/>
 
     </LinearLayout>

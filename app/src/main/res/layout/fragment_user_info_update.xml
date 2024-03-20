@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:weightSum="108"
     tools:context="com.cut.android.running.usecases.profile.UserInfoUpdateFragment">
@@ -176,7 +177,9 @@
                 android:gravity="center"
                 android:layout_marginLeft="10dp"
                 android:fontFamily="@font/kodemono_medium"
-                android:textSize="18sp"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeMaxTextSize="12sp"
+                app:autoSizeStepGranularity="1sp"
                  />
 
             <View
@@ -192,9 +195,11 @@
                 android:text="Guardar"
                 android:background="#FFFFFF"
                 android:gravity="center"
-                android:fontFamily="@font/kodemono_medium"
                 android:layout_marginEnd="10dp"
-                android:textSize="18sp"
+                android:fontFamily="@font/kodemono_medium"
+                app:autoSizeMinTextSize="8sp"
+                app:autoSizeMaxTextSize="12sp"
+                app:autoSizeStepGranularity="1sp"
                 android:enabled="false"
                  />
 
