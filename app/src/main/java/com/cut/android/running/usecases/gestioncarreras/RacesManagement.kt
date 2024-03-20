@@ -28,6 +28,9 @@ import com.cut.android.running.usecases.gestioncarreras.adminraceactions.AdminRa
 import com.cut.android.running.usecases.gestionuc.UcManagementViewModel
 import com.cut.android.running.usecases.home.HomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.TimeZone
 
 /**
  * A simple [Fragment] subclass.
@@ -63,8 +66,20 @@ class RacesManagement : Fragment() {
         homeViewModel.checkUserRole(DatosUsuario.getEmail(requireActivity()))
 
         raceManagementViewModel.getRaceModel.observe(viewLifecycleOwner, Observer {
-            if (!it.isNullOrEmpty())
-                raceAdapter.races = it!!
+            if (!it.isNullOrEmpty()) {
+                val currentDate = Date()
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+
+                val races = it.filter { race ->
+                    val raceDate = dateFormat.parse(race.date)
+                    raceDate?.after(currentDate) ?: false
+                }.map { race ->
+                    val convertedDate = convertDateFormat(race.date, -6)
+                    race.copy(date = convertedDate)
+                }
+                raceAdapter.races = races
+            }
         })
 
         raceManagementViewModel.addRaceActionsModel.observe(viewLifecycleOwner, Observer {
@@ -106,10 +121,14 @@ class RacesManagement : Fragment() {
         val userRaceAdapter = UserRaceAdapter { race -> navigateToRaceDone(race) }
         binding.rvCarrerasUser.adapter = userRaceAdapter
 
-        raceManagementViewModel.getRaceByUserModel.observe(viewLifecycleOwner) { races ->
-            Log.d(TAG, "Observando races - datos: $races")
-            userRaceAdapter.races = races ?: listOf()
-            userRaceAdapter.notifyDataSetChanged()
+        raceManagementViewModel.getRaceByUserModel.observe(viewLifecycleOwner) { it ->
+            if (!it.isNullOrEmpty()) {
+                val races = it.map { race ->
+                    val convertedDate = convertDateFormat(race.date, -6)
+                    race.copy(date = convertedDate)
+                }
+                userRaceAdapter.races = races
+            }
         }
 
 
@@ -119,6 +138,20 @@ class RacesManagement : Fragment() {
         return binding.root
 
     }
+
+    private fun convertDateFormat(dateString: String, offsetHours: Int): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+        val date = inputFormat.parse(dateString)
+
+        val outputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        val timeZone = TimeZone.getTimeZone("UTC")
+        timeZone.rawOffset = offsetHours * 3600 * 1000 // Convert offset from hours to milliseconds
+        outputFormat.timeZone = timeZone
+
+        return outputFormat.format(date)
+    }
+
 
     private fun navigateToRaceDone(race: Race) {
         val raceDoneFragment = RaceDone().apply {
