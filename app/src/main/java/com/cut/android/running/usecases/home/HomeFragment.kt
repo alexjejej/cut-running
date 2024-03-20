@@ -2,6 +2,7 @@ package com.cut.android.running.usecases.home
 
 import MapsFragment
 import RacesManagement
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -10,7 +11,10 @@ import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
+import android.Manifest
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.cut.android.running.R
@@ -18,11 +22,11 @@ import com.cut.android.running.usecases.clasificacion.ClasificacionFragment
 import com.cut.android.running.provider.DatosUsuario
 import com.cut.android.running.provider.resources.ManejadorAccionesFallidas
 import com.cut.android.running.usecases.admin.AdminUsers
+import com.cut.android.running.usecases.admin.FinishRace
 import com.cut.android.running.usecases.estadisticas.EstadisticasFragment
 import com.cut.android.running.usecases.logros.LogrosFragment
 import com.cut.android.running.usecases.logros.admin.AdminLogrosFragment
 import com.cut.android.running.usecases.profile.ProfileFragment
-
 
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
@@ -30,9 +34,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private lateinit var viewModel: HomeViewModel
     private lateinit var btnCarrera: Button
     private lateinit var btnLogros: Button
+    private lateinit var btnEventos: Button
     private lateinit var btnClasificacion: Button
     private lateinit var btnAdminLogros: Button
     private lateinit var btnAdminCarreras: Button
+    private lateinit var btnAdminEvento: Button
     private lateinit var btnCarreras: Button
     private lateinit var btnReintentarEstatus : Button
     private lateinit var btnAdminUsuarios: Button
@@ -47,6 +53,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         initializeUI(view)
         setupViewModel()
+        requestPermissions()
     }
 
     private fun initializeUI(view: View) {
@@ -60,8 +67,16 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnEstadisticas = view.findViewById(R.id.btnEstadisticas)
         btnCarreras = view.findViewById(R.id.btnCarreras)
         btnAdminUsuarios = view.findViewById(R.id.btnAdminUsuarios)
+        btnAdminEvento = view.findViewById(R.id.btnAdminEvento)
+        btnEventos = view.findViewById(R.id.btnEventos)
         //Dar clic a los botones
-        btnCarrera.setOnClickListener { navigateToFragment(MapsFragment()) }
+        btnCarrera.setOnClickListener {
+            if (checkPermissions()) {
+                navigateToFragment(MapsFragment())
+            } else {
+                requestPermissions()
+            }
+        }
         btnLogros.setOnClickListener { navigateToFragment(LogrosFragment()) }
         btnClasificacion.setOnClickListener { navigateToFragment(ClasificacionFragment()) }
         btnAdminLogros.setOnClickListener { navigateToFragment(AdminLogrosFragment()) }
@@ -69,8 +84,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnPerfil.setOnClickListener{ navigateToFragment(ProfileFragment()) }
         btnEstadisticas.setOnClickListener{ navigateToFragment(EstadisticasFragment())}
         btnCarreras.setOnClickListener{ navigateToFragment(RacesManagement())}
+        btnAdminEvento.setOnClickListener{navigateToFragment(FinishRace())}
         btnAdminUsuarios.setOnClickListener{ navigateToFragment(AdminUsers())}
-        // Instanciar ManejadorAccionesFallidas
+        btnEventos.setOnClickListener{ navigateToFragment(RacesManagement())}
+        // Instanciar ManejadorAccionesFallidas-
         manejadorAcciones = ManejadorAccionesFallidas(requireContext())
 
         btnReintentarEstatus = view.findViewById(R.id.btnReintentarEstatus)
@@ -105,12 +122,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         // Llama a checkNextRace() para verificar las carreras próximas
         viewModel.checkNextRace()
 
-        viewModel.nextRace.observe(viewLifecycleOwner) { (hasNextRace, daysUntilNextRace, eventTime) ->
+        viewModel.nextRace.observe(viewLifecycleOwner) { (hasNextRace, daysUntilNextRace, eventTime, raceId) ->
             if (hasNextRace) {
                 if (daysUntilNextRace in 0..7) {
                     // Evento próximo dentro de 7 días o es hoy
                     layoutBienvenida.visibility = View.GONE
                     layoutCarrera.visibility = View.VISIBLE
+                    btnAdminEvento.setOnClickListener {
+                        navigateToFragment(FinishRace.newInstance(raceId!!))
+                    }
 
                     txtAvisoFecha.text = when {
                         daysUntilNextRace == 0 && eventTime != null -> {
@@ -193,6 +213,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnAdminCarreras.visibility = if (isAdmin) View.VISIBLE else View.GONE
         btnAdminLogros.visibility = if (isAdmin) View.VISIBLE else View.GONE
         btnAdminUsuarios.visibility = if (isAdmin) View.VISIBLE else View.GONE
+        btnEventos.visibility = if (isAdmin) View.VISIBLE else View.GONE
     }
 
     private fun navigateToFragment(fragment: Fragment) {
@@ -200,6 +221,30 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             .replace(R.id.home_container_fragment, fragment)
             .addToBackStack(null)
             .commit()
+    }
+    private fun checkPermissions(): Boolean {
+        val locationPermission = ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val activityRecognitionPermission = ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED
+
+        return locationPermission && activityRecognitionPermission
+    }
+
+    private fun requestPermissions() {
+        requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACTIVITY_RECOGNITION), LOCATION_PERMISSION_REQUEST_CODE)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            } else {
+                Toast.makeText(requireContext(), "Permiso de ubicación y actividad necesario para esta funcionalidad", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+    companion object {
+        private const val LOCATION_PERMISSION_REQUEST_CODE = 999
+        private const val ACTIVITY_RECOGNITION_REQUEST_CODE = 1000
     }
 
 

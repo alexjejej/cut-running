@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.cut.android.running.models.NextRaceInfo
 import com.cut.android.running.provider.RetrofitInstance
 import com.cut.android.running.provider.services.UserService
 import kotlinx.coroutines.launch
@@ -22,10 +23,9 @@ class HomeViewModel : ViewModel() {
     private val raceService = RetrofitInstance.getRetrofit().create(RaceService::class.java)
 
     //Declarar MutableLiveData
-    private val _nextRace = MutableLiveData<Triple<Boolean, Int, String?>>()
+    private val _nextRace = MutableLiveData<NextRaceInfo>()
+    val nextRace: LiveData<NextRaceInfo> = _nextRace
 
-    //Exponer el MutableLiveData como LiveData inmutable
-    val nextRace: LiveData<Triple<Boolean, Int, String?>> = _nextRace
 
     //LiveData que será observado desde la UI
     private val _usuario = MutableLiveData<String>()
@@ -93,29 +93,34 @@ class HomeViewModel : ViewModel() {
                 val response = raceService.getRaces()
                 if (response.isSuccessful) {
                     val races = response.body()?.data?.filter { race ->
-                        val raceDate = ZonedDateTime.parse(race.date, DateTimeFormatter.ISO_ZONED_DATE_TIME)
-                        val raceDateTimeInLocal = raceDate.withZoneSameInstant(ZoneId.of("America/Mexico_City"))
-                        val now = ZonedDateTime.now(ZoneId.of("America/Mexico_City"))
-                        val daysUntilRace = Duration.between(now.toLocalDate().atStartOfDay(), raceDateTimeInLocal.toLocalDate().atStartOfDay()).toDays()
-                        daysUntilRace >= 0
+                        val raceDateTimeInLocal = parseDate(race.date)
+                        raceDateTimeInLocal?.let {
+                            val now = ZonedDateTime.now(ZoneId.of("America/Mexico_City"))
+                            val daysUntilRace = Duration.between(now.toLocalDate().atStartOfDay(), it.toLocalDate().atStartOfDay()).toDays()
+                            daysUntilRace >= 0
+                        } ?: false
                     }
                     val nearestRace = races?.minByOrNull { race ->
-                        val raceDate = ZonedDateTime.parse(race.date, DateTimeFormatter.ISO_ZONED_DATE_TIME)
-                        val raceDateTimeInLocal = raceDate.withZoneSameInstant(ZoneId.of("America/Mexico_City"))
-                        Duration.between(ZonedDateTime.now(ZoneId.of("America/Mexico_City")), raceDateTimeInLocal).toDays()
+                        parseDate(race.date)?.let {
+                            Duration.between(ZonedDateTime.now(ZoneId.of("America/Mexico_City")), it).toDays()
+                        } ?: Long.MAX_VALUE
                     }
 
-                    if (nearestRace != null) {
-                        val now = ZonedDateTime.now(ZoneId.of("America/Mexico_City"))
-                        val nearestRaceDate = ZonedDateTime.parse(nearestRace.date, DateTimeFormatter.ISO_ZONED_DATE_TIME).withZoneSameInstant(ZoneId.of("America/Mexico_City"))
-                        val daysUntilNearestRace = Duration.between(now.toLocalDate().atStartOfDay(), nearestRaceDate.toLocalDate().atStartOfDay()).toDays().toInt()
+                    if (nearestRace != null && nearestRace.id != null) {
+                        val nearestRaceDate = parseDate(nearestRace.date)
+                        nearestRaceDate?.let {
+                            val now = ZonedDateTime.now(ZoneId.of("America/Mexico_City"))
+                            val daysUntilNearestRace = Duration.between(now.toLocalDate().atStartOfDay(), it.toLocalDate().atStartOfDay()).toDays().toInt()
+                            val eventTime = if (daysUntilNearestRace == 0 && now.toLocalTime().isBefore(it.toLocalTime())) {
+                                it.format(DateTimeFormatter.ofPattern("HH:mm"))
+                            } else {
+                                null
+                            }
 
-                        val isRaceToday = daysUntilNearestRace == 0 && now.toLocalTime().isBefore(nearestRaceDate.toLocalTime())
-                        val eventTime = if (isRaceToday) nearestRaceDate.format(DateTimeFormatter.ofPattern("HH:mm")) else null
-
-                        _nextRace.postValue(Triple(true, daysUntilNearestRace, eventTime))
+                            _nextRace.postValue(NextRaceInfo(true, daysUntilNearestRace, eventTime, nearestRace.id))
+                        } ?: _nextRace.postValue(NextRaceInfo(false, 0, null, null))
                     } else {
-                        _nextRace.postValue(Triple(false, 0, null))
+                        _nextRace.postValue(NextRaceInfo(false, 0, null, null))
                     }
                 } else {
                     Log.d("HomeViewModel", "Error al obtener carreras")
@@ -125,5 +130,29 @@ class HomeViewModel : ViewModel() {
             }
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun parseDate(dateStr: String): ZonedDateTime? {
+        val formatters = listOf(
+            DateTimeFormatter.ISO_ZONED_DATE_TIME,
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        )
+
+        for (formatter in formatters) {
+            try {
+                return if (formatter == DateTimeFormatter.ISO_ZONED_DATE_TIME) {
+                    ZonedDateTime.parse(dateStr, formatter)
+                } else {
+                    LocalDateTime.parse(dateStr, formatter).atZone(ZoneId.of("America/Mexico_City"))
+                }
+            } catch (e: Exception) {
+                // Ignorar y probar con el siguiente formateador
+            }
+        }
+
+        return null
+    }
+
+
 
 }
