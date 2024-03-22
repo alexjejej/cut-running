@@ -38,10 +38,6 @@ class AdminRaceActionsDialog (
             NavigationObj.navigateTo(_fragmentManager, AdminUserByRace.newInstance(_raceId), "AdminUserByRace")
             dialog.cancel()
         }
-        _binding.btnShowRanking.setOnClickListener {
-            Toast.makeText(_context, "btnShowRanking.setOnClickListener", Toast.LENGTH_LONG).show()
-            dialog.cancel()
-        }
         _binding.btnRegister.setOnClickListener {
             _viewModel.verifyRelationship.observeOnce(_lifecycleOwner) {
                 if (it != null && it) {
@@ -57,6 +53,7 @@ class AdminRaceActionsDialog (
                 else {
                     _viewModel.addUserRelation(_email, _raceId)
                 }
+                dialog.cancel()
             }
             _viewModel.verifyUserRaceRelationship(_email, _raceId)
         }
