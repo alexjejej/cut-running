@@ -32,6 +32,7 @@ class RaceManagementViewModel : ViewModel() {
                 val call = RetrofitInstance.getRetrofit().create(RaceService::class.java).getRaces()
                 val result = call.body()
                 if (result != null && result.isSuccess) {
+                    Log.d("RacesManagement",""+result.data)
                     getRaceModel.postValue(result.data)
                 }
                 else getRaceModel.postValue(null)

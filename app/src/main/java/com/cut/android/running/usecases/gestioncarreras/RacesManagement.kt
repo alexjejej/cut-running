@@ -28,7 +28,9 @@ import com.cut.android.running.usecases.gestioncarreras.adminraceactions.AdminRa
 import com.cut.android.running.usecases.gestionuc.UcManagementViewModel
 import com.cut.android.running.usecases.home.HomeViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
 
@@ -67,19 +69,30 @@ class RacesManagement : Fragment() {
 
         raceManagementViewModel.getRaceModel.observe(viewLifecycleOwner, Observer {
             if (!it.isNullOrEmpty()) {
-                val currentDate = Date()
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-                dateFormat.timeZone = TimeZone.getTimeZone("UTC")
+                val currentDate = Calendar.getInstance().apply {
+                    set(Calendar.HOUR_OF_DAY, 0)
+                    set(Calendar.MINUTE, 0)
+                    set(Calendar.SECOND, 0)
+                    set(Calendar.MILLISECOND, 0)
+                }.time
 
                 val races = it.filter { race ->
-                    val raceDate = dateFormat.parse(race.date)
-                    raceDate?.after(currentDate) ?: false
+                    val raceDate = parseDate(race.date) // Convertir el String a Date utilizando parseDate
+                    raceDate?.let {
+                        val raceCalendar = Calendar.getInstance().apply { time = it }
+
+                        raceCalendar.time.after(currentDate) || isSameDay(raceCalendar.time, currentDate)
+                    } ?: false
                 }.map { race ->
-                    val convertedDate = convertDateFormat(race.date, -6)
+                    val convertedDate = convertDateFormat(race.date, 0) // Supongo que esto convierte la fecha a otro formato
                     race.copy(date = convertedDate)
                 }
+
                 raceAdapter.races = races
             }
+
+
+
         })
 
         raceManagementViewModel.addRaceActionsModel.observe(viewLifecycleOwner, Observer {
@@ -124,7 +137,7 @@ class RacesManagement : Fragment() {
         raceManagementViewModel.getRaceByUserModel.observe(viewLifecycleOwner) { it ->
             if (!it.isNullOrEmpty()) {
                 val races = it.map { race ->
-                    val convertedDate = convertDateFormat(race.date, -6)
+                    val convertedDate = convertDateFormat(race.date, 0)
                     race.copy(date = convertedDate)
                 }
                 userRaceAdapter.races = races
@@ -139,18 +152,57 @@ class RacesManagement : Fragment() {
 
     }
 
-    private fun convertDateFormat(dateString: String, offsetHours: Int): String {
-        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-        inputFormat.timeZone = TimeZone.getTimeZone("UTC")
-        val date = inputFormat.parse(dateString)
-
-        val outputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        val timeZone = TimeZone.getTimeZone("UTC")
-        timeZone.rawOffset = offsetHours * 3600 * 1000 // Convert offset from hours to milliseconds
-        outputFormat.timeZone = timeZone
-
-        return outputFormat.format(date)
+    fun isSameDay(date1: Date, date2: Date): Boolean {
+        val cal1 = Calendar.getInstance().apply { time = date1 }
+        val cal2 = Calendar.getInstance().apply { time = date2 }
+        return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
     }
+
+    fun parseDate(dateString: String): Date? {
+        val dateFormat1 = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        dateFormat1.timeZone = TimeZone.getTimeZone("America/Mexico_City")
+
+        val dateFormat2 = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        dateFormat2.timeZone = TimeZone.getTimeZone("America/Mexico_City")
+
+        return try {
+            dateFormat1.parse(dateString)
+        } catch (e1: ParseException) {
+            try {
+                dateFormat2.parse(dateString)
+            } catch (e2: ParseException) {
+                null
+            }
+        }
+    }
+    private fun convertDateFormat(dateString: String, offsetHours: Int): String {
+        val inputFormats = arrayOf(
+            SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"),
+            SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        )
+
+        val timeZone = TimeZone.getTimeZone("America/Mexico_City")
+        timeZone.rawOffset = offsetHours * 3600 * 1000 // Convert offset from hours to milliseconds
+
+        for (format in inputFormats) {
+            try {
+                format.timeZone = timeZone
+                val date = format.parse(dateString)
+                if (date != null) {
+                    val outputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                    outputFormat.timeZone = timeZone
+                    return outputFormat.format(date)
+                }
+            } catch (e: ParseException) {
+                // Intenta el siguiente formato si la conversión falla
+            }
+        }
+
+        // Si no se pudo convertir con ninguno de los formatos, devuelve la cadena original
+        return dateString
+    }
+
 
 
     private fun navigateToRaceDone(race: Race) {

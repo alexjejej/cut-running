@@ -97,17 +97,7 @@ class UserInfoUpdateFragment : Fragment() {
             editText.filters = currentFilters.toTypedArray()
         }
 
-        //Menú configuración avanzada
-        val tvConfigAvanzadas = view.findViewById<TextView>(R.id.tvConfigAvanzadas)
-        val llConfigAvanzadas = view.findViewById<LinearLayout>(R.id.llConfigAvanzadas)
 
-        tvConfigAvanzadas.setOnClickListener {
-            if (llConfigAvanzadas.visibility == View.GONE) {
-                llConfigAvanzadas.visibility = View.VISIBLE
-            } else {
-                llConfigAvanzadas.visibility = View.GONE
-            }
-        }
     }
 
 

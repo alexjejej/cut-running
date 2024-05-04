@@ -23,19 +23,19 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:fontFamily="@font/kodemono_medium"
-            android:text="Información disponible a editar"
+            android:text="Información general"
             android:textSize="20sp" />
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="10"/>
+            android:layout_weight="12"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/codigoTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="9">
+            android:layout_weight="7">
 
             <EditText
                 android:id="@+id/codigoEditTextUpdate"
@@ -47,11 +47,50 @@
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <Spinner
+            android:id="@+id/SpecialityIDSpinnerUpdate"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="15"
+            android:fontFamily="@font/kodemono_medium"
+            android:prompt="@string/Speciality_ID_prompt" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"/>
+
+        <!-- View con linea divisora -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".5"
+            android:background="@drawable/gradient_line" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="10"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:fontFamily="@font/kodemono_medium"
+            android:text="Información salud"
+            android:textSize="20sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="12"/>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/edadTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="9">
+            android:layout_weight="7">
 
             <EditText
                 android:id="@+id/edadEditTextUpdate"
@@ -66,7 +105,7 @@
             android:id="@+id/estaturaTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="9">
+            android:layout_weight="7">
 
             <EditText
                 android:id="@+id/estaturaEditTextUpdate"
@@ -81,7 +120,7 @@
             android:id="@+id/pesoTextInputLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="9">
+            android:layout_weight="7">
 
             <EditText
                 android:id="@+id/pesoEditTextUpdate"
@@ -92,62 +131,21 @@
                 android:inputType="number" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Spinner
-            android:id="@+id/SpecialityIDSpinnerUpdate"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/distanciaPromedioPorPasoTextInputLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="10"
-            android:fontFamily="@font/kodemono_medium"
-            android:prompt="@string/Speciality_ID_prompt" />
+            android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:orientation="vertical"
-            android:layout_weight="32">
-
-            <!-- Configuraciones Avanzadas -->
-            <TextView
-                android:id="@+id/tvConfigAvanzadas"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/distanciaPromedioPorPasoEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Configuraciones Avanzadas"
-                android:textSize="18sp"
-                android:gravity="center"
-                android:clickable="true"
-                android:focusable="true"
-                android:textStyle="bold"
-                android:paddingTop="16dp"
-                android:paddingBottom="8dp"
                 android:fontFamily="@font/kodemono_medium"
-                android:background="?attr/selectableItemBackground" />
+                android:hint="Distancia promedio por paso (cm)"
+                android:inputType="numberDecimal"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Contenedor de Configuración Avanzada (Inicialmente Oculto) -->
-            <LinearLayout
-                android:id="@+id/llConfigAvanzadas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/distanciaPromedioPorPasoTextInputLayout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/distanciaPromedioPorPasoEditText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/kodemono_medium"
-                        android:hint="Distancia promedio por paso (cm)"
-                        android:inputType="numberDecimal"/>
-                </com.google.android.material.textfield.TextInputLayout>
-
-            </LinearLayout>
-
-        </LinearLayout>
 
         <TextView
             android:id="@+id/txtEstatusUpdate"
@@ -163,7 +161,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="10"
+            android:layout_weight="12"
             android:weightSum="5"
             android:orientation="horizontal">
 

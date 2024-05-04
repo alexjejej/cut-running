@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:weightSum="100"
-    tools:context="com.cut.android.running.usecases.profile.ProfileFragment">
+    android:fillViewport="true">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="118"
+        tools:context="com.cut.android.running.usecases.profile.ProfileFragment">
 
     <!-- Vista de los primeros 2 layouts, foto y pasos (33%) -->
     <RelativeLayout
@@ -159,15 +163,15 @@
             android:paddingStart="20dp"
             android:fontFamily="@font/kodemono_medium"
             android:paddingEnd="20dp"
-            android:text="Información" />
+            android:text="Información general" />
 
     </LinearLayout>
-    <!-- Layout contenedor de informacion (40%) -->
+    <!-- Layout contenedor de informacion (35%) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:layout_weight="40"
+        android:layout_weight="30"
         android:weightSum="40"
         android:background="@color/backgroundgris"
 
@@ -177,7 +181,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:orientation="horizontal"
-            android:layout_weight="7"
+            android:layout_weight="5"
             android:background="@color/backgroundgris"
 
             >
@@ -207,21 +211,9 @@
                 android:text="Nombre: Alejandro Garcia"
                 />
 
-            <TextView
-                android:id="@+id/txtEdadUsuarioProfile"
-                style="@style/EstiloTextViewsProfile"
-                android:text="Edad: 23 años"
-                />
-            <TextView
-                android:id="@+id/txtEstaturaUsuarioProfile"
-                style="@style/EstiloTextViewsProfile"
-                android:text="Estatura: 175 cm"
-                />
-            <TextView
-                android:id="@+id/txtPesoUsuarioProfile"
-                style="@style/EstiloTextViewsProfile"
-                android:text="Peso: 65kg"
-                />
+
+
+
             <TextView
                 android:id="@+id/txtCorreoUsuarioProfile"
                 style="@style/EstiloTextViewsProfile"
@@ -234,17 +226,98 @@
                 android:text="Carrera: Ingenieria en Ciencias Computacionales"
                 />
 
-            <TextView
-                android:id="@+id/txtDistanciaxPasoUsuarioProfile"
-                style="@style/EstiloTextViewsProfile"
-                android:text="Distancia por paso: Predeterminado"
-                />
 
 
         </LinearLayout>
 
     </LinearLayout>
 
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"></View>
+
+        <!-- Layout banner info (2%) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="vertical"
+            android:layout_weight="3"
+            >
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:textSize="15sp"
+                android:background="@color/backgroundgris"
+                android:paddingStart="20dp"
+                android:fontFamily="@font/kodemono_medium"
+                android:paddingEnd="20dp"
+                android:text="Información salud" />
+
+        </LinearLayout>
+        <!-- Layout contenedor de informacion (20%) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:orientation="horizontal"
+            android:layout_weight="25"
+            android:weightSum="40"
+            android:background="@color/backgroundgris"
+
+            >
+            <!-- Layout - Seperación lado lizquierdo info -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight="5"
+                android:background="@color/backgroundgris"
+                >
+
+            </LinearLayout>
+
+            <!-- Layout vertical con información -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight="33"
+                android:background="@color/backgroundgris"
+
+                >
+                <TextView
+                    android:id="@+id/txtEdadUsuarioProfile"
+                    style="@style/EstiloTextViewsProfile"
+                    android:text="Edad: 23 años"
+                    />
+
+                <TextView
+                    android:id="@+id/txtEstaturaUsuarioProfile"
+                    style="@style/EstiloTextViewsProfile"
+                    android:text="Estatura: 175 cm"
+                    />
+                <TextView
+                    android:id="@+id/txtPesoUsuarioProfile"
+                    style="@style/EstiloTextViewsProfile"
+                    android:text="Peso: 65kg"
+                    />
+
+                <TextView
+                    android:id="@+id/txtDistanciaxPasoUsuarioProfile"
+                    style="@style/EstiloTextViewsProfile"
+                    android:text="Distancia por paso: Predeterminado"
+                    />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
     <!-- Layout imagebutton (10%)-->
     <LinearLayout
         android:layout_width="match_parent"
@@ -274,5 +347,6 @@
     </LinearLayout>
 
 
+    </LinearLayout>
 
-</LinearLayout>
+</ScrollView>

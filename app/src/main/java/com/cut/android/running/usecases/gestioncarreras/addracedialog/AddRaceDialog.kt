@@ -61,7 +61,7 @@ class AddRaceDialog constructor(
                  _raceManagementViewModel.addRace(
                     RaceDto(0,
                         _binding.txtRaceName.text.toString(),
-                        "${raceDate}T${raceHour}.00Z",
+                        "${raceDate}T${(raceHour)}.00Z",
                         _binding.txtRaceDescription.text.toString(),
                         ucIdSelected,
                         1,
@@ -87,13 +87,13 @@ class AddRaceDialog constructor(
         /**
          * Add button behavior
          */
-        materialDatePicker.addOnPositiveButtonClickListener {
-            val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
-            calendar.time = Date(it)
+        materialDatePicker.addOnPositiveButtonClickListener { selectedDate ->
+            val calendar: Calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Mexico_City"))
+            calendar.time = Date(selectedDate)
             val year = calendar.get(Calendar.YEAR).toString()
-            val mont = if (calendar.get(Calendar.MONTH).toString().length > 1) (calendar.get(Calendar.MONTH)+1).toString() else "0${(calendar.get(Calendar.MONTH)+1).toString()}"
-            val day = if (calendar.get(Calendar.DAY_OF_MONTH).toString().length > 1) calendar.get(Calendar.DAY_OF_MONTH).toString() else "0${calendar.get(Calendar.DAY_OF_MONTH).toString()}"
-            raceDate = "${year}-${mont}-${day}"
+            val month = (calendar.get(Calendar.MONTH) + 1).toString() // Suma 1 al índice del mes
+            val day = (calendar.get(Calendar.DAY_OF_MONTH) + 1).toString()
+            raceDate = "$year-${month.padStart(2, '0')}-${day.padStart(2, '0')}"
             _binding.btnRaceDate.text = materialDatePicker.headerText
         }
         return materialDatePicker
@@ -116,8 +116,11 @@ class AddRaceDialog constructor(
         materialTimePicker.addOnPositiveButtonClickListener {
             val hour = if (materialTimePicker.hour in 0..9) "0${materialTimePicker.hour}" else materialTimePicker.hour
             val minute = if (materialTimePicker.minute in 0..9) "0${materialTimePicker.minute}" else materialTimePicker.minute
-            raceHour = "${hour}:${minute}:00"
-            _binding.btnRaceHour.text = raceHour
+            //Agregar 1 hora por las diferencias existentes
+            val modifiedHour = materialTimePicker.hour + 1
+            raceHour = "${modifiedHour}:${minute}:00"
+            val raceHourUnmodified = "${hour}:${minute}:00"
+            _binding.btnRaceHour.text = raceHourUnmodified
         }
         return materialTimePicker
     }

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CutRunning</string>
+    <string name="app_name">CUTRunning</string>
 
     <!-- AuthActivity -->
     <string name="txt_email_hint">Correo</string>
