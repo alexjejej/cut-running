@@ -149,7 +149,7 @@
         <Button
             android:id="@+id/ButtonHomeEstadisticas"
             android:layout_width="200dp"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             android:drawableLeft="@drawable/baseline_edit_note_24"
             android:background="#FFFFFF"
             android:padding="10dp"

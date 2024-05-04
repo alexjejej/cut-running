@@ -113,7 +113,7 @@ class AdminLogrosFragment_add : Fragment() {
             if (response.isSuccessful && response.body()?.data == true) {
                 // Éxito al agregar el logro
                 activity?.runOnUiThread {
-                    AlertDialog.Builder(requireContext())
+                    AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
                         .setTitle("Éxito")
                         .setMessage("El logro \"$nombreLogro\" se agregó con éxito.")
                         .setPositiveButton("Ver logros") { dialog, which ->

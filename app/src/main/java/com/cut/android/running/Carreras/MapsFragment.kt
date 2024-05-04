@@ -243,7 +243,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
                 stopTrackingAndLaunchActivity(FinEvento::class.java)
             } else {
                 withContext(Dispatchers.Main) {
-                    AlertDialog.Builder(requireContext())
+                    AlertDialog.Builder(requireContext(), R.style.AlertDialogCustom)
                         .setTitle("Alerta")
                         .setMessage("Aún no puedes terminar la carrera")
                         .setPositiveButton("OK") { dialog, which ->

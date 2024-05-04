@@ -102,6 +102,8 @@ class HomeViewModel : ViewModel() {
                     }
                     val nearestRace = races?.minByOrNull { race ->
                         parseDate(race.date)?.let {
+                            Log.d("HomeViewModel","$it")
+
                             Duration.between(ZonedDateTime.now(ZoneId.of("America/Mexico_City")), it).toDays()
                         } ?: Long.MAX_VALUE
                     }
@@ -109,6 +111,7 @@ class HomeViewModel : ViewModel() {
                     if (nearestRace != null && nearestRace.id != null) {
                         val nearestRaceDate = parseDate(nearestRace.date)
                         nearestRaceDate?.let {
+                            Log.d("HomeViewModel","$it")
                             val now = ZonedDateTime.now(ZoneId.of("America/Mexico_City"))
                             val daysUntilNearestRace = Duration.between(now.toLocalDate().atStartOfDay(), it.toLocalDate().atStartOfDay()).toDays().toInt()
                             val eventTime = if (daysUntilNearestRace == 0 && now.toLocalTime().isBefore(it.toLocalTime())) {

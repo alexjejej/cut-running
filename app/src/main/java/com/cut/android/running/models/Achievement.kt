@@ -7,6 +7,6 @@ data class Achievement(
     var progreso:String?=null,
     var steps:Int,
     var photo:String?=null,
-    val enabled: Int?=null,
+    var enabled: Int?=null,
     val updateDate: String?=null
 )

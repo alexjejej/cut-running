@@ -1,3 +1,4 @@
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,8 +32,14 @@ class LogrosAdapter_delete(private var logros: List<Achievement>, private val on
         holder.logroDescripcion.text = logro.description
         var pasos = logro.steps
         holder.logroProgreso.text = "Pasos para obtener el logro: $pasos"
-        var id = logro.id.toString()
-        holder.logroStatus.text = "Id del logro: $id"
+        if (logro.enabled == 1){
+            holder.logroStatus.text = "Estado: ACTIVADO"
+            holder.itemView.setBackgroundColor(Color.TRANSPARENT)
+        }else{
+            holder.logroStatus.text = "Estado: DESACTIVADO"
+            holder.itemView.setBackgroundColor(Color.parseColor("#FFCCCC"))
+        }
+
         Glide.with(holder.itemView.context)
             .load(logro.photo)
             .into(holder.logroPhoto)

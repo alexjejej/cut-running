@@ -26,6 +26,7 @@
             android:layout_height="50dp"
             android:fontFamily="@font/kodemono_medium"
             android:text="@string/add"
+            android:visibility="gone"
             android:layout_marginRight="2dp"
             android:layout_marginLeft="2dp"
             android:layout_marginTop="2dp"

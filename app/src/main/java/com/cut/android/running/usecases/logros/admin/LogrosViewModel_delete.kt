@@ -43,4 +43,12 @@ class LogrosViewModel_delete : ViewModel() {
             callback(response.isSuccessful && response.body()?.data == true)
         }
     }
+
+    fun desactivarLogro(logro: Achievement, callback: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val response = achievementService.updateAchievement(logro)
+            callback(response.isSuccessful && response.body()?.data == true)
+        }
+    }
+
 }

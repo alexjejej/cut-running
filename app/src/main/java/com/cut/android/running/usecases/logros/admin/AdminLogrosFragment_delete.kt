@@ -13,7 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cut.android.running.R
-
+import com.cut.android.running.models.Achievement
 
 
 class AdminLogrosFragment_delete : Fragment() {
@@ -43,34 +43,38 @@ class AdminLogrosFragment_delete : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         viewModel.obtenerLogros { logros ->
-            val adapter = LogrosAdapter_delete(logros) { logro ->
-                logro.id?.let { mostrarDialogoConfirmacion(logro.id, logro.name) }
+            val adapter = LogrosAdapter_delete(logros) { logroSeleccionado ->
+                mostrarDialogoConfirmacion(logroSeleccionado)
             }
             recyclerView.adapter = adapter
         }
+
     }
 
 
-    private fun mostrarDialogoConfirmacion(logroId: Int, logroName: String) {
-        AlertDialog.Builder(context)
+    private fun mostrarDialogoConfirmacion(logro: Achievement) {
+        AlertDialog.Builder(context, R.style.AlertDialogCustom)
             .setTitle("Confirmación")
-            .setMessage("¿Estás seguro de que quieres eliminar el logro '$logroName'?")
-            .setPositiveButton("Eliminar") { dialog, which ->
-                viewModel.eliminarLogro(logroId) { exitoso ->
+            .setMessage("¿Estás seguro de que quieres desactivar el logro '${logro.name}'?")
+            .setPositiveButton("Desactivar") { dialog, which ->
+                // Ajusta el logro para desactivarlo
+                logro.enabled = 0
+                viewModel.desactivarLogro(logro) { exitoso ->
                     if (exitoso) {
-                        Toast.makeText(context, "Logro eliminado con éxito", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Logro desactivado con éxito", Toast.LENGTH_SHORT).show()
                         // Actualiza la lista de logros y el adaptador del RecyclerView
                         viewModel.obtenerLogros { logros ->
                             (recyclerView.adapter as? LogrosAdapter_delete)?.updateLogros(logros)
                         }
                     } else {
-                        Toast.makeText(context, "Error al eliminar el logro", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Error al desactivar el logro", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
             .setNegativeButton("Cancelar", null)
             .show()
     }
+
 
     private fun navigateToFragment(fragment: Fragment) {
         val transaction = parentFragmentManager.beginTransaction()

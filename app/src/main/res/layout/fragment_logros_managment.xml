@@ -19,6 +19,7 @@
         <com.google.android.material.textview.MaterialTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/txtTituloGrande"
             android:text="Seleccione la opción deseada"
             android:padding="15dp"
             android:layout_marginTop="50dp"
@@ -29,34 +30,46 @@
             android:layout_gravity="center"
             />
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="50dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAgregarLogro"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:layout_gravity="center"
             android:text="Agregar Logro"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
+            style="@style/EstiloBotonHome"/>
 
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="30dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEliminarLogro"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:layout_gravity="center"
-            android:text="Eliminar Logro"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
+            android:text="Activar/desactivar Logro"
+
+            style="@style/EstiloBotonHome"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="30dp"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEditarLogro"
-            android:layout_width="150dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:layout_gravity="center"
             android:text="Editar Logro"
-            style="@style/Widget.MaterialComponents.Button.UnelevatedButton"/>
+            style="@style/EstiloBotonHome"
+            />
 
 
 

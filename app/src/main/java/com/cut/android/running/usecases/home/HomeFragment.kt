@@ -123,6 +123,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewModel.checkNextRace()
 
         viewModel.nextRace.observe(viewLifecycleOwner) { (hasNextRace, daysUntilNextRace, eventTime, raceId) ->
+            Log.d("HomeFragment","$eventTime")
+
             if (hasNextRace) {
                 if (daysUntilNextRace in 0..7) {
                     // Evento próximo dentro de 7 días o es hoy
@@ -214,6 +216,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         btnAdminLogros.visibility = if (isAdmin) View.VISIBLE else View.GONE
         btnAdminUsuarios.visibility = if (isAdmin) View.VISIBLE else View.GONE
         btnEventos.visibility = if (isAdmin) View.VISIBLE else View.GONE
+        btnAdminEvento.visibility = if (isAdmin) View.VISIBLE else View.GONE
     }
 
     private fun navigateToFragment(fragment: Fragment) {

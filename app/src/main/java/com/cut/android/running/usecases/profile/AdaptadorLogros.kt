@@ -33,7 +33,7 @@ class AdaptadorLogros(private val logros: List<Achievement>) : RecyclerView.Adap
         try {
             // Formato original de la fecha
             val formatoOriginal = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-            formatoOriginal.timeZone = TimeZone.getTimeZone("UTC") // Asegúrate de usar la zona horaria correcta
+            formatoOriginal.timeZone = TimeZone.getTimeZone("America/Mexico_City") // Asegúrate de usar la zona horaria correcta
 
             // Formato deseado
             val formatoDeseado = SimpleDateFormat("yyyy/MM/dd", Locale.getDefault())

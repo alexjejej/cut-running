@@ -15,6 +15,7 @@
         android:layout_height="0dp"
         android:layout_weight="3"
         android:orientation="vertical"
+        android:visibility="gone"
         >
         <!-- TextView "Bienvenido" en la parte superior -->
         <TextView
@@ -46,7 +47,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
-        android:visibility="gone"
+        android:weightSum="5"
+        android:visibility="visible"
         android:orientation="vertical"
         android:background="#A6F3FF78"
         >
@@ -56,7 +58,7 @@
             android:layout_height="wrap_content"
             android:text="Importante"
             android:fontFamily="@font/kodemono_medium"
-            android:textSize="30sp"
+            android:textSize="25sp"
             android:paddingBottom="8dp"
             android:drawableLeft="@drawable/icon_important_announcement"
             android:drawableRight="@drawable/icon_important_announcement"
@@ -69,19 +71,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:textSize="18sp"
+            android:text="La carrera es hoy a las 22:00. Para registrarte, da click en el siguiente boton"
             android:fontFamily="@font/kodemono_medium"
             style="@style/txtSubtitulo"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:weightSum="10"
             android:orientation="horizontal"
             android:layout_gravity="center"
             >
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="10"
                 android:id="@+id/btnCarreras"
                 android:fontFamily="@font/kodemono_medium"
                 android:layout_margin="5dp"
@@ -127,10 +133,9 @@
         <Button
             android:id="@+id/btnCarrera"
             android:layout_width="140dp"
-            android:layout_height="0dp"
-            android:layout_weight="1.5"
+            android:layout_height="wrap_content"
             android:text="Contar pasos"
-            android:textSize="12sp"
+            android:textSize="12dp"
             android:layout_margin="10dp"
             android:fontFamily="@font/kodemono_medium"
             android:drawableLeft="@drawable/icon_run_24"
@@ -308,7 +313,7 @@
             android:layout_weight="1"
             android:text="Logros"
             android:backgroundTint="#B7950B"
-            android:visibility="visible"
+            android:visibility="gone"
             android:textColor="#FFFFFF"
             android:layout_margin="2sp"
             android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
@@ -325,7 +330,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="#FFFFFF"
-            android:visibility="visible"
+            android:visibility="gone"
             android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
             android:text="Carreras"
             android:layout_margin="2sp"
@@ -342,10 +347,9 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textColor="#FFFFFF"
-            android:visibility="visible"
+            android:visibility="gone"
             android:drawableLeft="@drawable/baseline_admin_panel_settings_24"
             android:text="Usuarios"
-            android:layout_margin="2sp"
             app:autoSizeTextType="uniform"
             app:autoSizeMinTextSize="8sp"
             app:autoSizeMaxTextSize="12sp"
