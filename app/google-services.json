@@ -1,0 +1,109 @@
+{
+  "project_info": {
+    "project_number": "985836807268",
+    "firebase_url": "https://cutrunning-e9f7f-default-rtdb.firebaseio.com",
+    "project_id": "cutrunning-e9f7f",
+    "storage_bucket": "cutrunning-e9f7f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985836807268:android:8d245239929cd5c6c9ab71",
+        "android_client_info": {
+          "package_name": "com.cut.android.running"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "985836807268-1lf0dekpq50lhgbpmomam34o744j3kt7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cut.android.running",
+            "certificate_hash": "0b4b568977dce6300b74dc2f14ac8c2d8fee4d8c"
+          }
+        },
+        {
+          "client_id": "985836807268-ogmt5098u43kupehrpois60d3v26k0fl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cut.android.running",
+            "certificate_hash": "342c717560ac2414e9c95f2655287066522a726f"
+          }
+        },
+        {
+          "client_id": "985836807268-84hu6fa3jve455ightig3e5i10acp5bo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDO4qRujtl-RWcy0PhyjwErUXAm-Pn0-2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "985836807268-84hu6fa3jve455ightig3e5i10acp5bo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:985836807268:android:1510842e0fd04e74c9ab71",
+        "android_client_info": {
+          "package_name": "com.raywenderlich.android.runtracking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "985836807268-45fqfibtvnegprsdef1qakskndr9vq2u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.raywenderlich.android.runtracking",
+            "certificate_hash": "ad8d1fc17d4b179d95a65e2ec05d05775f985d26"
+          }
+        },
+        {
+          "client_id": "985836807268-h8ifmiqehk87eif65g2ku07f7knd4140.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.raywenderlich.android.runtracking",
+            "certificate_hash": "342c717560ac2414e9c95f2655287066522a726f"
+          }
+        },
+        {
+          "client_id": "985836807268-pvcbimkq13hn7rmt3urc0obu8oju10ik.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.raywenderlich.android.runtracking",
+            "certificate_hash": "0b4b568977dce6300b74dc2f14ac8c2d8fee4d8c"
+          }
+        },
+        {
+          "client_id": "985836807268-84hu6fa3jve455ightig3e5i10acp5bo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDO4qRujtl-RWcy0PhyjwErUXAm-Pn0-2w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "985836807268-84hu6fa3jve455ightig3e5i10acp5bo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
