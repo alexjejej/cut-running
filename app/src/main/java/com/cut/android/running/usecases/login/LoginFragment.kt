@@ -21,6 +21,7 @@ import androidx.fragment.app.commit
 import androidx.lifecycle.lifecycleScope
 import com.cut.android.running.R
 import com.cut.android.running.R.animator
+import com.cut.android.running.common.EmailDomainValidation
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
@@ -182,7 +183,8 @@ class LoginFragment : Fragment() {
         layout = binding.authLayout
 
         binding.btnGoogleSignIn.setOnClickListener {
-            verificarConexionAPI()
+//            verificarConexionAPI()
+            lanzarInicioDeSesion()
         }
 
     }
@@ -346,15 +348,25 @@ class LoginFragment : Fragment() {
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     // Sign in success, update UI with the signed-in user's information
-                                    saveSharedPreferences(auth.currentUser) {
-                                        // Lógica a ejecutar después de completar ConsultarBD, por ejemplo:
-
-                                        showFragment(
-                                            NavBarFragment(),
-                                            getString(R.string.NavBarFragment)
-                                        )
+                                    if (EmailDomainValidation.domainValidation(auth.currentUser?.email!!)) {
+                                        saveSharedPreferences(auth.currentUser) {
+                                            // Lógica a ejecutar después de completar ConsultarBD, por ejemplo:
+                                            showFragment(
+                                                NavBarFragment(),
+                                                getString(R.string.NavBarFragment)
+                                            )
+                                        }
+                                        Log.d("FirebaseAuth", "Got ID token.")
                                     }
-                                    Log.d("FirebaseAuth", "Got ID token.")
+                                    else {
+                                        val builder = AlertDialog.Builder(requireContext())
+                                        builder.setTitle(getString(R.string.email_validation_title))
+                                        builder.setMessage(getString(R.string.email_validation_message))
+                                        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
+                                            dialog.dismiss()
+                                        }
+                                        builder.show()
+                                    }
                                 } else {
                                     Log.w("FirebaseAuth", "${task.exception.toString()}")
                                 }

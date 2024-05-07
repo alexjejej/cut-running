@@ -91,4 +91,8 @@
     ]]>
     </string>
 
+    <string name="email_validation_title">Registro no permitido</string>
+    <string name="email_validation_message">Solo se permite el registro a los usuarios que cuenten con alguno de los correos institucionales proporcionados por la universidad</string>
+    <string name="ok">Ok</string>
+
 </resources>
