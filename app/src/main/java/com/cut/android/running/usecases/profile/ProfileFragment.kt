@@ -116,9 +116,27 @@ class ProfileFragment : Fragment() {
         val txtcarrera = view.findViewById<TextView>(R.id.txtCarreraUsuarioProfile)
         val specialityID = bd.getIntData(email, BDsqlite.COLUMN_SPECIALITYID)
         txtcarrera.text = when (specialityID) {
-            1 -> "Carrera: Ingeniería en Ciencias Computacionales"
-            2 -> "Carrera: Ingenieria en Nanotecnología"
-            else -> "Carrera: Sin datos"
+            1 -> "Carrera/cargo: Administración de Negocios"
+            2 -> "Carrera/cargo: Arquitectura"
+            3 -> "Carrera/cargo: Ciencias Computacionales"
+            4 -> "Carrera/cargo: Ciencias Forenses"
+            5 -> "Carrera/cargo: Contaduría Pública"
+            6 -> "Carrera/cargo: Derecho / Abogado"
+            7 -> "Carrera/cargo: Diseño de Artesanía"
+            8 -> "Carrera/cargo: Egresado"
+            9 -> "Carrera/cargo: Energía"
+            10 -> "Carrera/cargo: Enfermería"
+            11 -> "Carrera/cargo: Estudios Liberales"
+            12 -> "Carrera/cargo: Gerontología"
+            13 -> "Carrera/cargo: Historia del Arte"
+            14 -> "Carrera/cargo: Médico Cirujano y Partero"
+            15 -> "Carrera/cargo: Nanotecnología"
+            16 -> "Carrera/cargo: Nutrición"
+            17 -> "Carrera/cargo: Salud Pública"
+            18 -> "Carrera/cargo: Académico o Administrativo de CUT"
+            19 -> "Carrera/cargo: Estudiante de Posgrado"
+            20 -> "Carrera/cargo: Otros"
+            else -> "Carrera/cargo: Sin datos"
         }
 
         //DistanciaPorPaso
