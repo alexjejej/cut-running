@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="centros_universitarios_array">
-        <item>Seleccionar carrera..</item>
-        <item>Ingeniería en Ciencias Computacionales</item>
-        <item>Ingeniería en Nanotecnología</item>
+        <item>Seleccionar carrera/cargo..</item>
+        <item>Administración de Negocios</item>
+        <item>Arquitectura</item>
+        <item>Ciencias Computacionales</item>
+        <item>Ciencias Forenses</item>
+        <item>Contaduría Pública</item>
+        <item>Derecho / Abogado</item>
+        <item>Diseño de Artesanía</item>
+        <item>Egresado</item>
+        <item>Energía</item>
+        <item>Enfermería</item>
+        <item>Estudios Liberales</item>
+        <item>Gerontología</item>
+        <item>Historia del Arte</item>
+        <item>Médico Cirujano y Partero</item>
+        <item>Nanotecnología</item>
+        <item>Nutrición</item>
+        <item>Salud Pública</item>
+        <item>Académico o Administrativo de CUT</item>
+        <item>Estudiante de Posgrado</item>
+        <item>Otros</item>
     </string-array>
 </resources>
+

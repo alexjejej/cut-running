@@ -78,7 +78,7 @@
             android:gravity="center"
             android:layout_gravity="center"
             android:fontFamily="@font/kodemono_medium"
-            android:text="Información salud"
+            android:text="Ficha salud"
             android:textSize="20sp" />
 
         <View
