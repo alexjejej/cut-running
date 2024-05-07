@@ -30,6 +30,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.cut.android.running.Carreras.FinCarrera
 import com.cut.android.running.Carreras.FinEvento
+import com.cut.android.running.Carreras.TimeUpdateListener
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
@@ -43,7 +44,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.ZonedDateTime
 
-class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
+class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener, TimeUpdateListener {
 
     private lateinit var map: GoogleMap
     private var isTracking = false
@@ -77,38 +78,42 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     }
 
     // Inflates the layout for this fragment
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_maps, container, false)
-    }
+        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+            return inflater.inflate(R.layout.fragment_maps, container, false)
+        }
 
-    // Initializes components and sets up observers and event listeners
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this).get(MapsViewModel::class.java)
+        // Initializes components and sets up observers and event listeners
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+            super.onViewCreated(view, savedInstanceState)
+            viewModel = ViewModelProvider(this).get(MapsViewModel::class.java)
 
-        //Sensores
-        sensorManager = activity?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
+            //Sensores
+            sensorManager = activity?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+            stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR)
 
-        setupObservers()
-        setupMapFragment()
-        setupButtons(view)
-        checkNotificationArgument()
+            setupObservers()
+            setupMapFragment()
+            setupButtons(view)
+            checkNotificationArgument()
+            viewModel.setTimeUpdateListener(this)
 
-        // cargar txt de estado
-        txtEstatusMaps = view.findViewById(R.id.txtEstatusMaps)
-    }
+            // cargar txt de estado
+            txtEstatusMaps = view.findViewById(R.id.txtEstatusMaps)
+        }
+        override fun updateTime(time: String) {
+            requireView().findViewById<TextView>(R.id.tvTiempo).text = time
+        }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun setupObservers() {
-        observeNextRaceDateTime()
-        observeTotalDistance()
-        observeTotalSteps()
-        observeTimeElapsed()
-        observeToastEvent()
-        observeButtonEnabled()
-    }
+        @RequiresApi(Build.VERSION_CODES.O)
+        private fun setupObservers() {
+            observeNextRaceDateTime()
+            observeTotalDistance()
+            observeTotalSteps()
+            observeTimeElapsed()
+            observeToastEvent()
+            observeButtonEnabled()
+        }
 
     private fun setupMapFragment() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment?
@@ -451,7 +456,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
             override fun onLocationResult(locationResult: LocationResult?) {
                 locationResult ?: return
                 for (location in locationResult.locations) {
-                    if (location.accuracy < 50) { // Solo considera ubicaciones con precisión menor a 50 metros
+                    if (location.accuracy < 60) { // Solo considera ubicaciones con precisión menor a 50 metros
                         val newPoint = LatLng(location.latitude, location.longitude)
                         viewModel.addPathPoint(newPoint)
                         drawPolyline()
@@ -476,6 +481,7 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
     }
 
     private fun drawPolyline() {
+        Log.d("MapsFragment","Creando polilinea")
         val polylineOptions = PolylineOptions().apply {
             width(5f)
             color(Color.BLUE)
@@ -542,9 +548,6 @@ class MapsFragment : Fragment(), OnMapReadyCallback, SensorEventListener {
         viewModel.loadTrackingData(requireContext())
         toggleTracking()
     }
-
-
-
 
 }
 

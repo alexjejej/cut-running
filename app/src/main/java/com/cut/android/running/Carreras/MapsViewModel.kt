@@ -8,11 +8,10 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import com.cut.android.running.Carreras.TimeUpdateListener
 import com.cut.android.running.provider.RetrofitInstance
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
-import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -47,6 +46,7 @@ class MapsViewModel : ViewModel() {
     private var tiempoPenalizacion = 0L // Tiempo hasta que la penalización se restablece
 
     //Contador de tiempo
+    private var timeUpdateListener: TimeUpdateListener? = null
     private var isTimerRunning = false
     private var timerHandler = Handler(Looper.getMainLooper())
     private var startTime = 0L
@@ -54,6 +54,9 @@ class MapsViewModel : ViewModel() {
     private val _timeElapsed = MutableLiveData<String>()
     val timeElapsed: LiveData<String> = _timeElapsed
 
+    fun setTimeUpdateListener(listener: TimeUpdateListener) {
+        timeUpdateListener = listener
+    }
 
     private var timeUpdateTask = object : Runnable {
         override fun run() {
@@ -69,6 +72,7 @@ class MapsViewModel : ViewModel() {
             }
 
             _timeElapsed.postValue(timeString)
+            timeUpdateListener?.updateTime(timeString)
 
             timerHandler.postDelayed(this, 1000)
         }

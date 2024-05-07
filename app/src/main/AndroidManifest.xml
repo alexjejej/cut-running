@@ -32,7 +32,9 @@
 
         <service
             android:name=".provider.services.TrackingService"
-            android:exported="false" />
+            />
+
+
 
         <activity
             android:name=".Carreras.FinCarrera"
