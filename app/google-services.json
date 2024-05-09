@@ -23,14 +23,6 @@
           }
         },
         {
-          "client_id": "985836807268-gqnl705egi25pq2dh7q1n7pb1h24brcl.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.cut.android.running",
-            "certificate_hash": "5e378fb143c08cd399cf4e61d37c25fdcb9848e5"
-          }
-        },
-        {
           "client_id": "985836807268-ogmt5098u43kupehrpois60d3v26k0fl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

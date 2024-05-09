@@ -170,10 +170,30 @@ class UserInfoUpdateFragment : Fragment() {
 
         // Determinar si el SpecialtyID ha cambiado
         val specialtyIdActualizado = when (SpecialityIDSpinner.selectedItem.toString()) {
-            "Ingeniería en Ciencias Computacionales" -> 1
-            "Ingeniería en Nanotecnología" -> 2
+            "Administración de Negocios" -> 1
+            "Arquitectura" -> 2
+            "Ciencias Computacionales" -> 3
+            "Ciencias Forenses" -> 4
+            "Contaduría Pública" -> 5
+            "Derecho / Abogado" -> 6
+            "Diseño de Artesanía" -> 7
+            "Egresado" -> 8
+            "Energía" -> 9
+            "Enfermería" -> 10
+            "Estudios Liberales" -> 11
+            "Gerontología" -> 12
+            "Historia del Arte" -> 13
+            "Médico Cirujano y Partero" -> 14
+            "Nanotecnología" -> 15
+            "Nutrición" -> 16
+            "Salud Pública" -> 17
+            "Académico o Administrativo de CUT" -> 18
+            "Estudiante de Posgrado" -> 19
+            "Otros" -> 20
             else -> usuarioActual.specialtyId
         }
+
+
 
         // Verificar si hay cambios comparando los valores actuales con los nuevos
         val hayCambios = edadActualizada != usuarioActual.age ||
@@ -358,8 +378,26 @@ class UserInfoUpdateFragment : Fragment() {
         }
         // Obtener specialtyId del Spinner
         val specialtyId = when (SpecialityIDSpinner.selectedItem.toString()) {
-            "Ingeniería en Ciencias Computacionales" -> 1
-            "Ingeniería en Nanotecnología" -> 2
+            "Administración de Negocios" -> 1
+            "Arquitectura" -> 2
+            "Ciencias Computacionales" -> 3
+            "Ciencias Forenses" -> 4
+            "Contaduría Pública" -> 5
+            "Derecho / Abogado" -> 6
+            "Diseño de Artesanía" -> 7
+            "Egresado" -> 8
+            "Energía" -> 9
+            "Enfermería" -> 10
+            "Estudios Liberales" -> 11
+            "Gerontología" -> 12
+            "Historia del Arte" -> 13
+            "Médico Cirujano y Partero" -> 14
+            "Nanotecnología" -> 15
+            "Nutrición" -> 16
+            "Salud Pública" -> 17
+            "Académico o Administrativo de CUT" -> 18
+            "Estudiante de Posgrado" -> 19
+            "Otros" -> 20
             else -> null
         }
 
