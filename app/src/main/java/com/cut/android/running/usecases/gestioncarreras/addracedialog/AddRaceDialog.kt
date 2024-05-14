@@ -61,7 +61,7 @@ class AddRaceDialog constructor(
                  _raceManagementViewModel.addRace(
                     RaceDto(0,
                         _binding.txtRaceName.text.toString(),
-                        "${raceDate}T${(raceHour)}.00Z",
+                        "${raceDate} ${(raceHour)}",W
                         _binding.txtRaceDescription.text.toString(),
                         ucIdSelected,
                         1,
