@@ -183,8 +183,8 @@ class LoginFragment : Fragment() {
         layout = binding.authLayout
 
         binding.btnGoogleSignIn.setOnClickListener {
-//            verificarConexionAPI()
-            lanzarInicioDeSesion()
+            verificarConexionAPI()
+//            lanzarInicioDeSesion()
         }
 
     }
@@ -359,13 +359,7 @@ class LoginFragment : Fragment() {
                                         Log.d("FirebaseAuth", "Got ID token.")
                                     }
                                     else {
-                                        val builder = AlertDialog.Builder(requireContext())
-                                        builder.setTitle(getString(R.string.email_validation_title))
-                                        builder.setMessage(getString(R.string.email_validation_message))
-                                        builder.setPositiveButton(android.R.string.yes) { dialog, which ->
-                                            dialog.dismiss()
-                                        }
-                                        builder.show()
+                                        mostrarErrorDeValidacionDeDominioEmail()
                                     }
                                 } else {
                                     Log.w("FirebaseAuth", "${task.exception.toString()}")
@@ -437,6 +431,18 @@ class LoginFragment : Fragment() {
             binding.txtEstatusLogin.visibility = View.INVISIBLE
         }
     }
+
+    private fun mostrarErrorDeValidacionDeDominioEmail() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            AlertDialog.Builder(context, R.style.AlertDialogCustom)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle(getString(R.string.email_validation_title))
+                .setMessage(getString(R.string.email_validation_message))
+                .setPositiveButton("Aceptar", null)
+                .show()
+        }
+    }
+
     private fun lanzarInicioDeSesion() {
         // Reactivar el botón en caso de éxito o fallo en el proceso de inicio de sesión
         oneTapClient.beginSignIn(signInRequest)

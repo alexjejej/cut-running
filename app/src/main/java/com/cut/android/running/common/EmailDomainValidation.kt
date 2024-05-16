@@ -4,8 +4,9 @@ class EmailDomainValidation {
 
     companion object {
         var allowedDomains = listOf<String>(
-            "academico.udg.mx",
-            "alumnos.udg.mx"
+            "academicoa.udg.mx",
+            "alumnos.udg.mx",
+            "cutonala.udg.mx"
         )
 
         public fun domainValidation(email: String): Boolean {
