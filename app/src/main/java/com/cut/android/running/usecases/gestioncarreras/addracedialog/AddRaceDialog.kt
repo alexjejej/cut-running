@@ -116,8 +116,8 @@ class AddRaceDialog constructor(
         materialTimePicker.addOnPositiveButtonClickListener {
             val hour = if (materialTimePicker.hour in 0..9) "0${materialTimePicker.hour}" else materialTimePicker.hour
             val minute = if (materialTimePicker.minute in 0..9) "0${materialTimePicker.minute}" else materialTimePicker.minute
-            //Agregar 1 hora por las diferencias existentes
-            val modifiedHour = materialTimePicker.hour + 1
+
+            val modifiedHour = materialTimePicker.hour
             raceHour = "${modifiedHour}:${minute}:00"
             val raceHourUnmodified = "${hour}:${minute}:00"
             _binding.btnRaceHour.text = raceHourUnmodified
